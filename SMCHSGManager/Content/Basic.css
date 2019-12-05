@@ -1,0 +1,21 @@
+
+P  
+{
+	text-indent: 2em; 
+	font-family:@ººÒÇÖÐ¿¬¼ò; 
+	font-size:medium;
+}
+
+.helpfile
+{
+	font-family:@Ó×Ô²; 
+	font-size:small;
+	line-height:140%;
+}
+.helpfile li
+{
+	margin-bottom:2em;
+}
+
+
+#header { background-color: blue }

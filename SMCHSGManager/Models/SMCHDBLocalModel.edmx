@@ -1,0 +1,289 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="2.0" xmlns:edmx="http://schemas.microsoft.com/ado/2008/10/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+      <Schema Namespace="SMCHDBModel.Store" Alias="Self" Provider="System.Data.SqlClient" ProviderManifestToken="2008" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns="http://schemas.microsoft.com/ado/2009/02/edm/ssdl">
+        <EntityContainer Name="SMCHDBModelStoreContainer">
+          <EntitySet Name="EmploymentStatuses" EntityType="SMCHDBModel.Store.EmploymentStatuses" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="Nationalities" EntityType="SMCHDBModel.Store.Nationalities" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="OrdinaryMemberInfos" EntityType="SMCHDBModel.Store.OrdinaryMemberInfos" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="Races" EntityType="SMCHDBModel.Store.Races" store:Type="Tables" Schema="dbo" />
+          <AssociationSet Name="FK_InitiateMemberInfos_EmploymentStatus" Association="SMCHDBModel.Store.FK_InitiateMemberInfos_EmploymentStatus">
+            <End Role="EmploymentStatuses" EntitySet="EmploymentStatuses" />
+            <End Role="OrdinaryMemberInfos" EntitySet="OrdinaryMemberInfos" />
+          </AssociationSet>
+          <AssociationSet Name="FK_InitiateMemberInfos_Nationalities" Association="SMCHDBModel.Store.FK_InitiateMemberInfos_Nationalities">
+            <End Role="Nationalities" EntitySet="Nationalities" />
+            <End Role="OrdinaryMemberInfos" EntitySet="OrdinaryMemberInfos" />
+          </AssociationSet>
+          <AssociationSet Name="FK_InitiateMemberInfos_Races" Association="SMCHDBModel.Store.FK_InitiateMemberInfos_Races">
+            <End Role="Races" EntitySet="Races" />
+            <End Role="OrdinaryMemberInfos" EntitySet="OrdinaryMemberInfos" />
+          </AssociationSet>
+        </EntityContainer>
+        <EntityType Name="EmploymentStatuses">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="nvarchar" Nullable="false" MaxLength="100" />
+          <Property Name="MemberFee" Type="money" />
+        </EntityType>
+        <EntityType Name="Nationalities">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="nvarchar" Nullable="false" MaxLength="50" />
+        </EntityType>
+        <EntityType Name="OrdinaryMemberInfos">
+          <Key>
+            <PropertyRef Name="IMemberID" />
+          </Key>
+          <Property Name="IMemberID" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="Address" Type="varchar" MaxLength="500" />
+          <Property Name="NameInNative" Type="nvarchar(max)" />
+          <Property Name="NationalityID" Type="int" />
+          <Property Name="RaceID" Type="int" />
+          <Property Name="EmploymentStatusID" Type="int" />
+          <Property Name="PlaceOfInitiation" Type="nvarchar" MaxLength="100" />
+          <Property Name="NRICOrFINNo" Type="nvarchar" MaxLength="50" />
+          <Property Name="MemberApplyDate" Type="datetime" />
+          <Property Name="MemberEffectiveStartDate" Type="datetime" />
+          <Property Name="MemberFeePayByID" Type="int" />
+          <Property Name="Occupation" Type="nvarchar" MaxLength="50" />
+          <Property Name="EducationLevel" Type="nvarchar" MaxLength="100" />
+          <Property Name="SpecialSkill" Type="nvarchar" MaxLength="200" />
+          <Property Name="Remark" Type="nvarchar(max)" />
+        </EntityType>
+        <EntityType Name="Races">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="nvarchar" Nullable="false" MaxLength="50" />
+        </EntityType>
+        <Association Name="FK_InitiateMemberInfos_EmploymentStatus">
+          <End Role="EmploymentStatuses" Type="SMCHDBModel.Store.EmploymentStatuses" Multiplicity="0..1" />
+          <End Role="OrdinaryMemberInfos" Type="SMCHDBModel.Store.OrdinaryMemberInfos" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="EmploymentStatuses">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="OrdinaryMemberInfos">
+              <PropertyRef Name="EmploymentStatusID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_InitiateMemberInfos_Nationalities">
+          <End Role="Nationalities" Type="SMCHDBModel.Store.Nationalities" Multiplicity="0..1" />
+          <End Role="OrdinaryMemberInfos" Type="SMCHDBModel.Store.OrdinaryMemberInfos" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Nationalities">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="OrdinaryMemberInfos">
+              <PropertyRef Name="NationalityID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_InitiateMemberInfos_Races">
+          <End Role="Races" Type="SMCHDBModel.Store.Races" Multiplicity="0..1" />
+          <End Role="OrdinaryMemberInfos" Type="SMCHDBModel.Store.OrdinaryMemberInfos" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Races">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="OrdinaryMemberInfos">
+              <PropertyRef Name="RaceID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+      </Schema>
+    </edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="SMCHDBModel" Alias="Self" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns="http://schemas.microsoft.com/ado/2008/09/edm">
+        <EntityContainer Name="SMCHDBLocalEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="EmploymentStatuses" EntityType="SMCHDBModel.EmploymentStatus" />
+          <EntitySet Name="Nationalities" EntityType="SMCHDBModel.Nationality" />
+          <EntitySet Name="OrdinaryMemberInfos" EntityType="SMCHDBModel.OrdinaryMemberInfo" />
+          <EntitySet Name="Races" EntityType="SMCHDBModel.Race" />
+          <AssociationSet Name="FK_InitiateMemberInfos_EmploymentStatus" Association="SMCHDBModel.FK_InitiateMemberInfos_EmploymentStatus">
+            <End Role="EmploymentStatuses" EntitySet="EmploymentStatuses" />
+            <End Role="OrdinaryMemberInfos" EntitySet="OrdinaryMemberInfos" />
+          </AssociationSet>
+          <AssociationSet Name="FK_InitiateMemberInfos_Nationalities" Association="SMCHDBModel.FK_InitiateMemberInfos_Nationalities">
+            <End Role="Nationalities" EntitySet="Nationalities" />
+            <End Role="OrdinaryMemberInfos" EntitySet="OrdinaryMemberInfos" />
+          </AssociationSet>
+          <AssociationSet Name="FK_InitiateMemberInfos_Races" Association="SMCHDBModel.FK_InitiateMemberInfos_Races">
+            <End Role="Races" EntitySet="Races" />
+            <End Role="OrdinaryMemberInfos" EntitySet="OrdinaryMemberInfos" />
+          </AssociationSet>
+        </EntityContainer>
+        <EntityType Name="EmploymentStatus">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="100" Unicode="true" FixedLength="false" />
+          <Property Name="MemberFee" Type="Decimal" Precision="19" Scale="4" />
+          <NavigationProperty Name="OrdinaryMemberInfos" Relationship="SMCHDBModel.FK_InitiateMemberInfos_EmploymentStatus" FromRole="EmploymentStatuses" ToRole="OrdinaryMemberInfos" />
+        </EntityType>
+        <EntityType Name="Nationality">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="50" Unicode="true" FixedLength="false" />
+          <NavigationProperty Name="OrdinaryMemberInfos" Relationship="SMCHDBModel.FK_InitiateMemberInfos_Nationalities" FromRole="Nationalities" ToRole="OrdinaryMemberInfos" />
+        </EntityType>
+        <EntityType Name="OrdinaryMemberInfo">
+          <Key>
+            <PropertyRef Name="IMemberID" />
+          </Key>
+          <Property Name="IMemberID" Type="Guid" Nullable="false" />
+          <Property Name="Address" Type="String" MaxLength="500" Unicode="false" FixedLength="false" />
+          <Property Name="NameInNative" Type="String" MaxLength="Max" Unicode="true" FixedLength="false" />
+          <Property Name="NationalityID" Type="Int32" />
+          <Property Name="RaceID" Type="Int32" />
+          <Property Name="EmploymentStatusID" Type="Int32" />
+          <Property Name="PlaceOfInitiation" Type="String" MaxLength="100" Unicode="true" FixedLength="false" />
+          <Property Name="NRICOrFINNo" Type="String" MaxLength="50" Unicode="true" FixedLength="false" />
+          <Property Name="MemberApplyDate" Type="DateTime" />
+          <Property Name="MemberEffectiveStartDate" Type="DateTime" />
+          <Property Name="MemberFeePayByID" Type="Int32" />
+          <Property Name="Occupation" Type="String" MaxLength="50" Unicode="true" FixedLength="false" />
+          <Property Name="EducationLevel" Type="String" MaxLength="100" Unicode="true" FixedLength="false" />
+          <Property Name="SpecialSkill" Type="String" MaxLength="200" Unicode="true" FixedLength="false" />
+          <Property Name="Remark" Type="String" MaxLength="Max" Unicode="true" FixedLength="false" />
+          <NavigationProperty Name="EmploymentStatus" Relationship="SMCHDBModel.FK_InitiateMemberInfos_EmploymentStatus" FromRole="OrdinaryMemberInfos" ToRole="EmploymentStatuses" />
+          <NavigationProperty Name="Nationality" Relationship="SMCHDBModel.FK_InitiateMemberInfos_Nationalities" FromRole="OrdinaryMemberInfos" ToRole="Nationalities" />
+          <NavigationProperty Name="Race" Relationship="SMCHDBModel.FK_InitiateMemberInfos_Races" FromRole="OrdinaryMemberInfos" ToRole="Races" />
+        </EntityType>
+        <EntityType Name="Race">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="50" Unicode="true" FixedLength="false" />
+          <NavigationProperty Name="OrdinaryMemberInfos" Relationship="SMCHDBModel.FK_InitiateMemberInfos_Races" FromRole="Races" ToRole="OrdinaryMemberInfos" />
+        </EntityType>
+        <Association Name="FK_InitiateMemberInfos_EmploymentStatus">
+          <End Role="EmploymentStatuses" Type="SMCHDBModel.EmploymentStatus" Multiplicity="0..1" />
+          <End Role="OrdinaryMemberInfos" Type="SMCHDBModel.OrdinaryMemberInfo" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="EmploymentStatuses">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="OrdinaryMemberInfos">
+              <PropertyRef Name="EmploymentStatusID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_InitiateMemberInfos_Nationalities">
+          <End Role="Nationalities" Type="SMCHDBModel.Nationality" Multiplicity="0..1" />
+          <End Role="OrdinaryMemberInfos" Type="SMCHDBModel.OrdinaryMemberInfo" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Nationalities">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="OrdinaryMemberInfos">
+              <PropertyRef Name="NationalityID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_InitiateMemberInfos_Races">
+          <End Role="Races" Type="SMCHDBModel.Race" Multiplicity="0..1" />
+          <End Role="OrdinaryMemberInfos" Type="SMCHDBModel.OrdinaryMemberInfo" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Races">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="OrdinaryMemberInfos">
+              <PropertyRef Name="RaceID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2008/09/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="SMCHDBModelStoreContainer" CdmEntityContainer="SMCHDBLocalEntities">
+          <EntitySetMapping Name="EmploymentStatuses"><EntityTypeMapping TypeName="SMCHDBModel.EmploymentStatus"><MappingFragment StoreEntitySet="EmploymentStatuses">
+            <ScalarProperty Name="ID" ColumnName="ID" />
+            <ScalarProperty Name="Name" ColumnName="Name" />
+            <ScalarProperty Name="MemberFee" ColumnName="MemberFee" />
+          </MappingFragment></EntityTypeMapping></EntitySetMapping>
+          <EntitySetMapping Name="Nationalities"><EntityTypeMapping TypeName="SMCHDBModel.Nationality"><MappingFragment StoreEntitySet="Nationalities">
+            <ScalarProperty Name="ID" ColumnName="ID" />
+            <ScalarProperty Name="Name" ColumnName="Name" />
+          </MappingFragment></EntityTypeMapping></EntitySetMapping>
+          <EntitySetMapping Name="OrdinaryMemberInfos"><EntityTypeMapping TypeName="SMCHDBModel.OrdinaryMemberInfo"><MappingFragment StoreEntitySet="OrdinaryMemberInfos">
+            <ScalarProperty Name="IMemberID" ColumnName="IMemberID" />
+            <ScalarProperty Name="Address" ColumnName="Address" />
+            <ScalarProperty Name="NameInNative" ColumnName="NameInNative" />
+            <ScalarProperty Name="NationalityID" ColumnName="NationalityID" />
+            <ScalarProperty Name="RaceID" ColumnName="RaceID" />
+            <ScalarProperty Name="EmploymentStatusID" ColumnName="EmploymentStatusID" />
+            <ScalarProperty Name="PlaceOfInitiation" ColumnName="PlaceOfInitiation" />
+            <ScalarProperty Name="NRICOrFINNo" ColumnName="NRICOrFINNo" />
+            <ScalarProperty Name="MemberApplyDate" ColumnName="MemberApplyDate" />
+            <ScalarProperty Name="MemberEffectiveStartDate" ColumnName="MemberEffectiveStartDate" />
+            <ScalarProperty Name="MemberFeePayByID" ColumnName="MemberFeePayByID" />
+            <ScalarProperty Name="Occupation" ColumnName="Occupation" />
+            <ScalarProperty Name="EducationLevel" ColumnName="EducationLevel" />
+            <ScalarProperty Name="SpecialSkill" ColumnName="SpecialSkill" />
+            <ScalarProperty Name="Remark" ColumnName="Remark" />
+          </MappingFragment></EntityTypeMapping></EntitySetMapping>
+          <EntitySetMapping Name="Races"><EntityTypeMapping TypeName="SMCHDBModel.Race"><MappingFragment StoreEntitySet="Races">
+            <ScalarProperty Name="ID" ColumnName="ID" />
+            <ScalarProperty Name="Name" ColumnName="Name" />
+          </MappingFragment></EntityTypeMapping></EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2008/10/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="True" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="True" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams>
+      <Diagram Name="SMCHDBLocalModel">
+        <EntityTypeShape EntityType="SMCHDBModel.EmploymentStatus" Width="1.5" PointX="0.75" PointY="3.875" Height="1.7879850260416665" IsExpanded="true" />
+        <EntityTypeShape EntityType="SMCHDBModel.Nationality" Width="1.5" PointX="0.75" PointY="0.75" Height="1.5956835937499996" IsExpanded="true" />
+        <EntityTypeShape EntityType="SMCHDBModel.OrdinaryMemberInfo" Width="1.5" PointX="3" PointY="2.5" Height="4.480205078125" IsExpanded="true" />
+        <EntityTypeShape EntityType="SMCHDBModel.Race" Width="1.5" PointX="0.75" PointY="7.125" Height="1.5956835937499996" IsExpanded="true" />
+        <AssociationConnector Association="SMCHDBModel.FK_InitiateMemberInfos_EmploymentStatus" ManuallyRouted="false">
+          <ConnectorPoint PointX="2.25" PointY="4.7689925130208337" />
+          <ConnectorPoint PointX="3" PointY="4.7689925130208337" />
+        </AssociationConnector>
+        <AssociationConnector Association="SMCHDBModel.FK_InitiateMemberInfos_Nationalities" ManuallyRouted="false">
+          <ConnectorPoint PointX="2.25" PointY="1.5478417968749998" />
+          <ConnectorPoint PointX="3.75" PointY="1.5478417968749998" />
+          <ConnectorPoint PointX="3.75" PointY="2.5" />
+        </AssociationConnector>
+        <AssociationConnector Association="SMCHDBModel.FK_InitiateMemberInfos_Races" ManuallyRouted="false">
+          <ConnectorPoint PointX="2.25" PointY="7.922841796875" />
+          <ConnectorPoint PointX="3.75" PointY="7.922841796875" />
+          <ConnectorPoint PointX="3.75" PointY="6.980205078125" />
+        </AssociationConnector>
+      </Diagram>
+    </Diagrams>
+  </Designer>
+</edmx:Edmx>

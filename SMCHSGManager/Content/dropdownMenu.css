@@ -1,0 +1,88 @@
+/*background-image:url("https://a248.e.akamai.net/7/248/19421/3d/www.skywards.com/Images/bg_mainNav.gif");
+	background-repeat:repeat-x;
+height:31px;
+border-bottom:1px solid #c7bfad;
+width:979px;*/
+
+#navMain {
+	background: url(../images/background_nav_mainmenu.gif) repeat-x;
+	border-left:1px solid #a8a8a8;
+	border-right:1px solid #a8a8a8;
+    font-size: 11px;
+    font-weight: bold;
+    font-family: Verdana, Helvetica, Helvetica-Narrow, Tahoma, sans-serif;
+	height:45px;
+	margin:0 auto;
+	padding:0;
+	width: 1000px;
+}
+
+#menu {
+	PADDING-RIGHT: 0px; PADDING-LEFT: 0px; FLOAT: left; MARGIN-BOTTOM: -13px; PADDING-BOTTOM: 0px; PADDING-TOP: 0px; LIST-STYLE-TYPE: none
+}
+#menu LI {
+	DISPLAY: block; Z-INDEX: 100; FLOAT: left; POSITION: relative
+}
+#menu LI SPAN {
+	PADDING-RIGHT: 12px; MARGIN-TOP: 0px; DISPLAY: block; PADDING-LEFT: 12px; FONT-SIZE: 1em; Z-INDEX: 100; 
+}
+#menu LI A {
+	PADDING-RIGHT: 0px; DISPLAY: block; PADDING-LEFT: 0px; PADDING-BOTTOM: 0px; COLOR: #FFF; PADDING-TOP: 0px
+}
+#menu LI A:visited {
+	PADDING-RIGHT: 0px; DISPLAY: block; PADDING-LEFT: 0px; PADDING-BOTTOM: 0px; COLOR: #FFF; PADDING-TOP: 0px
+}
+#menu DL {
+	PADDING-RIGHT: 0px; PADDING-LEFT: 0px;  LEFT: 0px; PADDING-BOTTOM: 0px; MARGIN: 0px; PADDING-TOP: 0px; POSITION: absolute; TOP: 0px
+}
+#menu DT {
+	FONT-SIZE: 1em; FLOAT: left; MARGIN: 0px;
+}
+#menu DD {
+	CLEAR: left; BORDER-RIGHT: #bbc6ca 1px solid; PADDING-RIGHT: 0px; BORDER-TOP: #bbc6ca 1px; DISPLAY: none; PADDING-LEFT: 0px; FONT-SIZE: 0.95em; BACKGROUND: none transparent scroll repeat 0% 0%; PADDING-BOTTOM: 0px; MARGIN: 0px; BORDER-LEFT: #bbc6ca 1px solid; PADDING-TOP: 0px; BORDER-BOTTOM: #bbc6ca 1px; TEXT-ALIGN: left
+}
+#menu DT A {
+	PADDING-RIGHT: 12px; DISPLAY: block; PADDING-LEFT: 12px; COLOR: #FFF; BORDER-TOP-STYLE: none; BORDER-RIGHT-STYLE: none; BORDER-LEFT-STYLE: none; TEXT-DECORATION: none; BORDER-BOTTOM-STYLE: none
+}
+#menu DT A:visited {
+	PADDING-RIGHT: 12px; DISPLAY: block; PADDING-LEFT: 12px; COLOR: #FFF; BORDER-TOP-STYLE: none; BORDER-RIGHT-STYLE: none; BORDER-LEFT-STYLE: none; TEXT-DECORATION: none; BORDER-BOTTOM-STYLE: none
+}
+#menu DD A {
+	PADDING-RIGHT: 12px; DISPLAY: block; PADDING-LEFT: 12px; BACKGROUND: url(../images/background_submenu.jpg) repeat-x;	PADDING-BOTTOM: 6px; PADDING-TOP: 6px; TEXT-DECORATION: none
+}
+#menu DD A:visited {
+	PADDING-RIGHT: 12px; DISPLAY: block; PADDING-LEFT: 12px; BACKGROUND: url(../images/background_submenu.jpg) repeat-x; PADDING-BOTTOM: 6px; PADDING-TOP: 6px; TEXT-DECORATION: none
+}
+#menu DD A.last {
+	BACKGROUND-IMAGE: none
+}
+#menu LI A:hover {
+	BORDER-TOP-WIDTH: 0px; BORDER-LEFT-WIDTH: 0px; BORDER-BOTTOM-WIDTH: 0px; COLOR: Orange; BORDER-RIGHT-WIDTH: 0px
+}
+#menu DD A:hover {
+	BORDER-TOP-WIDTH: 0px; BORDER-LEFT-WIDTH: 0px; BORDER-BOTTOM-WIDTH: 0px; COLOR:Orange; BORDER-RIGHT-WIDTH: 0px
+}
+#menu LI:hover DD {
+	BORDER-RIGHT: #bbc6ca 1px solid; BORDER-TOP: #bbc6ca 1px; DISPLAY: block; BORDER-LEFT: #bbc6ca 1px solid; COLOR: #c33; BORDER-BOTTOM: #bbc6ca 1px
+}
+#menu LI A:hover DD {
+	BORDER-RIGHT: #bbc6ca 1px solid; BORDER-TOP: #bbc6ca 1px; DISPLAY: block; BORDER-LEFT: #bbc6ca 1px solid; COLOR: #c33; BORDER-BOTTOM: #bbc6ca 1px
+}
+#menu LI:hover DL {
+	MARGIN-TOP: 0px; MARGIN-LEFT: -1px; PADDING-TOP: 0px; BORDER-BOTTOM: #FED36B 5px solid
+}
+#menu LI A:hover DL {
+	MARGIN-TOP: 0px; MARGIN-LEFT: -1px; PADDING-TOP: 0px; BORDER-BOTTOM: #0093c8 5px solid
+}
+#menu LI A:hover DT A {
+	BORDER-RIGHT: #bbc6ca 1px solid; BORDER-TOP: #bbc6ca 1px; PADDING-BOTTOM: 9px; BORDER-LEFT: #bbc6ca 1px solid; COLOR: #c33; PADDING-TOP: 6px; BORDER-BOTTOM: #bbc6ca 1px; BACKGROUND-COLOR: #fff
+}
+#menu LI A:hover DT A:hover {
+	COLOR: #c33
+}
+#menu LI:hover DT A {
+	BORDER-RIGHT: #555 1px solid ; BORDER-TOP: #bbc6ca 1px; PADDING-BOTTOM: 10px; BORDER-LEFT: #555 1px solid; BORDER-BOTTOM: #bbc6ca 1px; COLOR: Orange; 
+}
+#menu DL {
+	WIDTH: 210px
+}
