@@ -66,60 +66,6 @@ namespace SMCHSGManager.Controllers
             return View(viewModel);
         }
 
-
-        //
-        // GET: /GroupMeditation/Create
-
-        //[Authorize(Roles = "SuperAdmin")]
-        //public ActionResult CreateGMEvent(DateTime? startDate, DateTime? endDate)
-        //{
-        //    int year = DateTime.Today.Year;// +1;
-        //    //List<GroupMeditation> GMs = (from r in _entities.GroupMeditations where r.StartDateTime.Year == nextYear orderby r.StartDateTime select r).ToList();
-        //    if (!startDate.HasValue)
-        //    {
-        //        startDate = new DateTime(year, 1, 1);
-        //    }
-
-        //    if (!endDate.HasValue)
-        //    {
-        //        endDate = new DateTime(year, 12, 31);
-        //    }
-
-        //    for (DateTime dt = startDate.Value; dt <= endDate; dt = dt.AddDays(1))
-        //    {
-        //        switch (dt.DayOfWeek)
-        //        {
-        //            case DayOfWeek.Sunday:
-        //                AddGroupMeditationItem(dt, 9, 3, 1);
-        //               break;
-        //            case DayOfWeek.Monday:
-        //                AddGroupMeditationItem(dt, 19.5, 2, 1);
-        //                break;
-        //            case DayOfWeek.Tuesday:
-        //                AddGroupMeditationItem(dt, 19.5, 2, 1);
-        //                break;
-        //            case DayOfWeek.Wednesday:
-        //                AddGroupMeditationItem(dt, 23, 7, 1);
-        //                break;
-        //            case DayOfWeek.Thursday:
-        //                AddGroupMeditationItem(dt, 19.5, 2, 1);
-        //                break;
-        //            case DayOfWeek.Friday:
-        //                AddGroupMeditationItem(dt, 20, 0.5, 2);
-        //                break;
-        //            case DayOfWeek.Saturday:
-        //                AddGroupMeditationItem(dt, 9, 3, 1);
-        //                AddGroupMeditationItem(dt, 19, 2.5, 1);
-        //                AddGroupMeditationItem(dt, 23, 8, 1);
-        //                break;
-        //            default:
-        //                break;
-        //        }
-        //    }
-
-        //    return View();
-        //}
-
         [Authorize(Roles = "SuperAdmin")]
         public ActionResult CreateNextYearGMEvent(DateTime? startDate, DateTime? endDate)
         {
@@ -595,33 +541,48 @@ namespace SMCHSGManager.Controllers
         }
 
 
-
 		[Authorize(Roles = "Administrator")]
 		public ActionResult AttendanceTable(int nextMonth)
 		{
 			List<GroupMeditation> nextMonthGMs = GetMonthGMs(nextMonth);
 
 			DateTime firstDayOfMonth = new DateTime(DateTime.Today.AddMonths(nextMonth).Year, DateTime.Today.AddMonths(nextMonth).Month, 1);
-
+            
 			DateTime nextMonthDay = firstDayOfMonth.AddDays(32);
 			DateTime preMonthDay = firstDayOfMonth.AddDays(-2);
+
+            List<GroupMeditationAttendance> allMonthGMAs = _entities.GroupMeditationAttendances
+                .Where(a => a.GroupMeditation.StartDateTime.Year == firstDayOfMonth.Year && a.GroupMeditation.StartDateTime.Month == firstDayOfMonth.Month)
+                .OrderBy(a => a.MemberInfo.MemberNo).Distinct().ToList();
+
+            var allMonthGMAMemberIDs = allMonthGMAs.OrderBy(a => a.MemberInfo.MemberNo).Select(a => a.MemberID).Distinct().ToList();
 
             MemberFeePaymentController mfpc = new MemberFeePaymentController();
             List<MemberFeeExpiredDateInfo> memberFeeMax = mfpc.updateMemberFeeExipredDate();
 
-            List<MemberInfo> memberInfos = GetMemberInfos();
-            foreach (MemberInfo mi in memberInfos)
+            bool[,] attendenceChecks = new bool[allMonthGMAMemberIDs.Count, nextMonthGMs.Count];
+            for (int i = 0; i < allMonthGMAMemberIDs.Count; i++)
             {
-                if (!memberFeeMax.Any(a => a.MemberID == mi.MemberID))
+                int j = 0;
+                foreach (GroupMeditation gm in nextMonthGMs)
+                {
+                    if (allMonthGMAs.Any(a => a.GroupMeditationID == gm.ID && a.MemberID == allMonthGMAMemberIDs[i])) 
+                    {
+                        attendenceChecks[i, j] = true;
+                    }
+                    j++;
+                }
+                if (!memberFeeMax.Any(a => a.MemberID == allMonthGMAMemberIDs[i]))
                 {
                     MemberFeeExpiredDateInfo mfe = new MemberFeeExpiredDateInfo();
-                    mfe.MemberID = mi.MemberID;
-                    mfe.MemberNo = mi.MemberNo;
-                    mfe.Name = mi.Name;
+                    mfe.MemberID = allMonthGMAMemberIDs[i];
+                    mfe.MemberNo = allMonthGMAs.First(a => a.MemberID == allMonthGMAMemberIDs[i]).MemberInfo.MemberNo;
+                    mfe.Name = allMonthGMAs.First(a => a.MemberID == allMonthGMAMemberIDs[i]).MemberInfo.Name;
                     memberFeeMax.Add(mfe);
                 }
             }
-            memberFeeMax = memberFeeMax.OrderBy(a => a.MemberNo).ToList();
+            memberFeeMax = (from r in memberFeeMax where allMonthGMAMemberIDs.Contains(r.MemberID) orderby r.MemberNo select r).ToList();
+
             var viewModel = new GMAttendanceViewModel
 			{
                 MemberFeeExpiredDates = memberFeeMax,
@@ -632,23 +593,7 @@ namespace SMCHSGManager.Controllers
 				HavePreviousMonth = _entities.GroupMeditations.Any(a => a.StartDateTime <= preMonthDay),
 			};
 
-            bool[,] attendenceChecks = new bool[memberFeeMax.Count, nextMonthGMs.Count];
-			int j = 0;
-			foreach (GroupMeditation gm in nextMonthGMs)
-			{
-				List<MemberInfo> mis = _entities.GroupMeditationAttendances.Where(a => a.GroupMeditationID == gm.ID).Select(a => a.MemberInfo).OrderBy(a => a.MemberNo).ToList();
-                for (int i = 0; i < memberFeeMax.Count; i++)
-				{
-                    if (mis.Any(a => a.MemberID == memberFeeMax[i].MemberID))
-					{
-						attendenceChecks[i, j] = true;
-					}
-				}
-				j++;
-			}
-
 			viewModel.AttendenceChecks = attendenceChecks;
-
 			TempData["viewModel"] = viewModel;
 
 			return View(viewModel);
