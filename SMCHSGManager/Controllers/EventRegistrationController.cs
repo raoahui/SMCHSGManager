@@ -109,6 +109,11 @@ namespace SMCHSGManager.Controllers
                 }
                 totalPrice += personNeedToPay;
 
+                if (mValues.Count == 0)
+                {
+                    row.Add(String.Format("SGD{0:C}", personNeedToPay));
+                }
+
                 string remark = string.Empty;
                 if (aEvent.EventTypeID == 5)
                 {

@@ -46,7 +46,7 @@ namespace SMCHSGManager.Controllers
 		{
             SMCHDBEntities _entities = new SMCHDBEntities();
 			List<MemberInfo> memberInfos = (from r in _entities.MemberInfos
-											where r.MemberNo.HasValue && r.MemberNo.Value < 999
+											where r.MemberNo.HasValue
 											orderby r.MemberNo
 											select r).ToList();
 			List<SelectListItem> si = new List<SelectListItem>();

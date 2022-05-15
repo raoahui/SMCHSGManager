@@ -24,21 +24,6 @@ namespace SMCHSGManager.Controllers
 		[Authorize(Roles = "Administrator")]
 		public ActionResult Index(string sort, int? page, string searchContent, int? IsActive)
 		{
-			//List<MemberInfo> memberInfo2s = _entities.MemberInfos.ToList();
-			//List<OrdinaryMemberInfo> ordinaryMembers = _localEntities.OrdinaryMemberInfos.ToList();
-			//foreach (OrdinaryMemberInfo omi in ordinaryMembers)
-			//{
-			//    if (omi.MemberFeePayByID == 1)
-			//    {
-			//        MemberInfo mi = _entities.MemberInfos.SingleOrDefault(a => a.MemberID == omi.IMemberID);
-			//        if (!mi.MemberFeeExpiredDate.HasValue)
-			//        {
-			//            mi.MemberFeeExpiredDate = new DateTime(2020, 12, 31);
-			//            _entities.SaveChanges();
-			//        }
-			//    }
-			//}
-			//return View();
 
 			var currentPage = page ?? 1;
 			ViewData["SortItem"] = sort;
@@ -61,26 +46,32 @@ namespace SMCHSGManager.Controllers
 			ViewData["IsActive"] = IsActive;
 
   			List<PublicMemberInfo> memberInfos = (from r in _entities.MemberInfos //OrdinaryMemberInfos
-                                                            //join h in latestMemberFeePayments on r.MemberID equals h.IMemberID 
-                                                            where (r.Name.Contains(searchContent) || searchContent == null || r.MemberNo == memberNO)
-  															 //&& r.MemberNo.HasValue && r.MemberNo.Value < 1000
-															 //&& !r.Name.Contains("tester")
-															 && (r.IsActive && IsActive == 1 || !r.IsActive && IsActive == 2 || IsActive == 3)
-															 select new PublicMemberInfo()
-															 {
-																 ID = r.MemberID,
-																 Name = r.Name,
-																 DateOfInitiation = r.DateOfInitiation,
-																 IDCardNo = r.IDCardNo,
-																 ContactNo = r.ContactNo,
-																 Gender = r.Gender.Name,
-																 InitiateType = r.InitiateType.Name,
-																 IsActive = r.IsActive,
-																 MemberNo = r.MemberNo,
-																 MemberFeeExpiredDate = r.MemberFeeExpiredDate,
-															 }).ToList();
+                                                 where (r.Name.Contains(searchContent) || searchContent == null || r.MemberNo == memberNO)
+ 												 && (r.IsActive && IsActive == 1 || !r.IsActive && IsActive == 2 || IsActive == 3)
+												 select new PublicMemberInfo()
+												 {
+													 ID = r.MemberID,
+													 Name = r.Name,
+													 DateOfInitiation = r.DateOfInitiation,
+													 IDCardNo = r.IDCardNo,
+													 ContactNo = r.ContactNo,
+													 Gender = r.Gender.Name,
+													 InitiateType = r.InitiateType.Name,
+													 IsActive = r.IsActive,
+													 MemberNo = r.MemberNo,
+												 }).ToList();
 
-            updateMemberFeeExipredDate(memberInfos);
+            MemberFeePaymentController mfpc = new MemberFeePaymentController ();
+            List<MemberFeeExpiredDateInfo> latestMemberFeePayments = mfpc.updateMemberFeeExipredDate();
+            foreach (PublicMemberInfo pmi in memberInfos)
+            {
+                MembershipUser user = Membership.GetUser(pmi.ID);
+                pmi.Email = user.Email;
+                if(latestMemberFeePayments.Any(a=>a.MemberID == pmi.ID))
+                {
+                    pmi.MemberFeeExpiredDate = latestMemberFeePayments.SingleOrDefault(a => a.MemberID == pmi.ID).MemberFeeExpiredDate;
+                }
+            }
 
 			ViewData["TotalPages"] = (int)Math.Ceiling((float)memberInfos.Count() / _pageSize);
 
@@ -91,63 +82,40 @@ namespace SMCHSGManager.Controllers
 			ViewData["CurrentPage"] = currentPage;
 
 			var sortedMemberInfos = (memberInfos.AsQueryable().OrderBy(a => a.MemberNo).Skip((currentPage - 1) * _pageSize).Take(_pageSize)).ToList();
-			TempData["viewModel"] = memberInfos.AsQueryable().Where(a=>a.MemberNo.HasValue && a.MemberNo < 999).OrderBy(a => a.MemberNo).ToList();
+			TempData["viewModel"] = memberInfos.AsQueryable().Where(a=>a.MemberNo.HasValue).OrderBy(a => a.MemberNo).ToList();
 
 			if (sort == "Name")
 			{
 				sortedMemberInfos = (memberInfos.AsQueryable().OrderBy(a => a.Name).Skip((currentPage - 1) * _pageSize).Take(_pageSize)).ToList();
-				TempData["viewModel"] = memberInfos.AsQueryable().Where(a => a.MemberNo.HasValue && a.MemberNo < 999).OrderBy(a => a.Name).ToList();
+				TempData["viewModel"] = memberInfos.AsQueryable().Where(a => a.MemberNo.HasValue).OrderBy(a => a.Name).ToList();
 			}
 			else if (sort == "IDCardNo")
 			{
 				sortedMemberInfos = (memberInfos.AsQueryable().OrderBy(a => a.IDCardNo).Skip((currentPage - 1) * _pageSize).Take(_pageSize)).ToList();
-				TempData["viewModel"] = memberInfos.AsQueryable().Where(a => a.MemberNo.HasValue && a.MemberNo < 999).OrderBy(a => a.IDCardNo).ToList();
+				TempData["viewModel"] = memberInfos.AsQueryable().Where(a => a.MemberNo.HasValue).OrderBy(a => a.IDCardNo).ToList();
 			}
 			else if (sort == "ContactNo")
 			{
 				sortedMemberInfos = (memberInfos.AsQueryable().OrderBy(a => a.ContactNo).Skip((currentPage - 1) * _pageSize).Take(_pageSize)).ToList();
-				TempData["viewModel"] = memberInfos.AsQueryable().Where(a => a.MemberNo.HasValue && a.MemberNo < 999).OrderBy(a => a.ContactNo).ToList();
+				TempData["viewModel"] = memberInfos.AsQueryable().Where(a => a.MemberNo.HasValue).OrderBy(a => a.ContactNo).ToList();
 			}
-			else if (sort == "MemberFeeExpiredDate")
-			{
-				sortedMemberInfos = (memberInfos.AsQueryable().OrderBy(a => a.MemberFeeExpiredDate).ThenBy(a=>a.MemberNo).Skip((currentPage - 1) * _pageSize).Take(_pageSize)).ToList();
-				TempData["viewModel"] = memberInfos.AsQueryable().Where(a => a.MemberNo.HasValue && a.MemberNo < 999).OrderBy(a => a.MemberFeeExpiredDate).ThenBy(a => a.MemberNo).ToList();
-			}
-			//var sortedMemberInfos = (memberInfos.AsQueryable().OrderBy(sort).Skip((currentPage - 1) * _pageSize).Take(_pageSize)).ToList();
+            else if (sort == "MemberFeeExpiredDate")
+            {
+                sortedMemberInfos = (memberInfos.AsQueryable().OrderBy(a => a.MemberFeeExpiredDate).ThenBy(a => a.MemberNo).Skip((currentPage - 1) * _pageSize).Take(_pageSize)).ToList();
+                TempData["viewModel"] = memberInfos.AsQueryable().Where(a => a.MemberNo.HasValue && a.MemberNo < 999).OrderBy(a => a.MemberFeeExpiredDate).ThenBy(a => a.MemberNo).ToList();
+            }
+            else if (sort == "Email")
+            {
+                sortedMemberInfos = (memberInfos.AsQueryable().OrderBy(a => a.Email).ThenBy(a => a.MemberNo).Skip((currentPage - 1) * _pageSize).Take(_pageSize)).ToList();
+                TempData["viewModel"] = memberInfos.AsQueryable().Where(a => a.MemberNo.HasValue).OrderBy(a => a.Email).ThenBy(a => a.MemberNo).ToList();
+            }
+            //var sortedMemberInfos = (memberInfos.AsQueryable().OrderBy(sort).Skip((currentPage - 1) * _pageSize).Take(_pageSize)).ToList();
 
 			//TempData["Headers"] = GetStringList();
 			ViewData["IsFromLocalHost"] = IsFromLocalHost();
 
 			return View(sortedMemberInfos);
 		}
-
-        public void updateMemberFeeExipredDate(List<PublicMemberInfo> memberInfos)
-        {
-
-			var latestMemberFeePayments = (from r in _entities.MemberFeePayments
-										   orderby r.ToDate descending
-										   group r by r.MemberInfo.MemberNo into h
-										   select new
-										   {
-											   MemberNo = h.Key,
-											   ToDate = h.Max(a => a.ToDate),
-										   }).ToList();
-
-
-            foreach (var mfp in latestMemberFeePayments)
-            {
-                if (mfp.MemberNo.HasValue && memberInfos.Any(a => a.MemberNo == mfp.MemberNo))
-				{
-					PublicMemberInfo publicMemberInfo = memberInfos.SingleOrDefault(a => a.MemberNo == mfp.MemberNo);
-					if (mfp.ToDate > publicMemberInfo.MemberFeeExpiredDate)
-					{
-						publicMemberInfo.MemberFeeExpiredDate = mfp.ToDate;
-					}
-				}
-            }
-
-        }
-
 
 		public string[][] GetStringList()
 		{
@@ -162,7 +130,7 @@ namespace SMCHSGManager.Controllers
 
 			string[][] tempList	 = new string[][]
 			{
-				new string[] {"MemberNo","Name", "MemberFeeExpiredDate", "DateOfInitiation", "IDCardNo", "ContactNo", "Gender"},
+				new string[] {"MemberNo","Name", "Email", "MemberFeeExpiredDate", "DateOfInitiation", "IDCardNo", "ContactNo", "Gender"},
 				//new string[] {"2.1","2.2", "2.3"},
 				//new string[] {"3.1", "3.2", "3.3"}
 			};
@@ -225,13 +193,13 @@ namespace SMCHSGManager.Controllers
 		public bool IsFromLocalHost()
 		{
 			bool fromLocalHost = false;
-			System.Configuration.Configuration rootWebConfig =
-				System.Web.Configuration.WebConfigurationManager.OpenWebConfiguration("/SMCHSGManager");
+            System.Configuration.Configuration rootWebConfig =
+                System.Web.Configuration.WebConfigurationManager.OpenWebConfiguration("/SMCHSGManager");
 
-			if (rootWebConfig.ConnectionStrings.ConnectionStrings.Count > 0 && rootWebConfig.ConnectionStrings.ConnectionStrings["SMCHDBLocalEntities"] != null)
-			{
-				fromLocalHost = true;
-			}
+            if (rootWebConfig.ConnectionStrings.ConnectionStrings.Count > 0 && rootWebConfig.ConnectionStrings.ConnectionStrings["SMCHDBLocalEntities"] != null)
+            {
+                fromLocalHost = true;
+            }
 			return fromLocalHost;
 		}
 
@@ -248,7 +216,6 @@ namespace SMCHSGManager.Controllers
 			publicMemberInfo.MemberNo = memberInfo.MemberNo;
 			publicMemberInfo.Name = memberInfo.Name;
 			publicMemberInfo.UserName = userName;
-			publicMemberInfo.MemberFeeExpiredDate = memberInfo.MemberFeeExpiredDate;
 			publicMemberInfo.IsActive = memberInfo.IsActive;
 			publicMemberInfo.IDCardNo = memberInfo.IDCardNo;
 			publicMemberInfo.DateOfBirth = memberInfo.DateOfBirth;
@@ -305,11 +272,6 @@ namespace SMCHSGManager.Controllers
 					 throw new Exception();
 				 }
 
-				 if (OrdinaryMemberInfo.MemberFeePayByID == 1)
-				 {
-					 PublicMemberInfo.MemberFeeExpiredDate = new DateTime(2020, 12, 31);
-				 }
-
 				 MemberInfo memberInfo = GetMemberInfo(PublicMemberInfo, memberID);
 				 _entities.AddToMemberInfos(memberInfo);
 				 _entities.SaveChanges();
@@ -362,30 +324,7 @@ namespace SMCHSGManager.Controllers
 			 memberInfo.MemberID = memberID;
 
 			 UpdateMemberInfoDetails(publicMemberInfo, memberInfo);
-			 //memberInfo.InitiateTypeID = publicMemberInfo.InitiateTypeID;
-			 //memberInfo.Name = publicMemberInfo.Name.Trim();
-			 //if (!string.IsNullOrEmpty(publicMemberInfo.ContactNo))
-			 //{
-			 //    memberInfo.ContactNo = publicMemberInfo.ContactNo.Trim();
-			 //}
-			 //memberInfo.DateOfInitiation = publicMemberInfo.DateOfInitiation;
-			 //memberInfo.DateOfBirth = publicMemberInfo.DateOfBirth;
-			 //memberInfo.CountryOfBirth = publicMemberInfo.CountryOfBirth;
-			 //memberInfo.GenderID = publicMemberInfo.GenderID;
-			 //if (!string.IsNullOrEmpty(publicMemberInfo.IDCardNo))
-			 //{
-			 //    memberInfo.IDCardNo = publicMemberInfo.IDCardNo.Trim();
-			 //}
-			 //if (publicMemberInfo.MemberFeeExpiredDate.HasValue)
-			 //{
-			 //    memberInfo.MemberFeeExpiredDate = publicMemberInfo.MemberFeeExpiredDate;
-			 //}
-			 //if (publicMemberInfo.MemberNo.HasValue)
-			 //{
-			 //    memberInfo.MemberNo = publicMemberInfo.MemberNo;
-			 //}
-			 //memberInfo.PassportNo = publicMemberInfo.PassportNo;
-			 //memberInfo.Remark = publicMemberInfo.Remark;
+
 			 return memberInfo;
 		 }
 
@@ -421,10 +360,6 @@ namespace SMCHSGManager.Controllers
 				 memberInfo.IDCardNo = publicMemberInfo.IDCardNo;
 			 }
 			 memberInfo.InitiateTypeID = publicMemberInfo.InitiateTypeID;
-			 if (publicMemberInfo.MemberFeeExpiredDate.HasValue)
-			 {
-				 memberInfo.MemberFeeExpiredDate = publicMemberInfo.MemberFeeExpiredDate;
-			 }
 			 if (publicMemberInfo.MemberNo.HasValue)
 			 {
 				 memberInfo.MemberNo = publicMemberInfo.MemberNo;
@@ -538,12 +473,6 @@ namespace SMCHSGManager.Controllers
                 //    SMCHDBLocalEntities _localEntities = new SMCHDBLocalEntities();
                 //    OrdinaryMemberInfo ordinaryMemberInfo = _localEntities.OrdinaryMemberInfos.Single(a => a.IMemberID == id);
                 //    UpdateModel(ordinaryMemberInfo, "OrdinaryMemberInfo");
-
-                //    if (ordinaryMemberInfo.MemberFeePayByID == 1)
-                //    {
-                //        memberInfo.MemberFeeExpiredDate = new DateTime(2020, 12, 31);
-                //    }
-                //    //_entities.SaveChanges();
 
                 //    SetBackToNull(ordinaryMemberInfo);
 

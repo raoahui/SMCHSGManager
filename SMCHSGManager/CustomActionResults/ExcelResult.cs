@@ -10,6 +10,7 @@ using System.Web.UI;
 using System.Drawing;
 using System.Collections.Generic;
 using SMCHSGManager.ViewModel;
+using SMCHSGManager.Models;
 
 namespace SMCHSGManager.Controllers
 {
@@ -216,7 +217,7 @@ namespace SMCHSGManager.Controllers
 				{
 					if (value != null)
 					{
-						if ((DateTime)value == new DateTime(2020, 12, 31))
+                        if ((DateTime)value == MemberFeePayment.ToDateGiro)
 						{
 							tw.Write("Giro");
 						}

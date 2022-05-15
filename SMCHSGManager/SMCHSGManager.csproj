@@ -136,22 +136,14 @@
     <Compile Include="Controllers\EventVolunteerJobBookingController.cs" />
     <Compile Include="Controllers\EventVolunteerJobController.cs" />
     <Compile Include="Controllers\InitiateVisitorController.cs" />
-    <Compile Include="Controllers\LocalRetreatScheduleController.cs" />
     <Compile Include="Controllers\LocalRetreatScheduleTemplateController.cs" />
     <Compile Include="Controllers\LocationController.cs" />
     <Compile Include="Controllers\MemberInfoController.cs" />
     <Compile Include="Controllers\EventActivityController.cs" />
     <Compile Include="Controllers\EventScheduleController.cs" />
-    <Compile Include="Controllers\MemberOrderController.cs" />
     <Compile Include="Controllers\MemberFeePaymentController.cs" />
     <Compile Include="Controllers\OrdinaryMemberController.cs" />
-    <Compile Include="Controllers\ProductController.cs" />
-    <Compile Include="Controllers\ProductDiscountController.cs" />
-    <Compile Include="Controllers\ProductOrderController.cs" />
-    <Compile Include="Controllers\ProductDetailController.cs" />
     <Compile Include="Controllers\BlackListMemberController.cs" />
-    <Compile Include="Controllers\VeganController.cs" />
-    <Compile Include="Controllers\VolunteerJobTypeController.cs" />
     <Compile Include="CustomActionResults\ExcelControllerExtensions.cs" />
     <Compile Include="CustomActionResults\ExcelResult.cs" />
     <Compile Include="Global.asax.cs">
@@ -180,11 +172,9 @@
     </Compile>
     <Compile Include="Models\TransportInfo.cs" />
     <Compile Include="Models\InternationalGMApplicationInfo.cs" />
-    <Compile Include="Models\ProductDiscount.cs" />
     <Compile Include="Models\InitiateVisitor.cs" />
     <Compile Include="Models\MemberFeePayment.cs" />
     <Compile Include="Models\MemberInfo.cs" />
-    <Compile Include="Models\ProductOrder.cs" />
     <Compile Include="Models\EmailService .cs" />
     <Compile Include="Models\Event.cs" />
     <Compile Include="Models\LocalRetreatRegistration.cs" />
@@ -194,7 +184,6 @@
     <Compile Include="Models\OrdinaryMember.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ViewModel\MemberInfoViewModel.cs" />
-    <Compile Include="ViewModel\ProductViewModel.cs" />
     <Compile Include="ViewModel\EventViewModel.cs" />
     <Compile Include="ViewModel\LocalRetreatViewModel.cs" />
   </ItemGroup>
@@ -620,6 +609,8 @@
     <Content Include="Views\GroupMeditation\DeleteAttendData.aspx" />
     <Content Include="Views\GroupMeditation\GMPast6MonthsHistory.aspx" />
     <Content Include="Views\HTMLPage1.htm" />
+    <Content Include="Views\LocalRetreatScheduleTemplate\Delete.aspx" />
+    <Content Include="Views\LocalRetreatScheduleTemplate\Deleted.aspx" />
     <Content Include="Views\InternationalGMApplication\ConfirmAccommodation.aspx" />
     <Content Include="Views\InternationalGMApplication\Done.aspx" />
     <Content Include="Views\InternationalGMApplication\HsihuAshramGM.aspx" />
@@ -632,7 +623,6 @@
     <Content Include="Views\InternationalGMApplication\Details.aspx" />
     <Content Include="Views\InternationalGMApplication\Edit.aspx" />
     <Content Include="Views\InternationalGMApplication\Index.aspx" />
-    <Content Include="Views\ClimateChange\Index.aspx" />
     <Content Include="Views\EventActivity\Edit.aspx" />
     <Content Include="Views\EventPrice\Edit.aspx" />
     <Content Include="Views\EventPrice\Index.aspx" />
@@ -643,7 +633,6 @@
     <Content Include="Views\EventRegistration\Details.aspx" />
     <Content Include="Views\EventRegistration\Edit.aspx" />
     <Content Include="Views\EventRegistration\IndexByEvent.aspx" />
-    <Content Include="Views\EventSchedule\ScheduleModelSelect.aspx" />
     <Content Include="Views\EventSignature\Signature.aspx" />
     <Content Include="Views\EventSignature\SignatureList4GMAndLocalRetreat.aspx" />
     <Content Include="Views\EventSignature\UnSign.aspx" />
@@ -681,8 +670,15 @@
     <Content Include="Views\InitiateVisitor\Deleted.aspx" />
     <Content Include="Views\InitiateVisitor\Edit.aspx" />
     <Content Include="Views\InitiateVisitor\Index.aspx" />
+    <Content Include="Views\LocalRetreatScheduleTemplate\Create.aspx" />
+    <Content Include="Views\LocalRetreatScheduleTemplate\Index.aspx" />
+    <Content Include="Views\LocalRetreatScheduleTemplate\Details.aspx" />
+    <Content Include="Views\LocalRetreatScheduleTemplate\ScheduleModelSelect.aspx" />
     <Content Include="Views\LocalRetreatSchedule\Index.ascx" />
+    <Content Include="Views\LocalRetreatSchedule\ScheduleList.aspx" />
+    <Content Include="Views\MemberFeePayment\CreateGiro.aspx" />
     <Content Include="Views\MemberFeePayment\MemberFeeExpiredDateList.aspx" />
+    <Content Include="Views\MemberInfo\iList.aspx" />
     <Content Include="Views\MemberInfo\Details.aspx" />
     <Content Include="Views\MemberOrder\AddToOrderBag.aspx" />
     <Content Include="Views\MemberOrder\ProductList.aspx" />
@@ -702,34 +698,11 @@
     <Content Include="Views\MemberFeePayment\List.aspx" />
     <Content Include="Views\MemberOrder\NamesByProductDetail.aspx" />
     <Content Include="Views\OrdinaryMember\GetBirthDayFromLocalToServer.aspx" />
-    <Content Include="Views\ProductDetail\Create.aspx" />
-    <Content Include="Views\ProductDetail\Delete.aspx" />
-    <Content Include="Views\ProductDetail\Deleted.aspx" />
-    <Content Include="Views\ProductDetail\Edit.aspx" />
-    <Content Include="Views\ProductDetail\Index.aspx" />
-    <Content Include="Views\ProductDiscount\Create.aspx" />
-    <Content Include="Views\ProductDiscount\Delete.aspx" />
-    <Content Include="Views\ProductDiscount\Deleted.aspx" />
-    <Content Include="Views\ProductDiscount\Edit.aspx" />
-    <Content Include="Views\ProductDiscount\Index.aspx" />
-    <Content Include="Views\ProductOrder\Create.aspx" />
-    <Content Include="Views\ProductOrder\Delete.aspx" />
-    <Content Include="Views\ProductOrder\Deleted.aspx" />
-    <Content Include="Views\ProductOrder\Details.aspx" />
-    <Content Include="Views\ProductOrder\Edit.aspx" />
-    <Content Include="Views\ProductOrder\Index.aspx" />
     <Content Include="Views\OrdinaryMember\Create.aspx" />
     <Content Include="Views\OrdinaryMember\Delete.aspx" />
     <Content Include="Views\OrdinaryMember\Details.aspx" />
     <Content Include="Views\OrdinaryMember\Edit.aspx" />
     <Content Include="Views\OrdinaryMember\Index.aspx" />
-    <Content Include="Views\Product\Create.aspx" />
-    <Content Include="Views\Product\Delete.aspx" />
-    <Content Include="Views\Product\Deleted.aspx" />
-    <Content Include="Views\Product\Edit.aspx" />
-    <Content Include="Views\Product\Index.aspx" />
-    <Content Include="Views\Product\ProductSelect.aspx" />
-    <Content Include="Views\Product\UpdateProducts.aspx" />
     <Content Include="Views\BlackListMember\Create.aspx" />
     <Content Include="Views\BlackListMember\Delete.aspx" />
     <Content Include="Views\BlackListMember\Deleted.aspx" />
@@ -739,23 +712,21 @@
     <Content Include="Views\Shared\DeleteTemplate.ascx" />
     <Content Include="Views\Shared\DisplayTemplates\PublicMemberInfo.ascx" />
     <Content Include="Views\Shared\DisplayTemplates\OrdinaryMemberInfo.ascx" />
-    <Content Include="Views\Shared\EditorTemplates\Event1.ascx" />
+    <Content Include="Views\Shared\EditorTemplates\Event.ascx" />
+    <Content Include="Views\Shared\EditorTemplates\GMVolunteerJobName.ascx" />
     <Content Include="Views\Shared\EditorTemplates\HsihuAshramEventModel.ascx" />
     <Content Include="Views\Shared\EditorTemplates\InternationalGMApplicationInfo.ascx" />
+    <Content Include="Views\Shared\EditorTemplates\LocalRetreatScheduleTemplate.ascx" />
+    <Content Include="Views\Shared\EditorTemplates\LocalRetreatScheduleTemplateList.ascx" />
     <Content Include="Views\Shared\EditorTemplates\MemberFeeImageSelect.ascx" />
     <Content Include="Views\Shared\EditorTemplates\EventPrice.ascx" />
     <Content Include="Views\Shared\EditorTemplates\EventSchedule.ascx" />
     <Content Include="Views\Shared\EditorTemplates\EventRegistration.ascx" />
-    <Content Include="Views\Shared\EditorTemplates\GMVolunteerJobName.ascx" />
     <Content Include="Views\Shared\EditorTemplates\InitiateVisitor.ascx" />
     <Content Include="Views\Shared\EditorTemplates\MemberFeePayment.ascx" />
-    <Content Include="Views\Shared\EditorTemplates\ProductDiscount.ascx" />
     <Content Include="Views\Shared\EditorTemplates\PublicMemberInfo.ascx" />
     <Content Include="Views\Shared\EditorTemplates\OrdinaryMemberInfo.ascx" />
-    <Content Include="Views\Shared\EditorTemplates\Product.ascx" />
-    <Content Include="Views\Shared\EditorTemplates\ProductOrder.ascx" />
     <Content Include="Views\Shared\EditorTemplates\DPRosterViewModel.ascx" />
-    <Content Include="Views\Shared\EditorTemplates\ProductDetail.ascx" />
     <Content Include="Views\Shared\EditorTemplates\BlackListMember.ascx" />
     <Content Include="Views\Shared\EditorTemplates\InternationalGMApplicationTransportInfo.ascx" />
     <Content Include="Views\Shared\RSVPStatus.ascx" />
@@ -808,20 +779,11 @@
     <Content Include="Views\Shared\EditorTemplates\ImageSelectAll.ascx" />
     <Content Include="Views\Shared\EditorTemplates\ImageUpload.ascx" />
     <Content Include="Views\Shared\EditorTemplates\LocalRetreatSchedule.ascx" />
-    <Content Include="Views\Shared\EditorTemplates\LocalRetreatScheduleTemplate.ascx" />
     <Content Include="Views\Shared\EditorTemplates\Location.ascx" />
     <Content Include="Views\Shared\EditorTemplates\Announcement.ascx" />
     <Content Include="Views\Shared\EditorTemplates\RegisterModel.ascx" />
     <Content Include="Views\Shared\EditorTemplates\String.ascx" />
     <Content Include="Views\Shared\FileDownload.ascx" />
-    <Content Include="Views\Vegan\Index.aspx" />
-    <Content Include="Views\VolunteerJobType\Create.aspx" />
-    <Content Include="Views\VolunteerJobType\Delete.aspx" />
-    <Content Include="Views\VolunteerJobType\Deleted.aspx" />
-    <Content Include="Views\VolunteerJobType\Edit.aspx" />
-    <Content Include="Views\VolunteerJobType\Index.aspx" />
-    <Content Include="Views\YouTubePlayer\Index.aspx" />
-    <Content Include="Views\YouTubePlayer\PlayAll.aspx" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>
@@ -854,6 +816,7 @@
   <ItemGroup>
     <Content Include="Areas\UserAdministration\Views\Web.config" />
     <Content Include="images\Fliers\print_quality.zip" />
+    <None Include="ClassDiagram1.cd" />
     <None Include="images\Heal the Earth 2010.pdf" />
     <EntityDeploy Include="Models\SMCHDBLocalModel.edmx">
       <Generator>EntityModelCodeGenerator</Generator>
@@ -898,11 +861,12 @@
     <VisualStudio>
       <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
         <WebProjectProperties>
-          <UseIIS>True</UseIIS>
-          <AutoAssignPort>False</AutoAssignPort>
-          <DevelopmentServerPort>0</DevelopmentServerPort>
+          <UseIIS>False</UseIIS>
+          <AutoAssignPort>True</AutoAssignPort>
+          <DevelopmentServerPort>6578</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>http://localhost/home</IISUrl>
+          <IISUrl>
+          </IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>

@@ -55,9 +55,7 @@ namespace SMCHSGManager.Controllers
 			viewModel.GMVolunteerJobName.VolunteerJobTypeID = volunteerJobTypeID;
 			ViewData["VolunteerJobTypeName"] = _entities.VolunteerJobTypes.Single(a => a.ID == volunteerJobTypeID).Name;
 
-			//ViewData["MemberInfo"] = viewModel.MemberInfo ;
-		
-			return View(viewModel);
+		return View(viewModel);
         } 
 
         //
@@ -91,13 +89,12 @@ namespace SMCHSGManager.Controllers
 			var memberNotVJID = (from r in _entities.MemberInfos where !gmVolunteerJobNames.Contains(r.MemberID) orderby r.Name select r).ToList();
 
 			GMVolunteerJobName gmVolunteerJobName = _entities.GMVolunteerJobNames.Single(a => a.MemberID == memberID && a.VolunteerJobTypeID == volunteerJobTypeID);
-			var viewModel = new GMVolunteerJobNameViewdModel
+            var viewModel = new GMVolunteerJobNameViewdModel
 			{
 				GMVolunteerJobName = gmVolunteerJobName,
 				MemberInfo = memberNotVJID,
 			};
 			ViewData["VolunteerJobTypeName"] = gmVolunteerJobName.VolunteerJobType.Name;
-			//ViewData["MemberInfo"] = viewModel.MemberInfo;
 
 			return View(viewModel);
         }
@@ -153,16 +150,25 @@ namespace SMCHSGManager.Controllers
 		[Authorize]
 		public ActionResult DPRoster(int nextMonth, bool edit)
 		{
-            List<List<MemberInfo>> weekNoDPLists = GetWeekNoDPLists(nextMonth);
+            int numberOfSundays = NumberOfParticularDaysInMonth(2010, 9, DayOfWeek.Sunday);
+            int maxRow = numberOfSundays+1;
 
-            string[,] monthDpList = new string[6, weekNoDPLists.Count];
-			DateTime firstDayOfMonth = GetDpMonthMatrics(monthDpList, weekNoDPLists, nextMonth, edit);
+            List<Tuple<DayOfWeek, int, string>> titleList = new List<Tuple<DayOfWeek, int, string>>();
+            List<List<MemberInfo>> weekNoDPLists = GetWeekNoDPLists(nextMonth, ref maxRow, ref titleList);
+            
+            string[,] monthDpList = new string[maxRow, weekNoDPLists.Count];
+            DateTime firstDayOfMonth = GetDpMonthMatrics(monthDpList, titleList, nextMonth, edit);
 
+            List<string> tWeekNameList = new List<string>();
+            List<string> tTimeList = new List<string>();
+            SeparateTitles(titleList, tWeekNameList, tTimeList);
 			DateTime nextMonthDay = firstDayOfMonth.AddDays(32);
 			DateTime preMonthDay = firstDayOfMonth.AddDays(-2);
 	
 			var viewModel = new DPRosterViewModel
 			{
+                TitleWeekNameList = tWeekNameList,
+                TitleTimeList = tTimeList,
 				WeekNoDPLists = weekNoDPLists,
 				MonthDpList = monthDpList,
 				NextMonth = nextMonth,
@@ -172,48 +178,67 @@ namespace SMCHSGManager.Controllers
 				HavePreviousMonth = _entities.GroupMeditations.Any(a => a.StartDateTime <= preMonthDay),
 			};
 
-            ViewData["FirstDayOfMonth"] = firstDayOfMonth;
 			return View(viewModel);
 		}
 
-		private DateTime GetDpMonthMatrics(string[,] monthDpList, List<List<MemberInfo>> memberLists, int nextMonth, bool edit)
-		{
-
-			List<GroupMeditation> nextMonthGMs = GetMonthGMs(nextMonth);
-			DateTime firstDayOfMonth = new DateTime(DateTime.Today.AddMonths(nextMonth).Year, DateTime.Today.AddMonths(nextMonth).Month, 1);
-
-			int i = 0; 
-			int j = -1; // indicate the first of line.
-			foreach (GroupMeditation gm in nextMonthGMs)
-			{
-                if (!isGMInRosterList(gm))
+        private static void SeparateTitles(List<Tuple<DayOfWeek, int, string>> titleList, List<string> tWeekNameList, List<string> tTimeList)
+        {
+            if (titleList.Count > 0)
+            {
+                int repeat = 1;
+                string pWeekName = "";
+                foreach (var item in titleList)
                 {
-                    continue;
+                    if (pWeekName == item.Item1.ToString())
+                    {
+                        repeat++;
+                        tWeekNameList.RemoveAt(tWeekNameList.Count - 1);
+                    }
+                    else repeat = 1;
+                    string weekNo = item.Item1.ToString() + "^" + repeat.ToString();
+                    tWeekNameList.Add(weekNo);
+                    tTimeList.Add(item.Item3);
+                    pWeekName = item.Item1.ToString();
                 }
+            }
+        }
 
-                if (j < 0)
+        private DateTime GetDpMonthMatrics(string[,] monthDpList, List<Tuple<DayOfWeek, int, string>> titleList, int nextMonth, bool edit)
+        {
+            List<GroupMeditation> nextMonthGMs = GetMonthGMs(nextMonth);
+            DateTime firstDayOfMonth = new DateTime(DateTime.Today.AddMonths(nextMonth).Year, DateTime.Today.AddMonths(nextMonth).Month, 1);
+            if (nextMonthGMs.Count == 0) return firstDayOfMonth;
+
+            int row = 0;
+            MemberInfo mi = _entities.MemberInfos.Single(a => a.Name == "DP");
+            foreach (GroupMeditation gm in nextMonthGMs)
+            {
+                string weekNoName = String.Format("{0:t}", gm.StartDateTime) + " - " + String.Format("{0:t}", gm.EndDateTime);
+                var curWeekNo = new Tuple<DayOfWeek, int, string>(gm.StartDateTime.DayOfWeek, gm.StartDateTime.Hour, weekNoName);
+                int column = titleList.BinarySearch(curWeekNo);
+               
+                monthDpList[row, column] = gm.StartDateTime.Day.ToString();
+                if (gm.DPMemberID.HasValue)
                 {
-                    j = gm.StartDateTime.DayOfWeek - DayOfWeek.Sunday;
+                    if (edit)   monthDpList[row, column] += '^' + gm.DPMemberID.ToString();
+                    else
+                    {
+                        MemberInfo me = _entities.MemberInfos.Single(a => a.MemberID == gm.DPMemberID);
+                        monthDpList[row, column] += '^' + me.Name;
+                        if (!string.IsNullOrEmpty(me.ContactNo) && (Roles.IsUserInRole("SuperAdmin") || Roles.IsUserInRole("Administrator") || Roles.IsUserInRole("DP Admin")))
+                             monthDpList[row, column] += " (" + me.ContactNo + ')';
+                     }
                 }
                 else
                 {
-                    j++;
+                    monthDpList[row, column] += '^';
+                    if (edit)  monthDpList[row, column] += mi.MemberID.ToString();
                 }
+                if (column == titleList.Count - 1) row++;
+            }
 
-				i = GetMonthDPContents(monthDpList, gm, i, j, memberLists[i][0].MemberID, edit);
-
-                if (j == memberLists.Count - 1 && i < monthDpList.GetLength(0))
-                {
-                    i++;
-                    j = -1;
-                }
-
-			}
-
-			return firstDayOfMonth;
-
-		}
-
+            return firstDayOfMonth;
+        }
 
         public List<GroupMeditation>  GetMonthGMs(int nextMonth)
 		{
@@ -231,143 +256,152 @@ namespace SMCHSGManager.Controllers
                                     Where(a => a.StartDateTime >= firstDayOfMonth && a.StartDateTime <= lastDayOfMonth 
                                         && (a.InitiateTypeID == 1 || a.InitiateTypeID == 3)).OrderBy(a => a.StartDateTime).ToList();
 
-			//return firstDayOfMonth;
 			return nextMonthGMs;
 		}
 
+        static int NumberOfParticularDaysInMonth(int year, int month, DayOfWeek dayOfWeek)
+        {
+            DateTime startDate = new DateTime(year, month, 1);
+            int totalDays = startDate.AddMonths(1).Subtract(startDate).Days;
 
-        private List<List<MemberInfo>> GetWeekNoDPLists(int nextMonth)
+            int answer = Enumerable.Range(1, totalDays)
+                .Select(item => new DateTime(year, month, item))
+                .Where(date => date.DayOfWeek == dayOfWeek)
+                .Count();
+
+            return answer;
+        }
+
+        private List<List<MemberInfo>> GetWeekNoDPLists(int nextMonth, ref int maxRow, ref List<Tuple<DayOfWeek, int, string>> titleList)
 		{
-			List<List<MemberInfo>> WeekNoDPLists = new List<List<MemberInfo>>();
+            List<List<MemberInfo>> weekNoDpList = new List<List<MemberInfo>>();
+            List<GroupMeditation> nextMonthGMs = GetMonthGMs(nextMonth);
+            if (nextMonthGMs.Count == 0) return weekNoDpList;
+
+            int curYear = nextMonthGMs.First().StartDateTime.Year;
+            int curMonth = nextMonthGMs.First().StartDateTime.Month;
+            int numberOfSundays = NumberOfParticularDaysInMonth(curYear, curMonth, DayOfWeek.Sunday);
+            maxRow = numberOfSundays;
+            if (nextMonthGMs.First().StartDateTime.DayOfWeek != DayOfWeek.Sunday) maxRow++;
 
             MemberInfo mi = _entities.MemberInfos.Single(a => a.Name == "DP");
-			List<MemberInfo> tempList = (from r in _entities.GMVolunteerJobNames
-									 join h in _entities.MemberInfos on r.MemberID equals h.MemberID
-									 where r.Sunday && r.VolunteerJobTypeID == 1
-									 orderby h.Name
-									 select h).ToList();
-            tempList.Insert(0, mi);
-            WeekNoDPLists.Add(tempList);
-
-			tempList = (from r in _entities.GMVolunteerJobNames
-						join h in _entities.MemberInfos on r.MemberID equals h.MemberID
-						where r.Monday && r.VolunteerJobTypeID == 1
-						orderby h.Name
-						select h).ToList();
-            tempList.Insert(0, mi);
-            WeekNoDPLists.Add(tempList);
-
-			tempList = (from r in _entities.GMVolunteerJobNames
-						join h in _entities.MemberInfos on r.MemberID equals h.MemberID
-						where r.Tuesday && r.VolunteerJobTypeID == 1
-						orderby h.Name
-						select h).ToList();
-            tempList.Insert(0, mi);
-            WeekNoDPLists.Add(tempList);
-
-            DateTime firstDayOfMonth = new DateTime(DateTime.Today.AddMonths(nextMonth).Year, DateTime.Today.AddMonths(nextMonth).Month, 1);
-            if (firstDayOfMonth >= new DateTime(2012, 5, 1))
-            {
-                tempList = (from r in _entities.GMVolunteerJobNames
-                            join h in _entities.MemberInfos on r.MemberID equals h.MemberID
-                            where r.WednesdayOvernight && r.VolunteerJobTypeID == 1
-                            orderby h.Name
-                            select h).ToList();
-                tempList.Insert(0, mi);
-                WeekNoDPLists.Add(tempList);
+            var weekNoList = new List<Tuple<DayOfWeek, int, string>>();
+            foreach (GroupMeditation gm in nextMonthGMs)
+			{
+                string weekNoName = String.Format("{0:t}", gm.StartDateTime) + " - " + String.Format("{0:t}", gm.EndDateTime);
+                var curWeekNo = new Tuple<DayOfWeek, int, string>(gm.StartDateTime.DayOfWeek, gm.StartDateTime.Hour, weekNoName);
+                if (!weekNoList.Contains(curWeekNo))
+                {
+                    weekNoList.Add(curWeekNo);
+                }
             }
 
-			tempList = (from r in _entities.GMVolunteerJobNames
-						join h in _entities.MemberInfos on r.MemberID equals h.MemberID
-						where r.Thursday && r.VolunteerJobTypeID == 1
-						orderby h.Name
-						select h).ToList();
-            tempList.Insert(0, mi);
-            WeekNoDPLists.Add(tempList);
-
-			tempList = (from r in _entities.GMVolunteerJobNames
-						join h in _entities.MemberInfos on r.MemberID equals h.MemberID
-						where r.Friday && r.VolunteerJobTypeID == 1
-						orderby h.Name
-						select h).ToList();
-            tempList.Insert(0, mi);
-            WeekNoDPLists.Add(tempList);
-
-            if (firstDayOfMonth >= new DateTime(2015, 3, 1))
+            // generate Sunday on the first
+            titleList = weekNoList.OrderBy(a => a.Item1).ThenBy(a => a.Item2).ToList();
+            foreach (var item in titleList)
             {
-                tempList = (from r in _entities.GMVolunteerJobNames
-                            join h in _entities.MemberInfos on r.MemberID equals h.MemberID
-                            where r.SaturdayDay && r.VolunteerJobTypeID == 1
-                            orderby h.Name
-                            select h).ToList();
-                tempList.Insert(0, mi);
-                WeekNoDPLists.Add(tempList);
-            }
-
-            tempList = (from r in _entities.GMVolunteerJobNames
-						join h in _entities.MemberInfos on r.MemberID equals h.MemberID
-						where r.SaturdayEvening && r.VolunteerJobTypeID == 1
-						orderby h.Name
-						select h).ToList();
-            tempList.Insert(0, mi);
-            WeekNoDPLists.Add(tempList);
-
-			tempList = (from r in _entities.GMVolunteerJobNames
-						join h in _entities.MemberInfos on r.MemberID equals h.MemberID
-						where r.SaturdayOvernight && r.VolunteerJobTypeID == 1
-						orderby h.Name
-						select h).ToList();
-            tempList.Insert(0, mi);
-            WeekNoDPLists.Add(tempList);
-
-			return WeekNoDPLists;
+                List<MemberInfo> weekNoName = GetWeekNoDpMap(mi, item.Item1, item.Item2);
+                weekNoDpList.Add(weekNoName);
+           }
+            return weekNoDpList;
 		}
 
-
-		private int GetMonthDPContents(string[,] monthDpList, GroupMeditation gm, int i, int weekNO, Guid  memberID, bool edit)
-		{
-            int new_i = i;
-            if (string.IsNullOrEmpty(monthDpList[new_i, weekNO]))
+        private List<MemberInfo> GetWeekNoDpMap(MemberInfo mi, DayOfWeek dow, int startTime)
+        {
+            List<MemberInfo> tempList = new List<MemberInfo>();
+            switch (dow)
             {
-                monthDpList[new_i, weekNO] = gm.StartDateTime.Day.ToString();
-            }
-            else
-            {
-                new_i++;
-            }
-            monthDpList[new_i, weekNO] += '^' + String.Format("{0:t}", gm.StartDateTime) + " - " + String.Format("{0:t}", gm.EndDateTime);
-			if (gm.DPMemberID.HasValue)
-			{
-				if (edit)
-				{
-                    monthDpList[new_i, weekNO] += '^' + gm.DPMemberID.ToString();
-				}
-				else
-				{
-                    MemberInfo mi = _entities.MemberInfos.Single(a => a.MemberID == gm.DPMemberID);
-                    monthDpList[new_i, weekNO] += '^' + mi.Name;
-                    if (!string.IsNullOrEmpty(mi.ContactNo) && (Roles.IsUserInRole("SuperAdmin") || Roles.IsUserInRole("DP Admin")))
+                case DayOfWeek.Sunday:
                     {
-                        monthDpList[new_i, weekNO] += " (" + mi.ContactNo + ')';
+                        if (startTime > 8 && startTime < 10)
+                            tempList = (from r in _entities.GMVolunteerJobNames
+                                        join h in _entities.MemberInfos on r.MemberID equals h.MemberID
+                                        where r.Sunday && r.VolunteerJobTypeID == 1
+                                        orderby h.Name
+                                        select h).ToList();
+                        else if (startTime > 18 && startTime < 20)
+                            tempList = (from r in _entities.GMVolunteerJobNames
+                                        join h in _entities.MemberInfos on r.MemberID equals h.MemberID
+                                        where r.SundayEvening && r.VolunteerJobTypeID == 1
+                                        orderby h.Name
+                                        select h).ToList();
                     }
-				}
-			}
-			else
-			{
-				if (edit)
-				{
-                    monthDpList[new_i, weekNO] += '^' + memberID.ToString();
-				}
-				else
-				{
-                    monthDpList[new_i, weekNO] += '^';
-				}
-			}
+                    break;
+                case DayOfWeek.Monday:
+                    tempList = (from r in _entities.GMVolunteerJobNames
+                                join h in _entities.MemberInfos on r.MemberID equals h.MemberID
+                                where r.Monday && r.VolunteerJobTypeID == 1
+                                orderby h.Name
+                                select h).ToList();
+                    break;
+                case DayOfWeek.Tuesday:
+                    tempList = (from r in _entities.GMVolunteerJobNames
+                                join h in _entities.MemberInfos on r.MemberID equals h.MemberID
+                                where r.Tuesday && r.VolunteerJobTypeID == 1
+                                orderby h.Name
+                                select h).ToList();
+                    break;
+                case DayOfWeek.Wednesday:
+                    if (startTime > 18 && startTime < 20)
+                        tempList = (from r in _entities.GMVolunteerJobNames
+                                    join h in _entities.MemberInfos on r.MemberID equals h.MemberID
+                                    where r.Wednesday && r.VolunteerJobTypeID == 1
+                                    orderby h.Name
+                                    select h).ToList();
+                    else if (startTime > 22)
+                        tempList = (from r in _entities.GMVolunteerJobNames
+                                    join h in _entities.MemberInfos on r.MemberID equals h.MemberID
+                                    where r.WednesdayOvernight && r.VolunteerJobTypeID == 1
+                                    orderby h.Name
+                                    select h).ToList();
+                    break;
+                case DayOfWeek.Thursday:
+                    tempList = (from r in _entities.GMVolunteerJobNames
+                                join h in _entities.MemberInfos on r.MemberID equals h.MemberID
+                                where r.Thursday && r.VolunteerJobTypeID == 1
+                                orderby h.Name
+                                select h).ToList();
+                    break;
+                case DayOfWeek.Friday:
+                    tempList = (from r in _entities.GMVolunteerJobNames
+                                join h in _entities.MemberInfos on r.MemberID equals h.MemberID
+                                where r.Friday && r.VolunteerJobTypeID == 1
+                                orderby h.Name
+                                select h).ToList();
+                    break;
+                case DayOfWeek.Saturday:
+                    {
+                        if (startTime > 8 && startTime < 10)
+                            tempList = (from r in _entities.GMVolunteerJobNames
+                                        join h in _entities.MemberInfos on r.MemberID equals h.MemberID
+                                        where r.SaturdayDay && r.VolunteerJobTypeID == 1
+                                        orderby h.Name
+                                        select h).ToList();
+                        else if (startTime > 18 && startTime < 20)
+                            tempList = (from r in _entities.GMVolunteerJobNames
+                                        join h in _entities.MemberInfos on r.MemberID equals h.MemberID
+                                        where r.SaturdayEvening && r.VolunteerJobTypeID == 1
+                                        orderby h.Name
+                                        select h).ToList();
+                        else if (startTime > 22)
+                            tempList = (from r in _entities.GMVolunteerJobNames
+                                        join h in _entities.MemberInfos on r.MemberID equals h.MemberID
+                                        where r.SaturdayOvernight && r.VolunteerJobTypeID == 1
+                                        orderby h.Name
+                                        select h).ToList();
+                    }
+                    break;
+                default:
+                    break;
+            }
+            if (tempList.Count == 0) tempList = (from r in _entities.GMVolunteerJobNames
+                                                 join h in _entities.MemberInfos on r.MemberID equals h.MemberID
+                                                 orderby h.Name
+                                                 select h).ToList();
+            tempList.Insert(0, mi);
+            return tempList;
+        }
 
-            return new_i;
-		}
-
-	
 		//[HttpPost]
 		[AcceptVerbs(HttpVerbs.Post), Authorize(Roles = "Administrator")]
 		public ActionResult DPRoster(int nextMonth, FormCollection collection, GMVolunteerJobName gmVolunteerJobName)
@@ -380,14 +414,10 @@ namespace SMCHSGManager.Controllers
 				int i = 0;
 				foreach(GroupMeditation gm in nextMonthGMs)
 				{
-                    if (isGMInRosterList(gm))
-                    {
                         gm.DPMemberID = Guid.Parse(iMemberIDs[i]);
                         _entities.SaveChanges();
                         i++;
-                    }
 				}
-
 				return RedirectToAction("DPRoster", new { nextMonth = nextMonth, edit = false });
 			}
 			catch
@@ -395,33 +425,6 @@ namespace SMCHSGManager.Controllers
 				return View();
 			}
 		}
-
-
-        private static bool isGMInRosterList(GroupMeditation gm)
-        {
-            bool retVal = false;
-
-            if ( gm.StartDateTime.DayOfWeek == DayOfWeek.Sunday && gm.StartDateTime.Hour == 9 || 
-                 gm.StartDateTime.DayOfWeek == DayOfWeek.Monday && gm.StartDateTime.Hour   == 19 ||
-                 gm.StartDateTime.DayOfWeek == DayOfWeek.Tuesday && gm.StartDateTime.Hour  == 19 ||
-                 gm.StartDateTime.DayOfWeek == DayOfWeek.Thursday && gm.StartDateTime.Hour == 19 ||
-                 gm.StartDateTime.DayOfWeek == DayOfWeek.Friday && gm.StartDateTime.Hour == 20 && gm.InitiateTypeID == 3 ||
-                 gm.StartDateTime.DayOfWeek == DayOfWeek.Saturday && gm.StartDateTime.Hour == 19 ||
-                 gm.StartDateTime.DayOfWeek == DayOfWeek.Wednesday && gm.StartDateTime.Hour == 23 && gm.StartDateTime >= new DateTime(2012, 5, 1) || // Wednesday overnight session 
-                 gm.StartDateTime.DayOfWeek == DayOfWeek.Saturday && gm.StartDateTime.Hour == 23 ||    // Saturday overnight session
-                 gm.StartDateTime.DayOfWeek == DayOfWeek.Saturday && gm.StartDateTime.Hour == 9 && gm.StartDateTime >= new DateTime(2015, 3, 1) // Saturday morning session
-               )
-            
-            {
-                retVal = true;
-            }
-
-            return retVal;
-        }
-
-
-
-
 
     }
 }

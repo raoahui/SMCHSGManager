@@ -25,10 +25,10 @@ namespace SMCHSGManager.Models
 
             [Required(ErrorMessage = "Announce Title is required")]
             [DisplayName("Title")]
-            [StringLength(150)]
+            [StringLength(200)]
             public String Name { get; set; }
 
-            [StringLength(4000)]
+            [StringLength(20000)]
             public String Description { get; set; }
 
             [StringLength(800)]

@@ -49,53 +49,6 @@ namespace SMCHSGManager.Controllers
              }
         }
 
-        //
-   
-
-        // GET: /EventSchedule/ScheduleModelSelect
-		[Authorize(Roles = "Administrator")]
-		public ActionResult ScheduleModelSelect()
-        {
-            List<SelectListItem> scheduleModelSelectLists = new List<SelectListItem>();
-            List<int> scheduleModels = ((from r in _entities.LocalRetreatScheduleTemplates select r.Model).Distinct()).ToList();
-            foreach (int i in scheduleModels)
-            {
-                SelectListItem item = new SelectListItem { Text = "Model" + i.ToString(), Value = i.ToString() };
-                scheduleModelSelectLists.Add(item);
-            }
-            SelectListItem item1 = new SelectListItem { Text = "Manually Create", Value = (scheduleModels.Count() + 1).ToString() };
-            scheduleModelSelectLists.Add(item1);
-
-            ViewData["LocalRetreatScheduleModelSelectLists"] = scheduleModelSelectLists;
-
-            return View();
-        }
-
-
-        // POST: /EventSchedule/ScheduleModelSelect
-		//[HttpPost]
-		[AcceptVerbs(HttpVerbs.Post), Authorize(Roles = "Administrator")]
-		public ActionResult ScheduleModelSelect(FormCollection collection)
-        {
-            Event curEvent = (Event)TempData["Event"];
-            
-            int ModelNo = int.Parse(collection.Get("LocalRetreatScheduleModel"));
-
-            int count = ((from r in _entities.LocalRetreatScheduleTemplates select r.Model).Distinct()).Count();
-
-            if (ModelNo != count + 1)
-            {
-                  GenerateLocalRetreatSchedules(curEvent, ModelNo);
-               
-                 return RedirectToAction("Index", "Event");
-            }
-            else
-            {
-                // manual create schedule:
-                return RedirectToAction("Create", "EventSchedule", new { startDateTime = curEvent.StartDateTime, localRetreatID = curEvent.ID });
-            }
-        }
-
         public void GenerateEventSchedules(Event curEvent)
         {
             NewEventPrice(curEvent, 5, 10M);
@@ -107,14 +60,11 @@ namespace SMCHSGManager.Controllers
 
             eventSchedule.ScheduleOffsetID = (from r in _entities.ScheduleOffsets where r.OffsetHours == temp.TotalHours select r.ID).FirstOrDefault();
 
-			 //AddVolunteerJob(2, eventSchedule, "Clean");
-			 //AddVolunteerJob(1, eventSchedule, "Video");
+            curEvent.EventSchedules.Add(eventSchedule);
+            //eventSchedule.EventID = curEvent.ID;
+            //_entities.AddToEventSchedules(eventSchedule);
 
-            eventSchedule.EventID = curEvent.ID;
-            _entities.AddToEventSchedules(eventSchedule);
-
-            _entities.SaveChanges();
-
+            //_entities.SaveChanges();
         }
 
         //
@@ -210,43 +160,10 @@ namespace SMCHSGManager.Controllers
             }
         }
 
-        //public void GenerateEventSchedules(Event aEvent, int modelNo)
-        //{
-        //    if (aEvent.EventTypeID == 1)
-        //    {
-        //        GenerateLocalRetreatSchedules(aEvent, modelNo);
-        //    }
-        //    else
-        //    {
-        //        EventSchedule eventSchedule = new EventSchedule();
-        //        eventSchedule.DateTimeFrom = aEvent.StartDateTime;
-        //        eventSchedule.EventActivityID = aEvent.EventActivities.FirstOrDefault().ID;
-        //        TimeSpan temp = aEvent.EndDateTime - aEvent.StartDateTime;
-
-        //        eventSchedule.ScheduleOffsetID = (from r in _entities.ScheduleOffsets where r.OffsetHours == temp.TotalHours select r.ID).FirstOrDefault();
-
-        //        if (aEvent.EventTypeID == 2 || aEvent.EventTypeID == 3)
-        //        {
-        //            AddVolunteerJob(1, eventSchedule, "DP");
-        //        }
-        //        else
-        //        {
-        //            AddVolunteerJob(2, eventSchedule, "Clean");
-        //        }
-        //        AddVolunteerJob(1, eventSchedule, "Video");
-
-        //        eventSchedule.EventID = aEvent.ID;
-        //        _entities.AddToEventSchedules(eventSchedule);
-        //    }
-
-        //    _entities.SaveChanges();
-        //}
-
-
         public void GenerateLocalRetreatSchedules(Event aEvent, int modelNo)
         {
             DateTime dateTimeFrom = aEvent.StartDateTime;
-            decimal price = 0;
+            
 
             List<LocalRetreatScheduleTemplate> localRetreatScheduleTemplates = (from r in _entities.LocalRetreatScheduleTemplates where r.Model == modelNo orderby r.ID select r).ToList();
             foreach (LocalRetreatScheduleTemplate localRetreatScheduleTemplate in localRetreatScheduleTemplates)
@@ -260,12 +177,6 @@ namespace SMCHSGManager.Controllers
                 localRetreatSchedule.EventActivityID = localRetreatScheduleTemplate.EventActivityID;
 
                 dateTimeFrom = dateTimeFrom.AddHours(_entities.ScheduleOffsets.Single(a => a.ID == presetLocalRetreatScheduleOffsetID).OffsetHours);
-                if (DateTime.Compare(dateTimeFrom, aEvent.EndDateTime) > 0)
-                {
-                    presetLocalRetreatScheduleOffsetID--;
-                    dateTimeFrom = aEvent.EndDateTime; // dateTimeFrom.AddHours(_entities.LocalRetreatScheduleOffsets.Single(a => a.ID == presetLocalRetreatScheduleOffsetID).OffsetHours);
-                }
-
                 localRetreatSchedule.ScheduleOffsetID = presetLocalRetreatScheduleOffsetID;
 
                 AddVolunteerJob(localRetreatScheduleTemplate.DP_PersonNeeded, localRetreatSchedule, "DP");
@@ -274,16 +185,16 @@ namespace SMCHSGManager.Controllers
 
                 if (localRetreatSchedule.EventActivityID >= 4 && localRetreatSchedule.EventActivityID <= 6)// breakfast, lunch and dinner
                 {
+                    decimal price = 5M;
+                    if (localRetreatSchedule.EventActivityID == 5)
+                    {
+                        price = 10M;
+                    }
                     NewEventPrice(aEvent, localRetreatSchedule.EventActivityID, price);
                 }
-                //aEvent.EventSchedules.Add(localRetreatSchedule);
-                localRetreatSchedule.EventID = aEvent.ID;
-                _entities.AddToEventSchedules(localRetreatSchedule);
-
-                if (DateTime.Compare(dateTimeFrom, aEvent.EndDateTime) == 0)
-                {
-                    break;
-                }
+                aEvent.EventSchedules.Add(localRetreatSchedule);
+                //localRetreatSchedule.EventID = aEvent.ID;
+                //_entities.AddToEventSchedules(localRetreatSchedule);
             }
 
             EventSchedule lastLocalRetreatSchedule = new EventSchedule();
@@ -296,21 +207,21 @@ namespace SMCHSGManager.Controllers
             // Bless food
             NewEventPrice(aEvent, 8, 2M);
 
-            //aEvent.EventSchedules.Add(lastLocalRetreatSchedule);
-            lastLocalRetreatSchedule.EventID = aEvent.ID;
-            _entities.AddToEventSchedules(lastLocalRetreatSchedule);
-
-            _entities.SaveChanges();
+            aEvent.EventSchedules.Add(lastLocalRetreatSchedule);
+            //lastLocalRetreatSchedule.EventID = aEvent.ID;
+            //_entities.AddToEventSchedules(lastLocalRetreatSchedule);
+         
+            //_entities.SaveChanges();
         }
 
         public void NewEventPrice(Event aEvent, int eventActivityID, decimal unitPrice)
         {
             EventPrice eventPrice = new EventPrice();
-            eventPrice.EventID = aEvent.ID;
+            //eventPrice.EventID = aEvent.ID;
             eventPrice.EventActivityID = eventActivityID;
             eventPrice.UnitPrice = unitPrice;
-            _entities.AddToEventPrices(eventPrice);
-            //aEvent.EventPrices.Add(eventPrice);
+            //_entities.AddToEventPrices(eventPrice);
+            aEvent.EventPrices.Add(eventPrice);
         }
 
 

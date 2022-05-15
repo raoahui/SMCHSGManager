@@ -104,7 +104,7 @@
 							</td>
 						</tr>
 
-	                   <tr><td colspan=4 class="formlabel">
+	                   <tr><td colspan=4 class="formlabel" style="height: 85px">
                             <div class="dashedline"></div>
                        </td></tr>
 

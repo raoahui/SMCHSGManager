@@ -8,12 +8,13 @@
 //------------------------------------------------------------------------------
 
 using System;
+using System.ComponentModel;
+using System.Data.EntityClient;
 using System.Data.Objects;
 using System.Data.Objects.DataClasses;
-using System.Data.EntityClient;
-using System.ComponentModel;
-using System.Xml.Serialization;
+using System.Linq;
 using System.Runtime.Serialization;
+using System.Xml.Serialization;
 
 [assembly: EdmSchemaAttribute()]
 #region EDM Relationship Metadata
@@ -57,8 +58,6 @@ using System.Runtime.Serialization;
 [assembly: EdmRelationshipAttribute("DB_18093_smchdbModel", "FK_EventVolunteerJobs_VolunteerJobTypes", "VolunteerJobTypes", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(SMCHSGManager.Models.VolunteerJobType), "EventVolunteerJobs", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(SMCHSGManager.Models.EventVolunteerJob), true)]
 [assembly: EdmRelationshipAttribute("DB_18093_smchdbModel", "FK_InitiateVisitors_Genders", "Genders", System.Data.Metadata.Edm.RelationshipMultiplicity.ZeroOrOne, typeof(SMCHSGManager.Models.Gender), "InitiateVisitors", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(SMCHSGManager.Models.InitiateVisitor), true)]
 [assembly: EdmRelationshipAttribute("DB_18093_smchdbModel", "FK_MemberInfos_Genders", "Genders", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(SMCHSGManager.Models.Gender), "MemberInfos", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(SMCHSGManager.Models.MemberInfo), true)]
-[assembly: EdmRelationshipAttribute("DB_18093_smchdbModel", "FK_GMVolunteerJobNameLists_MemberInfos", "MemberInfos", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(SMCHSGManager.Models.MemberInfo), "GMVolunteerJobNames", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(SMCHSGManager.Models.GMVolunteerJobName), true)]
-[assembly: EdmRelationshipAttribute("DB_18093_smchdbModel", "FK_GMVolunteerJobNameLists_VolunteerJobTypes", "VolunteerJobTypes", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(SMCHSGManager.Models.VolunteerJobType), "GMVolunteerJobNames", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(SMCHSGManager.Models.GMVolunteerJobName), true)]
 [assembly: EdmRelationshipAttribute("DB_18093_smchdbModel", "FK_GroupMeditation_InitiateTypes", "InitiateTypes", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(SMCHSGManager.Models.InitiateType), "GroupMeditation", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(SMCHSGManager.Models.GroupMeditation), true)]
 [assembly: EdmRelationshipAttribute("DB_18093_smchdbModel", "FK_GroupMeditationAttendances_GroupMeditation", "GroupMeditation", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(SMCHSGManager.Models.GroupMeditation), "GroupMeditationAttendances", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(SMCHSGManager.Models.GroupMeditationAttendance), true)]
 [assembly: EdmRelationshipAttribute("DB_18093_smchdbModel", "FK_GroupMeditationAttendances_MemberInfos", "MemberInfos", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(SMCHSGManager.Models.MemberInfo), "GroupMeditationAttendances", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(SMCHSGManager.Models.GroupMeditationAttendance), true)]
@@ -71,8 +70,6 @@ using System.Runtime.Serialization;
 [assembly: EdmRelationshipAttribute("DB_18093_smchdbModel", "FK_LocalRetreatScheduleTemplates_ScheduleOffsets", "ScheduleOffsets", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(SMCHSGManager.Models.ScheduleOffset), "LocalRetreatScheduleTemplates", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(SMCHSGManager.Models.LocalRetreatScheduleTemplate), true)]
 [assembly: EdmRelationshipAttribute("DB_18093_smchdbModel", "FK_LocationUploadFiles_Locations", "Locations", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(SMCHSGManager.Models.Location), "LocationUploadFiles", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(SMCHSGManager.Models.LocationUploadFile), true)]
 [assembly: EdmRelationshipAttribute("DB_18093_smchdbModel", "FK_LocationUploadFiles_UploadFiles", "UploadFiles", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(SMCHSGManager.Models.UploadFile), "LocationUploadFiles", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(SMCHSGManager.Models.LocationUploadFile), true)]
-[assembly: EdmRelationshipAttribute("DB_18093_smchdbModel", "FK_MemberFeePayments_MemberInfos", "MemberInfos", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(SMCHSGManager.Models.MemberInfo), "MemberFeePayments", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(SMCHSGManager.Models.MemberFeePayment), true)]
-[assembly: EdmRelationshipAttribute("DB_18093_smchdbModel", "FK_MemberFeePayments_PayMethods", "PayMethods", System.Data.Metadata.Edm.RelationshipMultiplicity.ZeroOrOne, typeof(SMCHSGManager.Models.PayMethod), "MemberFeePayments", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(SMCHSGManager.Models.MemberFeePayment), true)]
 [assembly: EdmRelationshipAttribute("DB_18093_smchdbModel", "FK_MemberOrders_MemberInfos", "MemberInfos", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(SMCHSGManager.Models.MemberInfo), "MemberOrders", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(SMCHSGManager.Models.MemberOrder), true)]
 [assembly: EdmRelationshipAttribute("DB_18093_smchdbModel", "FK_MemberOrderDetails_MemberOrders", "MemberOrders", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(SMCHSGManager.Models.MemberOrder), "MemberOrderDetails", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(SMCHSGManager.Models.MemberOrderDetail), true)]
 [assembly: EdmRelationshipAttribute("DB_18093_smchdbModel", "FK_ProductDetails_MemberOrderDetails", "ProductDetails", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(SMCHSGManager.Models.ProductDetail), "MemberOrderDetails", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(SMCHSGManager.Models.MemberOrderDetail), true)]
@@ -88,6 +85,10 @@ using System.Runtime.Serialization;
 [assembly: EdmRelationshipAttribute("DB_18093_smchdbModel", "FK_ProductUploadFiles_UploadFiles", "UploadFiles", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(SMCHSGManager.Models.UploadFile), "ProductUploadFiles", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(SMCHSGManager.Models.ProductUploadFile), true)]
 [assembly: EdmRelationshipAttribute("DB_18093_smchdbModel", "FK_TempProductDetails_TempProducts", "TempProducts", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(SMCHSGManager.Models.TempProduct), "TempProductDetails", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(SMCHSGManager.Models.TempProductDetail), true)]
 [assembly: EdmRelationshipAttribute("DB_18093_smchdbModel", "FK_TempProducts_TempProductDiscounts", "TempProducts", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(SMCHSGManager.Models.TempProduct), "TempProductDiscounts", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(SMCHSGManager.Models.TempProductDiscount), true)]
+[assembly: EdmRelationshipAttribute("DB_18093_smchdbModel", "FK_MemberFeePayments_MemberInfos", "MemberInfo", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(SMCHSGManager.Models.MemberInfo), "MemberFeePayment", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(SMCHSGManager.Models.MemberFeePayment), true)]
+[assembly: EdmRelationshipAttribute("DB_18093_smchdbModel", "FK_MemberFeePayments_PayMethods", "PayMethod", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(SMCHSGManager.Models.PayMethod), "MemberFeePayment", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(SMCHSGManager.Models.MemberFeePayment), true)]
+[assembly: EdmRelationshipAttribute("DB_18093_smchdbModel", "FK_GMVolunteerJobNameLists_MemberInfos", "MemberInfo", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(SMCHSGManager.Models.MemberInfo), "GMVolunteerJobName", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(SMCHSGManager.Models.GMVolunteerJobName), true)]
+[assembly: EdmRelationshipAttribute("DB_18093_smchdbModel", "FK_GMVolunteerJobNameLists_VolunteerJobTypes", "VolunteerJobType", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(SMCHSGManager.Models.VolunteerJobType), "GMVolunteerJobName", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(SMCHSGManager.Models.GMVolunteerJobName), true)]
 
 #endregion
 
@@ -462,22 +463,6 @@ namespace SMCHSGManager.Models
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
-        public ObjectSet<GMVolunteerJobName> GMVolunteerJobNames
-        {
-            get
-            {
-                if ((_GMVolunteerJobNames == null))
-                {
-                    _GMVolunteerJobNames = base.CreateObjectSet<GMVolunteerJobName>("GMVolunteerJobNames");
-                }
-                return _GMVolunteerJobNames;
-            }
-        }
-        private ObjectSet<GMVolunteerJobName> _GMVolunteerJobNames;
-    
-        /// <summary>
-        /// No Metadata Documentation available.
-        /// </summary>
         public ObjectSet<GroupMeditation> GroupMeditations
         {
             get
@@ -666,22 +651,6 @@ namespace SMCHSGManager.Models
             }
         }
         private ObjectSet<LocationUploadFile> _LocationUploadFiles;
-    
-        /// <summary>
-        /// No Metadata Documentation available.
-        /// </summary>
-        public ObjectSet<MemberFeePayment> MemberFeePayments
-        {
-            get
-            {
-                if ((_MemberFeePayments == null))
-                {
-                    _MemberFeePayments = base.CreateObjectSet<MemberFeePayment>("MemberFeePayments");
-                }
-                return _MemberFeePayments;
-            }
-        }
-        private ObjectSet<MemberFeePayment> _MemberFeePayments;
     
         /// <summary>
         /// No Metadata Documentation available.
@@ -1018,8 +987,41 @@ namespace SMCHSGManager.Models
             }
         }
         private ObjectSet<YouTubeChannel> _YouTubeChannels;
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        public ObjectSet<MemberFeePayment> MemberFeePayments
+        {
+            get
+            {
+                if ((_MemberFeePayments == null))
+                {
+                    _MemberFeePayments = base.CreateObjectSet<MemberFeePayment>("MemberFeePayments");
+                }
+                return _MemberFeePayments;
+            }
+        }
+        private ObjectSet<MemberFeePayment> _MemberFeePayments;
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        public ObjectSet<GMVolunteerJobName> GMVolunteerJobNames
+        {
+            get
+            {
+                if ((_GMVolunteerJobNames == null))
+                {
+                    _GMVolunteerJobNames = base.CreateObjectSet<GMVolunteerJobName>("GMVolunteerJobNames");
+                }
+                return _GMVolunteerJobNames;
+            }
+        }
+        private ObjectSet<GMVolunteerJobName> _GMVolunteerJobNames;
 
         #endregion
+
         #region AddTo Methods
     
         /// <summary>
@@ -1183,14 +1185,6 @@ namespace SMCHSGManager.Models
         }
     
         /// <summary>
-        /// Deprecated Method for adding a new object to the GMVolunteerJobNames EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
-        /// </summary>
-        public void AddToGMVolunteerJobNames(GMVolunteerJobName gMVolunteerJobName)
-        {
-            base.AddObject("GMVolunteerJobNames", gMVolunteerJobName);
-        }
-    
-        /// <summary>
         /// Deprecated Method for adding a new object to the GroupMeditations EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
         /// </summary>
         public void AddToGroupMeditations(GroupMeditation groupMeditation)
@@ -1284,14 +1278,6 @@ namespace SMCHSGManager.Models
         public void AddToLocationUploadFiles(LocationUploadFile locationUploadFile)
         {
             base.AddObject("LocationUploadFiles", locationUploadFile);
-        }
-    
-        /// <summary>
-        /// Deprecated Method for adding a new object to the MemberFeePayments EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
-        /// </summary>
-        public void AddToMemberFeePayments(MemberFeePayment memberFeePayment)
-        {
-            base.AddObject("MemberFeePayments", memberFeePayment);
         }
     
         /// <summary>
@@ -1461,13 +1447,29 @@ namespace SMCHSGManager.Models
         {
             base.AddObject("YouTubeChannels", youTubeChannel);
         }
+    
+        /// <summary>
+        /// Deprecated Method for adding a new object to the MemberFeePayments EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
+        /// </summary>
+        public void AddToMemberFeePayments(MemberFeePayment memberFeePayment)
+        {
+            base.AddObject("MemberFeePayments", memberFeePayment);
+        }
+    
+        /// <summary>
+        /// Deprecated Method for adding a new object to the GMVolunteerJobNames EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
+        /// </summary>
+        public void AddToGMVolunteerJobNames(GMVolunteerJobName gMVolunteerJobName)
+        {
+            base.AddObject("GMVolunteerJobNames", gMVolunteerJobName);
+        }
 
         #endregion
+
     }
-    
 
     #endregion
-    
+
     #region Entities
     
     /// <summary>
@@ -1494,6 +1496,7 @@ namespace SMCHSGManager.Models
         }
 
         #endregion
+
         #region Primitive Properties
     
         /// <summary>
@@ -1572,6 +1575,7 @@ namespace SMCHSGManager.Models
         partial void OnRemarkChanged();
 
         #endregion
+
     
         #region Navigation Properties
     
@@ -1598,6 +1602,7 @@ namespace SMCHSGManager.Models
         }
 
         #endregion
+
     }
     
     /// <summary>
@@ -1632,6 +1637,7 @@ namespace SMCHSGManager.Models
         }
 
         #endregion
+
         #region Primitive Properties
     
         /// <summary>
@@ -1830,6 +1836,7 @@ namespace SMCHSGManager.Models
         partial void OnAnnounceGroupIDChanged();
 
         #endregion
+
     
         #region Navigation Properties
     
@@ -1932,6 +1939,7 @@ namespace SMCHSGManager.Models
         }
 
         #endregion
+
     }
     
     /// <summary>
@@ -1958,6 +1966,7 @@ namespace SMCHSGManager.Models
         }
 
         #endregion
+
         #region Primitive Properties
     
         /// <summary>
@@ -2039,6 +2048,7 @@ namespace SMCHSGManager.Models
         partial void OnRemarkChanged();
 
         #endregion
+
     
         #region Navigation Properties
     
@@ -2119,6 +2129,7 @@ namespace SMCHSGManager.Models
         }
 
         #endregion
+
     }
     
     /// <summary>
@@ -2145,6 +2156,7 @@ namespace SMCHSGManager.Models
         }
 
         #endregion
+
         #region Primitive Properties
     
         /// <summary>
@@ -2223,6 +2235,7 @@ namespace SMCHSGManager.Models
         partial void OnRemarkChanged();
 
         #endregion
+
     
         #region Navigation Properties
     
@@ -2249,6 +2262,7 @@ namespace SMCHSGManager.Models
         }
 
         #endregion
+
     }
     
     /// <summary>
@@ -2279,6 +2293,7 @@ namespace SMCHSGManager.Models
         }
 
         #endregion
+
         #region Primitive Properties
     
         /// <summary>
@@ -2597,6 +2612,7 @@ namespace SMCHSGManager.Models
         partial void OnMaxStayDaysChanged();
 
         #endregion
+
     
         #region Navigation Properties
     
@@ -2743,6 +2759,7 @@ namespace SMCHSGManager.Models
         }
 
         #endregion
+
     }
     
     /// <summary>
@@ -2777,6 +2794,7 @@ namespace SMCHSGManager.Models
         }
 
         #endregion
+
         #region Primitive Properties
     
         /// <summary>
@@ -2951,6 +2969,7 @@ namespace SMCHSGManager.Models
         partial void OnLastActivityDateChanged();
 
         #endregion
+
     
         #region Navigation Properties
     
@@ -3037,6 +3056,7 @@ namespace SMCHSGManager.Models
         }
 
         #endregion
+
     }
     
     /// <summary>
@@ -3067,6 +3087,7 @@ namespace SMCHSGManager.Models
         }
 
         #endregion
+
         #region Primitive Properties
     
         /// <summary>
@@ -3217,6 +3238,7 @@ namespace SMCHSGManager.Models
         partial void OnRemarkChanged();
 
         #endregion
+
     
         #region Navigation Properties
     
@@ -3297,6 +3319,7 @@ namespace SMCHSGManager.Models
         }
 
         #endregion
+
     }
     
     /// <summary>
@@ -3323,6 +3346,7 @@ namespace SMCHSGManager.Models
         }
 
         #endregion
+
         #region Primitive Properties
     
         /// <summary>
@@ -3377,6 +3401,7 @@ namespace SMCHSGManager.Models
         partial void OnNameChanged();
 
         #endregion
+
     
         #region Navigation Properties
     
@@ -3403,6 +3428,7 @@ namespace SMCHSGManager.Models
         }
 
         #endregion
+
     }
     
     /// <summary>
@@ -3429,6 +3455,7 @@ namespace SMCHSGManager.Models
         }
 
         #endregion
+
         #region Primitive Properties
     
         /// <summary>
@@ -3483,6 +3510,7 @@ namespace SMCHSGManager.Models
         partial void OnNameChanged();
 
         #endregion
+
     
         #region Navigation Properties
     
@@ -3575,6 +3603,7 @@ namespace SMCHSGManager.Models
         }
 
         #endregion
+
     }
     
     /// <summary>
@@ -3617,6 +3646,7 @@ namespace SMCHSGManager.Models
         }
 
         #endregion
+
         #region Primitive Properties
     
         /// <summary>
@@ -3911,6 +3941,7 @@ namespace SMCHSGManager.Models
         partial void OnEventTypeIDChanged();
 
         #endregion
+
     
         #region Navigation Properties
     
@@ -4117,6 +4148,7 @@ namespace SMCHSGManager.Models
         }
 
         #endregion
+
     }
     
     /// <summary>
@@ -4143,6 +4175,7 @@ namespace SMCHSGManager.Models
         }
 
         #endregion
+
         #region Primitive Properties
     
         /// <summary>
@@ -4221,6 +4254,7 @@ namespace SMCHSGManager.Models
         partial void OnRemarkChanged();
 
         #endregion
+
     
         #region Navigation Properties
     
@@ -4291,6 +4325,7 @@ namespace SMCHSGManager.Models
         }
 
         #endregion
+
     }
     
     /// <summary>
@@ -4319,6 +4354,7 @@ namespace SMCHSGManager.Models
         }
 
         #endregion
+
         #region Primitive Properties
     
         /// <summary>
@@ -4397,6 +4433,7 @@ namespace SMCHSGManager.Models
         partial void OnEventScheduleIDChanged();
 
         #endregion
+
     
         #region Navigation Properties
     
@@ -4477,6 +4514,7 @@ namespace SMCHSGManager.Models
         }
 
         #endregion
+
     }
     
     /// <summary>
@@ -4505,6 +4543,7 @@ namespace SMCHSGManager.Models
         }
 
         #endregion
+
         #region Primitive Properties
     
         /// <summary>
@@ -4586,6 +4625,7 @@ namespace SMCHSGManager.Models
         partial void OnUnitPriceChanged();
 
         #endregion
+
     
         #region Navigation Properties
     
@@ -4666,6 +4706,7 @@ namespace SMCHSGManager.Models
         }
 
         #endregion
+
     }
     
     /// <summary>
@@ -4694,6 +4735,7 @@ namespace SMCHSGManager.Models
         }
 
         #endregion
+
         #region Primitive Properties
     
         /// <summary>
@@ -4844,6 +4886,7 @@ namespace SMCHSGManager.Models
         partial void OnSignTimeChanged();
 
         #endregion
+
     
         #region Navigation Properties
     
@@ -4968,6 +5011,7 @@ namespace SMCHSGManager.Models
         }
 
         #endregion
+
     }
     
     /// <summary>
@@ -5000,6 +5044,7 @@ namespace SMCHSGManager.Models
         }
 
         #endregion
+
         #region Primitive Properties
     
         /// <summary>
@@ -5126,6 +5171,7 @@ namespace SMCHSGManager.Models
         partial void OnScheduleOffsetIDChanged();
 
         #endregion
+
     
         #region Navigation Properties
     
@@ -5288,6 +5334,7 @@ namespace SMCHSGManager.Models
         }
 
         #endregion
+
     }
     
     /// <summary>
@@ -5314,6 +5361,7 @@ namespace SMCHSGManager.Models
         }
 
         #endregion
+
         #region Primitive Properties
     
         /// <summary>
@@ -5392,6 +5440,7 @@ namespace SMCHSGManager.Models
         partial void OnRemarkChanged();
 
         #endregion
+
     
         #region Navigation Properties
     
@@ -5418,6 +5467,7 @@ namespace SMCHSGManager.Models
         }
 
         #endregion
+
     }
     
     /// <summary>
@@ -5444,6 +5494,7 @@ namespace SMCHSGManager.Models
         }
 
         #endregion
+
         #region Primitive Properties
     
         /// <summary>
@@ -5525,6 +5576,7 @@ namespace SMCHSGManager.Models
         partial void OnRemarkChanged();
 
         #endregion
+
     
         #region Navigation Properties
     
@@ -5605,6 +5657,7 @@ namespace SMCHSGManager.Models
         }
 
         #endregion
+
     }
     
     /// <summary>
@@ -5633,6 +5686,7 @@ namespace SMCHSGManager.Models
         }
 
         #endregion
+
         #region Primitive Properties
     
         /// <summary>
@@ -5759,6 +5813,7 @@ namespace SMCHSGManager.Models
         partial void OnPersonsTakedChanged();
 
         #endregion
+
     
         #region Navigation Properties
     
@@ -5861,6 +5916,7 @@ namespace SMCHSGManager.Models
         }
 
         #endregion
+
     }
     
     /// <summary>
@@ -5889,6 +5945,7 @@ namespace SMCHSGManager.Models
         }
 
         #endregion
+
         #region Primitive Properties
     
         /// <summary>
@@ -5991,6 +6048,7 @@ namespace SMCHSGManager.Models
         partial void OnRemarkChanged();
 
         #endregion
+
     
         #region Navigation Properties
     
@@ -6071,6 +6129,7 @@ namespace SMCHSGManager.Models
         }
 
         #endregion
+
     }
     
     /// <summary>
@@ -6097,6 +6156,7 @@ namespace SMCHSGManager.Models
         }
 
         #endregion
+
         #region Primitive Properties
     
         /// <summary>
@@ -6151,6 +6211,7 @@ namespace SMCHSGManager.Models
         partial void OnNameChanged();
 
         #endregion
+
     
         #region Navigation Properties
     
@@ -6199,6 +6260,7 @@ namespace SMCHSGManager.Models
         }
 
         #endregion
+
     }
     
     /// <summary>
@@ -6218,31 +6280,36 @@ namespace SMCHSGManager.Models
         /// <param name="volunteerJobTypeID">Initial value of the VolunteerJobTypeID property.</param>
         /// <param name="monday">Initial value of the Monday property.</param>
         /// <param name="tuesday">Initial value of the Tuesday property.</param>
+        /// <param name="wednesday">Initial value of the Wednesday property.</param>
+        /// <param name="wednesdayOvernight">Initial value of the WednesdayOvernight property.</param>
         /// <param name="thursday">Initial value of the Thursday property.</param>
         /// <param name="friday">Initial value of the Friday property.</param>
-        /// <param name="saturdayOvernight">Initial value of the SaturdayOvernight property.</param>
-        /// <param name="sunday">Initial value of the Sunday property.</param>
-        /// <param name="wednesdayOvernight">Initial value of the WednesdayOvernight property.</param>
         /// <param name="saturdayDay">Initial value of the SaturdayDay property.</param>
         /// <param name="saturdayEvening">Initial value of the SaturdayEvening property.</param>
-        public static GMVolunteerJobName CreateGMVolunteerJobName(global::System.Guid memberID, global::System.Int32 volunteerJobTypeID, global::System.Boolean monday, global::System.Boolean tuesday, global::System.Boolean thursday, global::System.Boolean friday, global::System.Boolean saturdayOvernight, global::System.Boolean sunday, global::System.Boolean wednesdayOvernight, global::System.Boolean saturdayDay, global::System.Boolean saturdayEvening)
+        /// <param name="saturdayOvernight">Initial value of the SaturdayOvernight property.</param>
+        /// <param name="sunday">Initial value of the Sunday property.</param>
+        /// <param name="sundayEvening">Initial value of the SundayEvening property.</param>
+        public static GMVolunteerJobName CreateGMVolunteerJobName(global::System.Guid memberID, global::System.Int32 volunteerJobTypeID, global::System.Boolean monday, global::System.Boolean tuesday, global::System.Boolean wednesday, global::System.Boolean wednesdayOvernight, global::System.Boolean thursday, global::System.Boolean friday, global::System.Boolean saturdayDay, global::System.Boolean saturdayEvening, global::System.Boolean saturdayOvernight, global::System.Boolean sunday, global::System.Boolean sundayEvening)
         {
             GMVolunteerJobName gMVolunteerJobName = new GMVolunteerJobName();
             gMVolunteerJobName.MemberID = memberID;
             gMVolunteerJobName.VolunteerJobTypeID = volunteerJobTypeID;
             gMVolunteerJobName.Monday = monday;
             gMVolunteerJobName.Tuesday = tuesday;
+            gMVolunteerJobName.Wednesday = wednesday;
+            gMVolunteerJobName.WednesdayOvernight = wednesdayOvernight;
             gMVolunteerJobName.Thursday = thursday;
             gMVolunteerJobName.Friday = friday;
-            gMVolunteerJobName.SaturdayOvernight = saturdayOvernight;
-            gMVolunteerJobName.Sunday = sunday;
-            gMVolunteerJobName.WednesdayOvernight = wednesdayOvernight;
             gMVolunteerJobName.SaturdayDay = saturdayDay;
             gMVolunteerJobName.SaturdayEvening = saturdayEvening;
+            gMVolunteerJobName.SaturdayOvernight = saturdayOvernight;
+            gMVolunteerJobName.Sunday = sunday;
+            gMVolunteerJobName.SundayEvening = sundayEvening;
             return gMVolunteerJobName;
         }
 
         #endregion
+
         #region Primitive Properties
     
         /// <summary>
@@ -6352,6 +6419,54 @@ namespace SMCHSGManager.Models
         /// </summary>
         [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
         [DataMemberAttribute()]
+        public global::System.Boolean Wednesday
+        {
+            get
+            {
+                return _Wednesday;
+            }
+            set
+            {
+                OnWednesdayChanging(value);
+                ReportPropertyChanging("Wednesday");
+                _Wednesday = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("Wednesday");
+                OnWednesdayChanged();
+            }
+        }
+        private global::System.Boolean _Wednesday;
+        partial void OnWednesdayChanging(global::System.Boolean value);
+        partial void OnWednesdayChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Boolean WednesdayOvernight
+        {
+            get
+            {
+                return _WednesdayOvernight;
+            }
+            set
+            {
+                OnWednesdayOvernightChanging(value);
+                ReportPropertyChanging("WednesdayOvernight");
+                _WednesdayOvernight = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("WednesdayOvernight");
+                OnWednesdayOvernightChanged();
+            }
+        }
+        private global::System.Boolean _WednesdayOvernight;
+        partial void OnWednesdayOvernightChanging(global::System.Boolean value);
+        partial void OnWednesdayOvernightChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
         public global::System.Boolean Thursday
         {
             get
@@ -6394,6 +6509,54 @@ namespace SMCHSGManager.Models
         private global::System.Boolean _Friday;
         partial void OnFridayChanging(global::System.Boolean value);
         partial void OnFridayChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Boolean SaturdayDay
+        {
+            get
+            {
+                return _SaturdayDay;
+            }
+            set
+            {
+                OnSaturdayDayChanging(value);
+                ReportPropertyChanging("SaturdayDay");
+                _SaturdayDay = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("SaturdayDay");
+                OnSaturdayDayChanged();
+            }
+        }
+        private global::System.Boolean _SaturdayDay;
+        partial void OnSaturdayDayChanging(global::System.Boolean value);
+        partial void OnSaturdayDayChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Boolean SaturdayEvening
+        {
+            get
+            {
+                return _SaturdayEvening;
+            }
+            set
+            {
+                OnSaturdayEveningChanging(value);
+                ReportPropertyChanging("SaturdayEvening");
+                _SaturdayEvening = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("SaturdayEvening");
+                OnSaturdayEveningChanged();
+            }
+        }
+        private global::System.Boolean _SaturdayEvening;
+        partial void OnSaturdayEveningChanging(global::System.Boolean value);
+        partial void OnSaturdayEveningChanged();
     
         /// <summary>
         /// No Metadata Documentation available.
@@ -6446,6 +6609,30 @@ namespace SMCHSGManager.Models
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Boolean SundayEvening
+        {
+            get
+            {
+                return _SundayEvening;
+            }
+            set
+            {
+                OnSundayEveningChanging(value);
+                ReportPropertyChanging("SundayEvening");
+                _SundayEvening = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("SundayEvening");
+                OnSundayEveningChanged();
+            }
+        }
+        private global::System.Boolean _SundayEvening;
+        partial void OnSundayEveningChanging(global::System.Boolean value);
+        partial void OnSundayEveningChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
         [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=true)]
         [DataMemberAttribute()]
         public global::System.String Availability
@@ -6466,80 +6653,9 @@ namespace SMCHSGManager.Models
         private global::System.String _Availability;
         partial void OnAvailabilityChanging(global::System.String value);
         partial void OnAvailabilityChanged();
-    
-        /// <summary>
-        /// No Metadata Documentation available.
-        /// </summary>
-        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
-        [DataMemberAttribute()]
-        public global::System.Boolean WednesdayOvernight
-        {
-            get
-            {
-                return _WednesdayOvernight;
-            }
-            set
-            {
-                OnWednesdayOvernightChanging(value);
-                ReportPropertyChanging("WednesdayOvernight");
-                _WednesdayOvernight = StructuralObject.SetValidValue(value);
-                ReportPropertyChanged("WednesdayOvernight");
-                OnWednesdayOvernightChanged();
-            }
-        }
-        private global::System.Boolean _WednesdayOvernight;
-        partial void OnWednesdayOvernightChanging(global::System.Boolean value);
-        partial void OnWednesdayOvernightChanged();
-    
-        /// <summary>
-        /// No Metadata Documentation available.
-        /// </summary>
-        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
-        [DataMemberAttribute()]
-        public global::System.Boolean SaturdayDay
-        {
-            get
-            {
-                return _SaturdayDay;
-            }
-            set
-            {
-                OnSaturdayDayChanging(value);
-                ReportPropertyChanging("SaturdayDay");
-                _SaturdayDay = StructuralObject.SetValidValue(value);
-                ReportPropertyChanged("SaturdayDay");
-                OnSaturdayDayChanged();
-            }
-        }
-        private global::System.Boolean _SaturdayDay;
-        partial void OnSaturdayDayChanging(global::System.Boolean value);
-        partial void OnSaturdayDayChanged();
-    
-        /// <summary>
-        /// No Metadata Documentation available.
-        /// </summary>
-        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
-        [DataMemberAttribute()]
-        public global::System.Boolean SaturdayEvening
-        {
-            get
-            {
-                return _SaturdayEvening;
-            }
-            set
-            {
-                OnSaturdayEveningChanging(value);
-                ReportPropertyChanging("SaturdayEvening");
-                _SaturdayEvening = StructuralObject.SetValidValue(value);
-                ReportPropertyChanged("SaturdayEvening");
-                OnSaturdayEveningChanged();
-            }
-        }
-        private global::System.Boolean _SaturdayEvening;
-        partial void OnSaturdayEveningChanging(global::System.Boolean value);
-        partial void OnSaturdayEveningChanged();
 
         #endregion
+
     
         #region Navigation Properties
     
@@ -6549,16 +6665,16 @@ namespace SMCHSGManager.Models
         [XmlIgnoreAttribute()]
         [SoapIgnoreAttribute()]
         [DataMemberAttribute()]
-        [EdmRelationshipNavigationPropertyAttribute("DB_18093_smchdbModel", "FK_GMVolunteerJobNameLists_MemberInfos", "MemberInfos")]
+        [EdmRelationshipNavigationPropertyAttribute("DB_18093_smchdbModel", "FK_GMVolunteerJobNameLists_MemberInfos", "MemberInfo")]
         public MemberInfo MemberInfo
         {
             get
             {
-                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<MemberInfo>("DB_18093_smchdbModel.FK_GMVolunteerJobNameLists_MemberInfos", "MemberInfos").Value;
+                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<MemberInfo>("DB_18093_smchdbModel.FK_GMVolunteerJobNameLists_MemberInfos", "MemberInfo").Value;
             }
             set
             {
-                ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<MemberInfo>("DB_18093_smchdbModel.FK_GMVolunteerJobNameLists_MemberInfos", "MemberInfos").Value = value;
+                ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<MemberInfo>("DB_18093_smchdbModel.FK_GMVolunteerJobNameLists_MemberInfos", "MemberInfo").Value = value;
             }
         }
         /// <summary>
@@ -6570,13 +6686,13 @@ namespace SMCHSGManager.Models
         {
             get
             {
-                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<MemberInfo>("DB_18093_smchdbModel.FK_GMVolunteerJobNameLists_MemberInfos", "MemberInfos");
+                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<MemberInfo>("DB_18093_smchdbModel.FK_GMVolunteerJobNameLists_MemberInfos", "MemberInfo");
             }
             set
             {
                 if ((value != null))
                 {
-                    ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedReference<MemberInfo>("DB_18093_smchdbModel.FK_GMVolunteerJobNameLists_MemberInfos", "MemberInfos", value);
+                    ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedReference<MemberInfo>("DB_18093_smchdbModel.FK_GMVolunteerJobNameLists_MemberInfos", "MemberInfo", value);
                 }
             }
         }
@@ -6587,16 +6703,16 @@ namespace SMCHSGManager.Models
         [XmlIgnoreAttribute()]
         [SoapIgnoreAttribute()]
         [DataMemberAttribute()]
-        [EdmRelationshipNavigationPropertyAttribute("DB_18093_smchdbModel", "FK_GMVolunteerJobNameLists_VolunteerJobTypes", "VolunteerJobTypes")]
+        [EdmRelationshipNavigationPropertyAttribute("DB_18093_smchdbModel", "FK_GMVolunteerJobNameLists_VolunteerJobTypes", "VolunteerJobType")]
         public VolunteerJobType VolunteerJobType
         {
             get
             {
-                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<VolunteerJobType>("DB_18093_smchdbModel.FK_GMVolunteerJobNameLists_VolunteerJobTypes", "VolunteerJobTypes").Value;
+                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<VolunteerJobType>("DB_18093_smchdbModel.FK_GMVolunteerJobNameLists_VolunteerJobTypes", "VolunteerJobType").Value;
             }
             set
             {
-                ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<VolunteerJobType>("DB_18093_smchdbModel.FK_GMVolunteerJobNameLists_VolunteerJobTypes", "VolunteerJobTypes").Value = value;
+                ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<VolunteerJobType>("DB_18093_smchdbModel.FK_GMVolunteerJobNameLists_VolunteerJobTypes", "VolunteerJobType").Value = value;
             }
         }
         /// <summary>
@@ -6608,18 +6724,19 @@ namespace SMCHSGManager.Models
         {
             get
             {
-                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<VolunteerJobType>("DB_18093_smchdbModel.FK_GMVolunteerJobNameLists_VolunteerJobTypes", "VolunteerJobTypes");
+                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<VolunteerJobType>("DB_18093_smchdbModel.FK_GMVolunteerJobNameLists_VolunteerJobTypes", "VolunteerJobType");
             }
             set
             {
                 if ((value != null))
                 {
-                    ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedReference<VolunteerJobType>("DB_18093_smchdbModel.FK_GMVolunteerJobNameLists_VolunteerJobTypes", "VolunteerJobTypes", value);
+                    ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedReference<VolunteerJobType>("DB_18093_smchdbModel.FK_GMVolunteerJobNameLists_VolunteerJobTypes", "VolunteerJobType", value);
                 }
             }
         }
 
         #endregion
+
     }
     
     /// <summary>
@@ -6650,6 +6767,7 @@ namespace SMCHSGManager.Models
         }
 
         #endregion
+
         #region Primitive Properties
     
         /// <summary>
@@ -6800,6 +6918,7 @@ namespace SMCHSGManager.Models
         partial void OnAudioMemberIDChanged();
 
         #endregion
+
     
         #region Navigation Properties
     
@@ -6940,6 +7059,7 @@ namespace SMCHSGManager.Models
         }
 
         #endregion
+
     }
     
     /// <summary>
@@ -6970,6 +7090,7 @@ namespace SMCHSGManager.Models
         }
 
         #endregion
+
         #region Primitive Properties
     
         /// <summary>
@@ -7072,6 +7193,7 @@ namespace SMCHSGManager.Models
         partial void OnCheckInTimeChanged();
 
         #endregion
+
     
         #region Navigation Properties
     
@@ -7152,6 +7274,7 @@ namespace SMCHSGManager.Models
         }
 
         #endregion
+
     }
     
     /// <summary>
@@ -7178,6 +7301,7 @@ namespace SMCHSGManager.Models
         }
 
         #endregion
+
         #region Primitive Properties
     
         /// <summary>
@@ -7256,6 +7380,7 @@ namespace SMCHSGManager.Models
         partial void OnRemarkChanged();
 
         #endregion
+
     
         #region Navigation Properties
     
@@ -7282,6 +7407,7 @@ namespace SMCHSGManager.Models
         }
 
         #endregion
+
     }
     
     /// <summary>
@@ -7308,6 +7434,7 @@ namespace SMCHSGManager.Models
         }
 
         #endregion
+
         #region Primitive Properties
     
         /// <summary>
@@ -7386,6 +7513,7 @@ namespace SMCHSGManager.Models
         partial void OnRemarkChanged();
 
         #endregion
+
     
         #region Navigation Properties
     
@@ -7434,6 +7562,7 @@ namespace SMCHSGManager.Models
         }
 
         #endregion
+
     }
     
     /// <summary>
@@ -7466,6 +7595,7 @@ namespace SMCHSGManager.Models
         }
 
         #endregion
+
         #region Primitive Properties
     
         /// <summary>
@@ -7688,6 +7818,7 @@ namespace SMCHSGManager.Models
         partial void OnRemarkChanged();
 
         #endregion
+
     
         #region Navigation Properties
     
@@ -7730,6 +7861,7 @@ namespace SMCHSGManager.Models
         }
 
         #endregion
+
     }
     
     /// <summary>
@@ -7764,6 +7896,7 @@ namespace SMCHSGManager.Models
         }
 
         #endregion
+
         #region Primitive Properties
     
         /// <summary>
@@ -8010,6 +8143,7 @@ namespace SMCHSGManager.Models
         partial void OnCPCommentsChanged();
 
         #endregion
+
     
         #region Navigation Properties
     
@@ -8194,6 +8328,7 @@ namespace SMCHSGManager.Models
         }
 
         #endregion
+
     }
     
     /// <summary>
@@ -8224,6 +8359,7 @@ namespace SMCHSGManager.Models
         }
 
         #endregion
+
         #region Primitive Properties
     
         /// <summary>
@@ -8326,6 +8462,7 @@ namespace SMCHSGManager.Models
         partial void OnConfirmDateChanged();
 
         #endregion
+
     
         #region Navigation Properties
     
@@ -8406,6 +8543,7 @@ namespace SMCHSGManager.Models
         }
 
         #endregion
+
     }
     
     /// <summary>
@@ -8438,6 +8576,7 @@ namespace SMCHSGManager.Models
         }
 
         #endregion
+
         #region Primitive Properties
     
         /// <summary>
@@ -8588,6 +8727,7 @@ namespace SMCHSGManager.Models
         partial void OnFlightNoChanged();
 
         #endregion
+
     
         #region Navigation Properties
     
@@ -8668,6 +8808,7 @@ namespace SMCHSGManager.Models
         }
 
         #endregion
+
     }
     
     /// <summary>
@@ -8696,6 +8837,7 @@ namespace SMCHSGManager.Models
         }
 
         #endregion
+
         #region Primitive Properties
     
         /// <summary>
@@ -8798,6 +8940,7 @@ namespace SMCHSGManager.Models
         partial void OnRemarkChanged();
 
         #endregion
+
     
         #region Navigation Properties
     
@@ -8862,6 +9005,7 @@ namespace SMCHSGManager.Models
         }
 
         #endregion
+
     }
     
     /// <summary>
@@ -8898,6 +9042,7 @@ namespace SMCHSGManager.Models
         }
 
         #endregion
+
         #region Primitive Properties
     
         /// <summary>
@@ -9072,6 +9217,7 @@ namespace SMCHSGManager.Models
         partial void OnClean_PersonNeededChanged();
 
         #endregion
+
     
         #region Navigation Properties
     
@@ -9152,6 +9298,7 @@ namespace SMCHSGManager.Models
         }
 
         #endregion
+
     }
     
     /// <summary>
@@ -9178,6 +9325,7 @@ namespace SMCHSGManager.Models
         }
 
         #endregion
+
         #region Primitive Properties
     
         /// <summary>
@@ -9328,6 +9476,7 @@ namespace SMCHSGManager.Models
         partial void OnAddressChanged();
 
         #endregion
+
     
         #region Navigation Properties
     
@@ -9376,6 +9525,7 @@ namespace SMCHSGManager.Models
         }
 
         #endregion
+
     }
     
     /// <summary>
@@ -9402,6 +9552,7 @@ namespace SMCHSGManager.Models
         }
 
         #endregion
+
         #region Primitive Properties
     
         /// <summary>
@@ -9483,6 +9634,7 @@ namespace SMCHSGManager.Models
         partial void OnRemarkChanged();
 
         #endregion
+
     
         #region Navigation Properties
     
@@ -9563,6 +9715,7 @@ namespace SMCHSGManager.Models
         }
 
         #endregion
+
     }
     
     /// <summary>
@@ -9582,19 +9735,22 @@ namespace SMCHSGManager.Models
         /// <param name="fromDate">Initial value of the FromDate property.</param>
         /// <param name="toDate">Initial value of the ToDate property.</param>
         /// <param name="payAmount">Initial value of the PayAmount property.</param>
+        /// <param name="payMethodID">Initial value of the PayMethodID property.</param>
         /// <param name="receivedDate">Initial value of the ReceivedDate property.</param>
-        public static MemberFeePayment CreateMemberFeePayment(global::System.Guid iMemberID, global::System.DateTime fromDate, global::System.DateTime toDate, global::System.Decimal payAmount, global::System.DateTime receivedDate)
+        public static MemberFeePayment CreateMemberFeePayment(global::System.Guid iMemberID, global::System.DateTime fromDate, global::System.DateTime toDate, global::System.Decimal payAmount, global::System.Int32 payMethodID, global::System.DateTime receivedDate)
         {
             MemberFeePayment memberFeePayment = new MemberFeePayment();
             memberFeePayment.IMemberID = iMemberID;
             memberFeePayment.FromDate = fromDate;
             memberFeePayment.ToDate = toDate;
             memberFeePayment.PayAmount = payAmount;
+            memberFeePayment.PayMethodID = payMethodID;
             memberFeePayment.ReceivedDate = receivedDate;
             return memberFeePayment;
         }
 
         #endregion
+
         #region Primitive Properties
     
         /// <summary>
@@ -9705,9 +9861,9 @@ namespace SMCHSGManager.Models
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
-        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=true)]
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
         [DataMemberAttribute()]
-        public Nullable<global::System.Int32> PayMethodID
+        public global::System.Int32 PayMethodID
         {
             get
             {
@@ -9722,8 +9878,8 @@ namespace SMCHSGManager.Models
                 OnPayMethodIDChanged();
             }
         }
-        private Nullable<global::System.Int32> _PayMethodID;
-        partial void OnPayMethodIDChanging(Nullable<global::System.Int32> value);
+        private global::System.Int32 _PayMethodID;
+        partial void OnPayMethodIDChanging(global::System.Int32 value);
         partial void OnPayMethodIDChanged();
     
         /// <summary>
@@ -9775,6 +9931,7 @@ namespace SMCHSGManager.Models
         partial void OnRemarkChanged();
 
         #endregion
+
     
         #region Navigation Properties
     
@@ -9784,16 +9941,16 @@ namespace SMCHSGManager.Models
         [XmlIgnoreAttribute()]
         [SoapIgnoreAttribute()]
         [DataMemberAttribute()]
-        [EdmRelationshipNavigationPropertyAttribute("DB_18093_smchdbModel", "FK_MemberFeePayments_MemberInfos", "MemberInfos")]
+        [EdmRelationshipNavigationPropertyAttribute("DB_18093_smchdbModel", "FK_MemberFeePayments_MemberInfos", "MemberInfo")]
         public MemberInfo MemberInfo
         {
             get
             {
-                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<MemberInfo>("DB_18093_smchdbModel.FK_MemberFeePayments_MemberInfos", "MemberInfos").Value;
+                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<MemberInfo>("DB_18093_smchdbModel.FK_MemberFeePayments_MemberInfos", "MemberInfo").Value;
             }
             set
             {
-                ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<MemberInfo>("DB_18093_smchdbModel.FK_MemberFeePayments_MemberInfos", "MemberInfos").Value = value;
+                ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<MemberInfo>("DB_18093_smchdbModel.FK_MemberFeePayments_MemberInfos", "MemberInfo").Value = value;
             }
         }
         /// <summary>
@@ -9805,13 +9962,13 @@ namespace SMCHSGManager.Models
         {
             get
             {
-                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<MemberInfo>("DB_18093_smchdbModel.FK_MemberFeePayments_MemberInfos", "MemberInfos");
+                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<MemberInfo>("DB_18093_smchdbModel.FK_MemberFeePayments_MemberInfos", "MemberInfo");
             }
             set
             {
                 if ((value != null))
                 {
-                    ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedReference<MemberInfo>("DB_18093_smchdbModel.FK_MemberFeePayments_MemberInfos", "MemberInfos", value);
+                    ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedReference<MemberInfo>("DB_18093_smchdbModel.FK_MemberFeePayments_MemberInfos", "MemberInfo", value);
                 }
             }
         }
@@ -9822,16 +9979,16 @@ namespace SMCHSGManager.Models
         [XmlIgnoreAttribute()]
         [SoapIgnoreAttribute()]
         [DataMemberAttribute()]
-        [EdmRelationshipNavigationPropertyAttribute("DB_18093_smchdbModel", "FK_MemberFeePayments_PayMethods", "PayMethods")]
+        [EdmRelationshipNavigationPropertyAttribute("DB_18093_smchdbModel", "FK_MemberFeePayments_PayMethods", "PayMethod")]
         public PayMethod PayMethod
         {
             get
             {
-                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<PayMethod>("DB_18093_smchdbModel.FK_MemberFeePayments_PayMethods", "PayMethods").Value;
+                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<PayMethod>("DB_18093_smchdbModel.FK_MemberFeePayments_PayMethods", "PayMethod").Value;
             }
             set
             {
-                ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<PayMethod>("DB_18093_smchdbModel.FK_MemberFeePayments_PayMethods", "PayMethods").Value = value;
+                ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<PayMethod>("DB_18093_smchdbModel.FK_MemberFeePayments_PayMethods", "PayMethod").Value = value;
             }
         }
         /// <summary>
@@ -9843,18 +10000,19 @@ namespace SMCHSGManager.Models
         {
             get
             {
-                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<PayMethod>("DB_18093_smchdbModel.FK_MemberFeePayments_PayMethods", "PayMethods");
+                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<PayMethod>("DB_18093_smchdbModel.FK_MemberFeePayments_PayMethods", "PayMethod");
             }
             set
             {
                 if ((value != null))
                 {
-                    ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedReference<PayMethod>("DB_18093_smchdbModel.FK_MemberFeePayments_PayMethods", "PayMethods", value);
+                    ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedReference<PayMethod>("DB_18093_smchdbModel.FK_MemberFeePayments_PayMethods", "PayMethod", value);
                 }
             }
         }
 
         #endregion
+
     }
     
     /// <summary>
@@ -9887,6 +10045,7 @@ namespace SMCHSGManager.Models
         }
 
         #endregion
+
         #region Primitive Properties
     
         /// <summary>
@@ -10087,30 +10246,6 @@ namespace SMCHSGManager.Models
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
-        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=true)]
-        [DataMemberAttribute()]
-        public Nullable<global::System.DateTime> MemberFeeExpiredDate
-        {
-            get
-            {
-                return _MemberFeeExpiredDate;
-            }
-            set
-            {
-                OnMemberFeeExpiredDateChanging(value);
-                ReportPropertyChanging("MemberFeeExpiredDate");
-                _MemberFeeExpiredDate = StructuralObject.SetValidValue(value);
-                ReportPropertyChanged("MemberFeeExpiredDate");
-                OnMemberFeeExpiredDateChanged();
-            }
-        }
-        private Nullable<global::System.DateTime> _MemberFeeExpiredDate;
-        partial void OnMemberFeeExpiredDateChanging(Nullable<global::System.DateTime> value);
-        partial void OnMemberFeeExpiredDateChanged();
-    
-        /// <summary>
-        /// No Metadata Documentation available.
-        /// </summary>
         [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
         [DataMemberAttribute()]
         public global::System.Boolean IsActive
@@ -10253,6 +10388,7 @@ namespace SMCHSGManager.Models
         partial void OnRemarkChanged();
 
         #endregion
+
     
         #region Navigation Properties
     
@@ -10464,28 +10600,6 @@ namespace SMCHSGManager.Models
         [XmlIgnoreAttribute()]
         [SoapIgnoreAttribute()]
         [DataMemberAttribute()]
-        [EdmRelationshipNavigationPropertyAttribute("DB_18093_smchdbModel", "FK_GMVolunteerJobNameLists_MemberInfos", "GMVolunteerJobNames")]
-        public EntityCollection<GMVolunteerJobName> GMVolunteerJobNames
-        {
-            get
-            {
-                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedCollection<GMVolunteerJobName>("DB_18093_smchdbModel.FK_GMVolunteerJobNameLists_MemberInfos", "GMVolunteerJobNames");
-            }
-            set
-            {
-                if ((value != null))
-                {
-                    ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedCollection<GMVolunteerJobName>("DB_18093_smchdbModel.FK_GMVolunteerJobNameLists_MemberInfos", "GMVolunteerJobNames", value);
-                }
-            }
-        }
-    
-        /// <summary>
-        /// No Metadata Documentation available.
-        /// </summary>
-        [XmlIgnoreAttribute()]
-        [SoapIgnoreAttribute()]
-        [DataMemberAttribute()]
         [EdmRelationshipNavigationPropertyAttribute("DB_18093_smchdbModel", "FK_GroupMeditationAttendances_MemberInfos", "GroupMeditationAttendances")]
         public EntityCollection<GroupMeditationAttendance> GroupMeditationAttendances
         {
@@ -10568,28 +10682,6 @@ namespace SMCHSGManager.Models
         [XmlIgnoreAttribute()]
         [SoapIgnoreAttribute()]
         [DataMemberAttribute()]
-        [EdmRelationshipNavigationPropertyAttribute("DB_18093_smchdbModel", "FK_MemberFeePayments_MemberInfos", "MemberFeePayments")]
-        public EntityCollection<MemberFeePayment> MemberFeePayments
-        {
-            get
-            {
-                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedCollection<MemberFeePayment>("DB_18093_smchdbModel.FK_MemberFeePayments_MemberInfos", "MemberFeePayments");
-            }
-            set
-            {
-                if ((value != null))
-                {
-                    ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedCollection<MemberFeePayment>("DB_18093_smchdbModel.FK_MemberFeePayments_MemberInfos", "MemberFeePayments", value);
-                }
-            }
-        }
-    
-        /// <summary>
-        /// No Metadata Documentation available.
-        /// </summary>
-        [XmlIgnoreAttribute()]
-        [SoapIgnoreAttribute()]
-        [DataMemberAttribute()]
         [EdmRelationshipNavigationPropertyAttribute("DB_18093_smchdbModel", "FK_MemberOrders_MemberInfos", "MemberOrders")]
         public EntityCollection<MemberOrder> MemberOrders
         {
@@ -10605,8 +10697,53 @@ namespace SMCHSGManager.Models
                 }
             }
         }
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [XmlIgnoreAttribute()]
+        [SoapIgnoreAttribute()]
+        [DataMemberAttribute()]
+        [EdmRelationshipNavigationPropertyAttribute("DB_18093_smchdbModel", "FK_MemberFeePayments_MemberInfos", "MemberFeePayment")]
+        public EntityCollection<MemberFeePayment> MemberFeePayments
+        {
+            get
+            {
+                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedCollection<MemberFeePayment>("DB_18093_smchdbModel.FK_MemberFeePayments_MemberInfos", "MemberFeePayment");
+            }
+            set
+            {
+                if ((value != null))
+                {
+                    ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedCollection<MemberFeePayment>("DB_18093_smchdbModel.FK_MemberFeePayments_MemberInfos", "MemberFeePayment", value);
+                }
+            }
+        }
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [XmlIgnoreAttribute()]
+        [SoapIgnoreAttribute()]
+        [DataMemberAttribute()]
+        [EdmRelationshipNavigationPropertyAttribute("DB_18093_smchdbModel", "FK_GMVolunteerJobNameLists_MemberInfos", "GMVolunteerJobName")]
+        public EntityCollection<GMVolunteerJobName> GMVolunteerJobNames
+        {
+            get
+            {
+                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedCollection<GMVolunteerJobName>("DB_18093_smchdbModel.FK_GMVolunteerJobNameLists_MemberInfos", "GMVolunteerJobName");
+            }
+            set
+            {
+                if ((value != null))
+                {
+                    ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedCollection<GMVolunteerJobName>("DB_18093_smchdbModel.FK_GMVolunteerJobNameLists_MemberInfos", "GMVolunteerJobName", value);
+                }
+            }
+        }
 
         #endregion
+
     }
     
     /// <summary>
@@ -10643,6 +10780,7 @@ namespace SMCHSGManager.Models
         }
 
         #endregion
+
         #region Primitive Properties
     
         /// <summary>
@@ -10865,6 +11003,7 @@ namespace SMCHSGManager.Models
         partial void OnRemarkChanged();
 
         #endregion
+
     
         #region Navigation Properties
     
@@ -11043,6 +11182,7 @@ namespace SMCHSGManager.Models
         }
 
         #endregion
+
     }
     
     /// <summary>
@@ -11071,6 +11211,7 @@ namespace SMCHSGManager.Models
         }
 
         #endregion
+
         #region Primitive Properties
     
         /// <summary>
@@ -11152,6 +11293,7 @@ namespace SMCHSGManager.Models
         partial void OnQuantityChanged();
 
         #endregion
+
     
         #region Navigation Properties
     
@@ -11232,6 +11374,7 @@ namespace SMCHSGManager.Models
         }
 
         #endregion
+
     }
     
     /// <summary>
@@ -11258,6 +11401,7 @@ namespace SMCHSGManager.Models
         }
 
         #endregion
+
         #region Primitive Properties
     
         /// <summary>
@@ -11336,6 +11480,7 @@ namespace SMCHSGManager.Models
         partial void OnRemarkChanged();
 
         #endregion
+
     
         #region Navigation Properties
     
@@ -11362,6 +11507,7 @@ namespace SMCHSGManager.Models
         }
 
         #endregion
+
     }
     
     /// <summary>
@@ -11388,6 +11534,7 @@ namespace SMCHSGManager.Models
         }
 
         #endregion
+
         #region Primitive Properties
     
         /// <summary>
@@ -11442,6 +11589,7 @@ namespace SMCHSGManager.Models
         partial void OnNameChanged();
 
         #endregion
+
     
         #region Navigation Properties
     
@@ -11451,23 +11599,24 @@ namespace SMCHSGManager.Models
         [XmlIgnoreAttribute()]
         [SoapIgnoreAttribute()]
         [DataMemberAttribute()]
-        [EdmRelationshipNavigationPropertyAttribute("DB_18093_smchdbModel", "FK_MemberFeePayments_PayMethods", "MemberFeePayments")]
+        [EdmRelationshipNavigationPropertyAttribute("DB_18093_smchdbModel", "FK_MemberFeePayments_PayMethods", "MemberFeePayment")]
         public EntityCollection<MemberFeePayment> MemberFeePayments
         {
             get
             {
-                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedCollection<MemberFeePayment>("DB_18093_smchdbModel.FK_MemberFeePayments_PayMethods", "MemberFeePayments");
+                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedCollection<MemberFeePayment>("DB_18093_smchdbModel.FK_MemberFeePayments_PayMethods", "MemberFeePayment");
             }
             set
             {
                 if ((value != null))
                 {
-                    ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedCollection<MemberFeePayment>("DB_18093_smchdbModel.FK_MemberFeePayments_PayMethods", "MemberFeePayments", value);
+                    ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedCollection<MemberFeePayment>("DB_18093_smchdbModel.FK_MemberFeePayments_PayMethods", "MemberFeePayment", value);
                 }
             }
         }
 
         #endregion
+
     }
     
     /// <summary>
@@ -11504,6 +11653,7 @@ namespace SMCHSGManager.Models
         }
 
         #endregion
+
         #region Primitive Properties
     
         /// <summary>
@@ -11774,6 +11924,7 @@ namespace SMCHSGManager.Models
         partial void OnUpdateDateChanged();
 
         #endregion
+
     
         #region Navigation Properties
     
@@ -11942,6 +12093,7 @@ namespace SMCHSGManager.Models
         }
 
         #endregion
+
     }
     
     /// <summary>
@@ -11968,6 +12120,7 @@ namespace SMCHSGManager.Models
         }
 
         #endregion
+
         #region Primitive Properties
     
         /// <summary>
@@ -12022,6 +12175,7 @@ namespace SMCHSGManager.Models
         partial void OnNameChanged();
 
         #endregion
+
     
         #region Navigation Properties
     
@@ -12070,6 +12224,7 @@ namespace SMCHSGManager.Models
         }
 
         #endregion
+
     }
     
     /// <summary>
@@ -12098,6 +12253,7 @@ namespace SMCHSGManager.Models
         }
 
         #endregion
+
         #region Primitive Properties
     
         /// <summary>
@@ -12248,6 +12404,7 @@ namespace SMCHSGManager.Models
         partial void OnUpdateDateChanged();
 
         #endregion
+
     
         #region Navigation Properties
     
@@ -12312,6 +12469,7 @@ namespace SMCHSGManager.Models
         }
 
         #endregion
+
     }
     
     /// <summary>
@@ -12344,6 +12502,7 @@ namespace SMCHSGManager.Models
         }
 
         #endregion
+
         #region Primitive Properties
     
         /// <summary>
@@ -12470,6 +12629,7 @@ namespace SMCHSGManager.Models
         partial void OnDateToChanged();
 
         #endregion
+
     
         #region Navigation Properties
     
@@ -12512,6 +12672,7 @@ namespace SMCHSGManager.Models
         }
 
         #endregion
+
     }
     
     /// <summary>
@@ -12542,6 +12703,7 @@ namespace SMCHSGManager.Models
         }
 
         #endregion
+
         #region Primitive Properties
     
         /// <summary>
@@ -12668,6 +12830,7 @@ namespace SMCHSGManager.Models
         partial void OnDescriptionChanged();
 
         #endregion
+
     
         #region Navigation Properties
     
@@ -12716,6 +12879,7 @@ namespace SMCHSGManager.Models
         }
 
         #endregion
+
     }
     
     /// <summary>
@@ -12744,6 +12908,7 @@ namespace SMCHSGManager.Models
         }
 
         #endregion
+
         #region Primitive Properties
     
         /// <summary>
@@ -12822,6 +12987,7 @@ namespace SMCHSGManager.Models
         partial void OnProductIDChanged();
 
         #endregion
+
     
         #region Navigation Properties
     
@@ -12902,6 +13068,7 @@ namespace SMCHSGManager.Models
         }
 
         #endregion
+
     }
     
     /// <summary>
@@ -12928,6 +13095,7 @@ namespace SMCHSGManager.Models
         }
 
         #endregion
+
         #region Primitive Properties
     
         /// <summary>
@@ -13009,6 +13177,7 @@ namespace SMCHSGManager.Models
         partial void OnRemarkChanged();
 
         #endregion
+
     
         #region Navigation Properties
     
@@ -13089,6 +13258,7 @@ namespace SMCHSGManager.Models
         }
 
         #endregion
+
     }
     
     /// <summary>
@@ -13115,6 +13285,7 @@ namespace SMCHSGManager.Models
         }
 
         #endregion
+
         #region Primitive Properties
     
         /// <summary>
@@ -13169,6 +13340,7 @@ namespace SMCHSGManager.Models
         partial void OnOffsetHoursChanged();
 
         #endregion
+
     
         #region Navigation Properties
     
@@ -13217,6 +13389,7 @@ namespace SMCHSGManager.Models
         }
 
         #endregion
+
     }
     
     /// <summary>
@@ -13251,6 +13424,7 @@ namespace SMCHSGManager.Models
         }
 
         #endregion
+
         #region Primitive Properties
     
         /// <summary>
@@ -13497,6 +13671,7 @@ namespace SMCHSGManager.Models
         partial void OnNewProductChanged();
 
         #endregion
+
     
         #region Navigation Properties
     
@@ -13621,6 +13796,7 @@ namespace SMCHSGManager.Models
         }
 
         #endregion
+
     }
     
     /// <summary>
@@ -13655,6 +13831,7 @@ namespace SMCHSGManager.Models
         }
 
         #endregion
+
         #region Primitive Properties
     
         /// <summary>
@@ -13964,6 +14141,7 @@ namespace SMCHSGManager.Models
         partial void OnNewProductChanged();
 
         #endregion
+
     
     }
     
@@ -13991,6 +14169,7 @@ namespace SMCHSGManager.Models
         }
 
         #endregion
+
         #region Primitive Properties
     
         /// <summary>
@@ -14117,6 +14296,7 @@ namespace SMCHSGManager.Models
         partial void OnUnitsOnOrderChanged();
 
         #endregion
+
     
         #region Navigation Properties
     
@@ -14159,6 +14339,7 @@ namespace SMCHSGManager.Models
         }
 
         #endregion
+
     }
     
     /// <summary>
@@ -14191,6 +14372,7 @@ namespace SMCHSGManager.Models
         }
 
         #endregion
+
         #region Primitive Properties
     
         /// <summary>
@@ -14317,6 +14499,7 @@ namespace SMCHSGManager.Models
         partial void OnDateToChanged();
 
         #endregion
+
     
         #region Navigation Properties
     
@@ -14359,6 +14542,7 @@ namespace SMCHSGManager.Models
         }
 
         #endregion
+
     }
     
     /// <summary>
@@ -14385,6 +14569,7 @@ namespace SMCHSGManager.Models
         }
 
         #endregion
+
         #region Primitive Properties
     
         /// <summary>
@@ -14439,6 +14624,7 @@ namespace SMCHSGManager.Models
         partial void OnImageFileNameChanged();
 
         #endregion
+
     
     }
     
@@ -14472,6 +14658,7 @@ namespace SMCHSGManager.Models
         }
 
         #endregion
+
         #region Primitive Properties
     
         /// <summary>
@@ -14622,6 +14809,7 @@ namespace SMCHSGManager.Models
         partial void OnUploadByChanged();
 
         #endregion
+
     
         #region Navigation Properties
     
@@ -14714,6 +14902,7 @@ namespace SMCHSGManager.Models
         }
 
         #endregion
+
     }
     
     /// <summary>
@@ -14738,6 +14927,7 @@ namespace SMCHSGManager.Models
         }
 
         #endregion
+
         #region Primitive Properties
     
         /// <summary>
@@ -14816,6 +15006,7 @@ namespace SMCHSGManager.Models
         partial void OnRemarkChanged();
 
         #endregion
+
     
         #region Navigation Properties
     
@@ -14847,23 +15038,24 @@ namespace SMCHSGManager.Models
         [XmlIgnoreAttribute()]
         [SoapIgnoreAttribute()]
         [DataMemberAttribute()]
-        [EdmRelationshipNavigationPropertyAttribute("DB_18093_smchdbModel", "FK_GMVolunteerJobNameLists_VolunteerJobTypes", "GMVolunteerJobNames")]
+        [EdmRelationshipNavigationPropertyAttribute("DB_18093_smchdbModel", "FK_GMVolunteerJobNameLists_VolunteerJobTypes", "GMVolunteerJobName")]
         public EntityCollection<GMVolunteerJobName> GMVolunteerJobNames
         {
             get
             {
-                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedCollection<GMVolunteerJobName>("DB_18093_smchdbModel.FK_GMVolunteerJobNameLists_VolunteerJobTypes", "GMVolunteerJobNames");
+                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedCollection<GMVolunteerJobName>("DB_18093_smchdbModel.FK_GMVolunteerJobNameLists_VolunteerJobTypes", "GMVolunteerJobName");
             }
             set
             {
                 if ((value != null))
                 {
-                    ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedCollection<GMVolunteerJobName>("DB_18093_smchdbModel.FK_GMVolunteerJobNameLists_VolunteerJobTypes", "GMVolunteerJobNames", value);
+                    ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedCollection<GMVolunteerJobName>("DB_18093_smchdbModel.FK_GMVolunteerJobNameLists_VolunteerJobTypes", "GMVolunteerJobName", value);
                 }
             }
         }
 
         #endregion
+
     }
     
     /// <summary>
@@ -14898,6 +15090,7 @@ namespace SMCHSGManager.Models
         }
 
         #endregion
+
         #region Primitive Properties
     
         /// <summary>
@@ -15096,9 +15289,11 @@ namespace SMCHSGManager.Models
         partial void OnTagTemplateChanged();
 
         #endregion
+
     
     }
 
     #endregion
+
     
 }

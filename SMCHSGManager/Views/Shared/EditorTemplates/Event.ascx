@@ -19,34 +19,34 @@
 </script>
     
    <script type="text/javascript">
-   	tinyMCE.init({
-   		mode: "textareas",
-   		theme: "advanced",
+       tinyMCE.init({
+           mode: "textareas",
+           theme: "advanced",
 
-   		//
-   		//  Theme options #1
-   		//
-   		theme_advanced_buttons1: "bold,italic,underline,formatselect,fontselect,fontsizeselect,forecolor,backcolor, |,justifyleft,justifycenter,justifyright,justifyfull,|,bullist,numlist",
-   		theme_advanced_buttons2: "",
-   		theme_advanced_buttons3: "",
-   		theme_advanced_buttons4: "",
-   		theme_advanced_toolbar_location: "top",
-   		theme_advanced_toolbar_align: "left",
-   		theme_advanced_resizing: true,
-   		readonly: false
-   	});
+           //
+           //  Theme options #1
+           //
+           theme_advanced_buttons1: "bold,italic,underline,formatselect,fontselect,fontsizeselect,forecolor,backcolor, |,justifyleft,justifycenter,justifyright,justifyfull,|,bullist,numlist",
+           theme_advanced_buttons2: "",
+           theme_advanced_buttons3: "",
+           theme_advanced_buttons4: "",
+           theme_advanced_toolbar_location: "top",
+           theme_advanced_toolbar_align: "left",
+           theme_advanced_resizing: true,
+           readonly: false
+       });
 
-   	$(function () {
-   		$("#texteditorform").dialog({
-   			height: 300,
-   			width: 520,
-   			autoOpen: false
-   		});
-   	});
+       $(function () {
+           $("#texteditorform").dialog({
+               height: 300,
+               width: 520,
+               autoOpen: false
+           });
+       });
 
-   	function ShowModalEditor() {
-   		$("#texteditorform").dialog('open');
-   	}
+       function ShowModalEditor() {
+           $("#texteditorform").dialog('open');
+       }
 
     </script>
 
@@ -79,20 +79,13 @@
                                 <%: Html.TextBoxFor(model => model.Title, new { style = "width:100%;", @class = "title" })%>  
                                 <%: Html.ValidationMessageFor(model => model.Title)%>
                              </td>
-                            <%-- <td class="formvalue" >
-                                <font color="red" size="2">*</font>Public?
-                            </td>
-                            <td align="left" class="formvalue" >
-                                <%: Html.CheckBoxFor(model => model.IsPublic)%>  
-                                <%: Html.ValidationMessageFor(model => model.IsPublic) %>
-                             </td>     --%>                  
                         </tr>
                         <tr>
                             <td class="formlabel">
                                 <font color="red" size="2">*</font>Event Type</td>
-                            <td align="left" class="formvalue" >
-                                <%: Html.DropDownList("EventTypeID", new SelectList(ViewData["EventTypes"] as IEnumerable, "ID", "Name", Model.EventTypeID))%> 
-                            </td>
+                            <td align="left" class="formvalue"  > 
+                                    <%: Html.DropDownList("EventTypeID", new SelectList(ViewData["EventTypes"] as IEnumerable, "ID", "Name", Model.EventTypeID))%> 
+                             </td>
                              <td  align="right" class="formlabel" >
                                 <font color="red" size="2">*</font>Public?
                             </td>
@@ -100,21 +93,7 @@
                                 <%: Html.CheckBoxFor(model => model.IsPublic)%>  
                                 <%: Html.ValidationMessageFor(model => model.IsPublic) %>
                              </td> 
-                            <%--  <td class="formlabel1" >
-                               <% if (ViewData["Mode"] == "Create")
-                                  { %>
-                                <font color="red" size="2">*</font>Schedule Model
-                                <%: Html.DropDownList("LocalRetreatScheduleModel", (IEnumerable<SelectListItem>)ViewData["LocalRetreatScheduleModelSelectLists"])%>
-                                <%} %>
-                            </td>--%>
-                           <%-- <td class="formlabel1" >
-                                <font color="red" size="2">*</font>Public?
-                            </td>
-                            <td align="left" class="formvalue" >
-                                <%: Html.CheckBoxFor(model => model.IsPublic)%>  
-                                <%: Html.ValidationMessageFor(model => model.IsPublic) %>
-                             </td>--%>
-                        </tr>
+                         </tr>
                         <tr>
                             <td class="formlabel">
                                 Link:
@@ -126,29 +105,47 @@
                         </tr>
                         
                           <tr>
-                             <td class="formlabel" valign="middle"> <font color="red" size="2">*</font>Start From  </td>
+                             <td class="formlabel" valign="middle" align="right" > <font color="red" size="2">*</font>Start From  </td>
                              <td align="left"  valign="top" class="formvalue">
+                               <%if (ViewData["Mode"] == "Create"){%>
                                     <%: Html.EditorFor(model => model.StartDateTime)%>    
                                     <%= Html.ValidationMessageFor(model => model.StartDateTime)%>
+                               <%}else{ %>
+                                    <%: Html.DisplayFor(model => model.StartDateTime)%>    
+                                <%} %>
                             </td>
  
-                            <td align="right" class="formlabel1"> <font color="red" size="2">*</font>To</td>
+  <%if ((ViewData["Mode"] == "Create") && ((int)Model.EventTypeID == 1))
+    {%>
+
+                           <td align="right" class="formlabel1"> 
+                            <font color="red" size="1">*</font>Local Retreat Schedule</td>
                            <td align="left" class="formvalue">
-                                    <%: Html.EditorFor(model => model.EndDateTime)%>    
-                                    <%= Html.ValidationMessageFor(model => model.EndDateTime)%>
+                                     <%: Html.DropDownList("ModelID", (IEnumerable<SelectListItem>)ViewData["SelectListItems"])%>
+                           </td>
+<%}else{ %>
+
+                            <td align="right" class="formlabel1"> 
+                           <font color="red" size="2">*</font>To</td>
+                           <td align="left" class="formvalue">
+                                     <%if (ViewData["Mode"] == "Create")  {%>
+                                        <%: Html.EditorFor(model => model.EndDateTime)%>    
+                                        <%= Html.ValidationMessageFor(model => model.EndDateTime)%>
+                                    <%} else{ %>
+                                        <%: Html.DisplayFor(model => model.EndDateTime)%>    
+                                    <%} %>
                             </td>
+ <%} %>                          
                         </tr>
 
                          <tr>
                              <td class="formlabel"><font color="red" size="2">*</font>Register Open</td>
                             <td align="left" class="formvalue">
-                                  <%--  <%: Html.EditorFor(model => model.RegistrationOpenDate, "Date")%>  --%>
-								    <%: Html.EditorFor(model => model.RegistrationOpenDate)%>    
+ 								    <%: Html.EditorFor(model => model.RegistrationOpenDate)%>    
                                     <%= Html.ValidationMessageFor(model => model.RegistrationOpenDate)%>
                             </td>
                             <td align="right" class="formlabel1"><font color="red" size="2">*</font>Close</td>
                             <td align="left" class="formvalue">
-                                   <%-- <%: Html.EditorFor(model => model.RegistrationCloseDate, "Date")%>    --%>
 								    <%: Html.EditorFor(model => model.RegistrationCloseDate)%>    
                                     <%= Html.ValidationMessageFor(model => model.RegistrationCloseDate)%>
                             </td>
@@ -169,7 +166,7 @@
                             <td align="left" class="formvalue"  colspan=3>
                                 <%--<%: Html.TextAreaFor(model => model.Description, new {@class = "text-box multi-line", style = "width:650px; " })%>   
                                 <%: Html.ValidationMessageFor(model => model.Description) %>--%>
-								<%=Html.TextArea("Description", Model.Description, new { @name = "Editor1", style = "width:100%; height:100%" })%>
+								<%=Html.TextArea("Description", Model.Description, new { @name = "Editor1", maxlength="200000", style = "width:100%; height:100%" })%>
                             </td>
                         </tr>
                        

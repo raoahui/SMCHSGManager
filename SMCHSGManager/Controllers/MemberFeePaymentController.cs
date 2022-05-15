@@ -35,7 +35,7 @@ namespace SMCHSGManager.Controllers
 			}
 
             List<MemberFeePaymentListViewModel> viewModel = (from r in _entities.MemberFeePayments
-															 where (r.MemberInfo.Name.Contains(searchContent) || searchContent == null || r.MemberInfo.MemberNo == memberNO ) && r.MemberInfo.IsActive
+                                                             where (r.MemberInfo.Name.Contains(searchContent) || r.PayMethod.Name.Contains(searchContent) || searchContent == null || r.MemberInfo.MemberNo == memberNO) 
                                                              select new MemberFeePaymentListViewModel
                                                              {
                                                                  Name = r.MemberInfo.Name,
@@ -45,12 +45,12 @@ namespace SMCHSGManager.Controllers
                                                                  ToDate = r.ToDate,
                                                                  PayAmount = r.PayAmount,
                                                                  PaymentMethod = r.PayMethod.Name,
-                                                                 ReceievedDate = r.ReceivedDate,
-                                                             }).OrderByDescending(a=>a.ReceievedDate).ToList();
+                                                                 ReceivedDate = r.ReceivedDate,
+                                                             }).OrderByDescending(a=>a.ReceivedDate).ToList();
 
-             if (memberID.HasValue)
+            if (memberID.HasValue)
             {
-                viewModel = viewModel.Where(a => a.IMemberID == memberID.Value).OrderByDescending(a => a.ReceievedDate).ToList();
+                viewModel = viewModel.Where(a => a.IMemberID == memberID.Value).OrderByDescending(a => a.ReceivedDate).ToList();
             }
 			ViewData["TotalPages"] = (int)Math.Ceiling((float)viewModel.Count() / _pageSize);
 
@@ -60,7 +60,7 @@ namespace SMCHSGManager.Controllers
 			}
 			ViewData["CurrentPage"] = currentPage;
 
-            viewModel = (viewModel.AsQueryable().OrderBy(a => a.ReceievedDate).Skip((currentPage - 1) * _pageSize).Take(_pageSize)).ToList();
+            viewModel = (viewModel.AsQueryable().OrderBy(a => a.ReceivedDate).Skip((currentPage - 1) * _pageSize).Take(_pageSize)).ToList();
 
 			if (viewModel.Count() == 0)
 			{
@@ -82,7 +82,29 @@ namespace SMCHSGManager.Controllers
                                                               }).ToList();
             return View();
         }
-  
+
+        public List<MemberFeeExpiredDateInfo> updateMemberFeeExipredDate()
+		{
+
+            List<MemberFeeExpiredDateInfo> latestMemberFeePayments = (from r in _entities.MemberFeePayments
+                                                                      where r.MemberInfo.IsActive && r.MemberInfo.Name != "DP"
+                                                                      orderby r.ToDate descending
+                                                                      group r by new
+                                                                      {
+                                                                          ID = r.MemberInfo.MemberID,
+                                                                          No = r.MemberInfo.MemberNo,
+                                                                          Name = r.MemberInfo.Name
+                                                                      } into h
+                                                                      select new MemberFeeExpiredDateInfo()
+                                                                      {
+                                                                          MemberID = h.Key.ID,
+                                                                          MemberNo = h.Key.No.Value,
+                                                                          Name = h.Key.Name,
+                                                                          MemberFeeExpiredDate = h.Max(a => a.ToDate),
+                                                                      }).OrderBy(a=>a.MemberNo).ToList();
+            
+            return latestMemberFeePayments;
+		}
 
         //
         // GET: /MemberFeePayment/Details/5
@@ -102,10 +124,10 @@ namespace SMCHSGManager.Controllers
         {
             var viewModel = GetMemberFeePaymentViewModel();
 
-			viewModel.MemberFeePayment.FromDate = (new DateTime(DateTime.Today.Year, 1, 1)).Date;
+            viewModel.MemberFeePayment.FromDate = (new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1)).Date;
 			viewModel.MemberFeePayment.ToDate = (new DateTime(DateTime.Today.Year, 12, 31)).Date;
 			viewModel.MemberFeePayment.PayAmount = 12 * 20;
-			viewModel.MemberFeePayment.PayMethodID = 3;
+			viewModel.MemberFeePayment.PayMethodID = 1;
 			return View(viewModel);
         }
 
@@ -115,41 +137,32 @@ namespace SMCHSGManager.Controllers
             {
                 MemberFeePayment = new MemberFeePayment(),
                 MemberInfos = BlackListMemberController.GetMemberNameSelectList(Guid.Empty),
-                PayMethod = _entities.PayMethods.ToList(),
+                PayMethod = _entities.PayMethods.Where(a=>a.ID != 4).ToList() // exclude Giro
             };
             return viewModel;
-        } 
+        }
 
-  		//
+        public static int MonthDifference(DateTime lValue, DateTime rValue)
+        {
+            return Math.Abs((lValue.Month - rValue.Month) + 12 * (lValue.Year - rValue.Year));
+        }
+
+        //
 		// POST: /MemberFeePayment/Create
 
         //[HttpPost]
         [AcceptVerbs(HttpVerbs.Post), Authorize(Roles = "Administrator")]
-         public ActionResult Create(FormCollection collection, MemberFeePayment memberFeePayment)
+        public ActionResult Create(FormCollection collection, MemberFeePayment memberFeePayment)
         {
 			memberFeePayment.IMemberID = Guid.Parse(collection.Get("MemberFeePayment.IMemberID"));
 			memberFeePayment.ReceivedDate = DateTime.Now.ToUniversalTime().AddHours(8);
 
-			if (memberFeePayment.PayMethodID == 1)
-			{
-				memberFeePayment.ToDate = new DateTime(2020, 12, 31);
-			}
-
             try
             {
-				if (_entities.MemberFeePayments.Any(a => a.IMemberID == memberFeePayment.IMemberID &&
-												 (memberFeePayment.FromDate >= a.FromDate && memberFeePayment.ToDate
-												 <= a.ToDate)))
-				{
-					ModelState.AddModelError(string.Empty, "There is a record in this period already for this initiate!"); 
-					throw new Exception();
-				}
-
+                CheckTheItemsValid(memberFeePayment);
 				_entities.AddToMemberFeePayments(memberFeePayment);
                 _entities.SaveChanges();
 
-				SaveLatestMemberFeeToDateToMemberInfo(memberFeePayment.IMemberID);
-              
                 return RedirectToAction("Index");
             }
             catch
@@ -167,18 +180,86 @@ namespace SMCHSGManager.Controllers
             }
         }
 
-        private void SaveLatestMemberFeeToDateToMemberInfo(Guid memberID)
+        private void CheckTheItemsValid(MemberFeePayment memberFeePayment)
         {
-            DateTime latestToDate = (from r in _entities.MemberFeePayments
-                                     where r.IMemberID == memberID
-                                     orderby r.ToDate descending
-                                     select r.ToDate).FirstOrDefault();
-
-            MemberInfo memberInfo = _entities.MemberInfos.Single(a => a.MemberID == memberID);
-            if (memberInfo.MemberFeeExpiredDate < latestToDate)
+            if (memberFeePayment.ToDate < memberFeePayment.FromDate)
             {
-                memberInfo.MemberFeeExpiredDate = latestToDate;
+                ModelState.AddModelError("memberFeePayment.FromDate", "FromDate should be earlier than ToDate!");
+                throw new Exception();
+            }
+            else if (_entities.MemberFeePayments.Any(a => a.IMemberID == memberFeePayment.IMemberID &&
+                                                 (a.ToDate >= memberFeePayment.FromDate && a.FromDate <= memberFeePayment.ToDate)))  // don't overlap!
+            {
+                ModelState.AddModelError("memberFeePayment.FromDate", "There is a record in this period already for this initiate!");
+                throw new Exception();
+            }
+            else if (memberFeePayment.PayMethodID != 4)
+            {
+                DateTime nextMonthDate = memberFeePayment.ToDate.AddDays(1);
+                if (memberFeePayment.FromDate.Day != 1)
+                {
+                    ModelState.AddModelError("memberFeePayment.FromDate", "FromDate should be 1st day of month!");
+                    throw new Exception();
+                }
+                else if (nextMonthDate.Day != 1)
+                {
+                    ModelState.AddModelError("memberFeePayment.ToDate", "ToDate should be last day of month!");
+                    throw new Exception();
+                }
+                else
+                {
+                    int month = MonthDifference(nextMonthDate, memberFeePayment.FromDate);
+                    decimal mountPerMonth = memberFeePayment.PayAmount / month;
+                    if (mountPerMonth != 2 && mountPerMonth != 10 && mountPerMonth != 20)
+                    {
+                        ModelState.AddModelError("memberFeePayment.PayAmount", "Pay amount is not match the period FromDate ~ ToDate!");
+                        throw new Exception();
+                    }
+                }
+            }
+        }
+
+        [Authorize(Roles = "Administrator")]
+        public ActionResult CreateGiro()
+        {
+            var viewModel = new MemberFeePaymentViewModel
+            {
+                MemberFeePayment = new MemberFeePayment(),
+                MemberInfos = BlackListMemberController.GetMemberNameSelectList(Guid.Empty),
+            };
+
+            viewModel.MemberFeePayment.FromDate = (new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1)).Date;
+            viewModel.MemberFeePayment.PayAmount = 20;
+            viewModel.MemberFeePayment.PayMethodID = 4;
+            return View(viewModel);
+        }
+
+        [AcceptVerbs(HttpVerbs.Post), Authorize(Roles = "Administrator")]
+        public ActionResult CreateGiro(FormCollection collection, MemberFeePayment memberFeePayment)
+        {
+            memberFeePayment.IMemberID = Guid.Parse(collection.Get("MemberFeePayment.IMemberID"));
+            memberFeePayment.ReceivedDate = DateTime.Now.ToUniversalTime().AddHours(8);
+            memberFeePayment.ToDate = MemberFeePayment.ToDateGiro;
+            memberFeePayment.PayMethodID = 4;
+
+            try
+            {
+                CheckTheItemsValid(memberFeePayment);
+                _entities.AddToMemberFeePayments(memberFeePayment);
                 _entities.SaveChanges();
+
+                return RedirectToAction("Index");
+            }
+            catch
+            {
+                var viewModel = new MemberFeePaymentViewModel
+                {
+                    MemberFeePayment = memberFeePayment,
+                    MemberInfos = BlackListMemberController.GetMemberNameSelectList(memberFeePayment.IMemberID),
+                    PayMethod = _entities.PayMethods.ToList(),
+                };
+
+                return View(viewModel);
             }
         }
         
@@ -189,7 +270,6 @@ namespace SMCHSGManager.Controllers
 		public ActionResult Edit(Guid IMemberID, DateTime FromDate, DateTime ToDate)
         {
 			var viewModel = GetMemberFeePaymentViewModel(IMemberID, FromDate, ToDate);
-
 			return View(viewModel);
 		}
 
@@ -214,18 +294,47 @@ namespace SMCHSGManager.Controllers
 		{
 
             MemberFeePayment memberFeePayment = _entities.MemberFeePayments.Single(a => a.IMemberID == IMemberID && a.FromDate == FromDate && a.ToDate == ToDate);
-			try
+            DateTime toDate = DateTime.Parse(collection.GetValues("MemberFeePayment.ToDate")[0]);
+
+            try
 			{
-                UpdateModel(memberFeePayment, "MemberFeePayment");
+                // cancel Giro need to change the ToDate, but as this is key, so need to add a new item first, then delete the old one.
+                if (memberFeePayment.PayMethodID == 4 && toDate != MemberFeePayment.ToDateGiro)
+                {
+                    MemberFeePayment mep = _entities.MemberFeePayments.Single(a => a.IMemberID == IMemberID && a.FromDate == FromDate && a.ToDate == ToDate);
+                    _entities.DeleteObject(mep);
+                    _entities.SaveChanges();
+
+                    mep.ToDate = toDate;
+                    _entities.AddToMemberFeePayments(mep);
+                }
+                else
+                {
+                    UpdateModel(memberFeePayment, "MemberFeePayment");
+                    if (memberFeePayment.PayMethodID != 4)
+                    {
+                        DateTime nextMonthDate = memberFeePayment.ToDate.AddDays(1);
+                        int month = MonthDifference(nextMonthDate, memberFeePayment.FromDate);
+                        decimal mountPerMonthe = memberFeePayment.PayAmount / month;
+                        if (mountPerMonthe != 2 && mountPerMonthe != 10 && mountPerMonthe != 20)
+                        {
+                            ModelState.AddModelError("memberFeePayment.PayAmount", "Pay amount is not match the period FromDate ~ ToDate!.");
+                            throw new Exception();
+                        }
+                    }
+                }
                 _entities.SaveChanges();
-
-				SaveLatestMemberFeeToDateToMemberInfo(memberFeePayment.IMemberID);
-
 				return RedirectToAction("Index");
 			}
 			catch
 			{
-                var viewModel = GetMemberFeePaymentViewModel(IMemberID, FromDate, ToDate);
+                var viewModel = new MemberFeePaymentViewModel
+                {
+                    MemberFeePayment = memberFeePayment,
+                    MemberInfos = BlackListMemberController.GetMemberNameSelectList(memberFeePayment.IMemberID),
+                    PayMethod = _entities.PayMethods.ToList(),
+                };
+                //var viewModel = GetMemberFeePaymentViewModel(IMemberID, FromDate, ToDate);
                   
                 return View(viewModel);
 			}
@@ -254,13 +363,15 @@ namespace SMCHSGManager.Controllers
         {
 			if (IMemberID != Guid.Empty)
             {
-				MemberFeePayment mep = _entities.MemberFeePayments.Single(a => a.IMemberID == IMemberID && a.FromDate == FromDate && a.ToDate == ToDate);
-				_entities.DeleteObject(mep);
-				_entities.SaveChanges();
+                MemberFeePayment mep = _entities.MemberFeePayments.Single(a => a.IMemberID == IMemberID && a.FromDate == FromDate && a.ToDate == ToDate);
+                _entities.DeleteObject(mep);
+                _entities.SaveChanges();
 
                 return RedirectToAction("Index");
             }
 			return View("Deleted");
         }
+
+
     }
 }

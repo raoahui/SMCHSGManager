@@ -40,25 +40,31 @@
                 Tue
             </th>
             <th>
+                Wed
+            </th>
+            <th>
                 Wed(O)
             </th>
             <th>
                 Thu
             </th>
             <th>
-                Fri(Conv.)
+                Fri(Conv)
             </th>
             <th>
                 Sat Day
             </th>
            <th>
-                Sat Evening
+                Sat Eve
             </th>
             <th>
                 Sat(O)
             </th>
             <th>
                 Sun
+            </th>
+            <th>
+                Sun Eve
             </th>
          <%--   <th>
                 Availability
@@ -85,39 +91,47 @@
                 <%: item.VolunteerJobTypeID %>
             </td>--%>
             <td>
-			<% if (item.Monday)
+			    <% if (item.Monday)
 				{ %> Y	<%} %> 
             </td>
             <td>
-			  <% if (item.Tuesday)
-				{ %> Y	<%} %> 
-              </td>
- 	         <td>
- 			   	  <% if (item.WednesdayOvernight)
+			    <% if (item.Tuesday)
 				{ %> Y	<%} %> 
             </td>
- 	         <td>
- 			   	  <% if (item.Thursday)
+            <td>
+			    <% if (item.Wednesday)
 				{ %> Y	<%} %> 
             </td>
-             <td>
-			<% if (item.Friday)
+ 	        <td>
+ 			    <% if (item.WednesdayOvernight)
 				{ %> Y	<%} %> 
             </td>
-           <td>
+ 	        <td>
+ 			    <% if (item.Thursday)
+				{ %> Y	<%} %> 
+            </td>
+            <td>
+			    <% if (item.Friday)
+				{ %> Y	<%} %> 
+            </td>
+            <td>
 			    <% if (item.SaturdayDay)
 				{ %> Y	<%} %> 
             </td>
-           <td>
+            <td>
 			    <% if (item.SaturdayEvening)
 				{ %> Y	<%} %> 
             </td>
             <td>
- 			   <% if (item.SaturdayOvernight)
+ 			    <% if (item.SaturdayOvernight)
 				{ %> Y	<%} %> 
-             </td>
+            </td>
             <td>
-  			   <% if (item.Sunday)
+  			    <% if (item.Sunday)
+				{ %> Y	<%} %> 
+            </td>
+            <td>
+  			    <% if (item.SundayEvening)
 				{ %> Y	<%} %> 
             </td>
            <%-- <td>

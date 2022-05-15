@@ -28,7 +28,8 @@
 							<td class="style2" nowrap="nowrap" ><%: Html.EditorFor(model => model.MemberFeeExpiredDate, "Date")%></td>--%>					
 						<%} %>
 						<td class="formlabel5" nowrap="nowrap">Member Fee Expire Date</td>
-						<% if (Model.MemberFeeExpiredDate.HasValue && Model.MemberFeeExpiredDate.Value == new DateTime(2020, 12, 31)){ %>
+						<% if (Model.MemberFeeExpiredDate.HasValue && Model.MemberFeeExpiredDate.Value == new DateTime(2050, 12, 31, 0, 0, 11))
+         { %>
 							<td class="formlabel6" nowrap="nowrap"> Giro </td>
 						<%}else { %>
 							<td class="formlabel6" nowrap="nowrap"><%: Html.DisplayFor(model=>model.MemberFeeExpiredDate, "Date")%></td>

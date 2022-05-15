@@ -20,92 +20,6 @@ namespace SMCHSGManager.Controllers
         private int _pageSize = 100;
 
 
-		////DateTime createDate = new DateTime(2011, 1, 11); 
-		//List<InitiateMemberInfo> iMembers = _entities.InitiateMemberInfos.ToList();
-		//foreach (InitiateMemberInfo im in iMembers)
-		//{
-		//    bool change = false;
-		//    //if (im.DateOfInitiation != null && im.DateOfBirth != null && im.DateOfInitiation.Value.Date == im.DateOfBirth.Value.AddYears(25).Date)
-		//    //{
-		//    //    im.DateOfInitiation = null;
-		//    //    im.DateOfBirth = null;
-		//    //    MemberInfo mi = _entities.MemberInfos.Single(a => a.MemberID == im.IMemberID);
-		//    //    mi.DateOfInitiation = im.DateOfInitiation;
-		//    //    change = true;
-		//    //}
-		//    if (!string.IsNullOrEmpty(im.ICOrPassportNo) && im.ICOrPassportNo.StartsWith("S1234567"))
-		//    {
-		//        im.ICOrPassportNo = null;
-		//        change = true;
-		//    }
-		//    if(change)
-		//    {
-		//        _entities.SaveChanges();
-
-		//    }
-		//}
-		//List<MemberInfo> members = _entities.MemberInfos.ToList(); 
-		//foreach (MemberInfo im in members)
-		//{
-		//    if (im.ContactNo == "11111111")
-		//    {
-		//        im.ContactNo = null;
-		//        _entities.SaveChanges();
-		//    }
-		//    MembershipUser mu = Membership.GetUser(im.MemberID);
-		//    if (mu.Email.EndsWith("@smchsg.com") && mu.Email != "raohui@smchsg.com")
-		//    {
-		//        mu.Email = "password@smchsg.com";
-		//        Membership.UpdateUser(mu);
-		//    }
-		//    //if (im.Address == "......")
-		//    //{
-		//    //    im.Address = null;
-		//    //}
-		//    //if (im.ICOrPassportNo == "S123456C")
-		//    //{
-		//    //    im.ICOrPassportNo = null;
-		//    //}
-		//    //if(im.MemberNo == null)
-		//    //{
-		//    //    im.MemberFeePayByID = null;
-		//    //}
-		//    //if (im.MemberTypeID == 2)
-		//    //{
-		//    //    im.MemberNo += 1000;
-		//    //}
-
-		//    //if (im.DateOfInitiation.Value.Date == createDate.AddYears(-15).Date && im.DateOfBirth.Value.Date == createDate.AddYears(-40).Date)
-		//    //{
-		//    //    im.DateOfInitiation = null;
-		//    //    im.DateOfBirth = null;
-		//    //}
-		//    //else if (im.DateOfInitiation.Value.Date == createDate.AddYears(-15).Date)
-		//    //{
-		//    //    im.DateOfInitiation = null;
-		//    //}
-		//    //else if (im.DateOfBirth.Value.Date == createDate.AddYears(-40).Date)
-		//    //{
-		//    //    im.DateOfBirth = null;
-		//    //}
-
-		//    //MemberInfo mi = _entities.MemberInfos.Single(a => a.MemberID == im.IMemberID);
-		//    //mi.IDCardNo = im.IDCardNo;
-		//    //mi.GenderID = im.GenderID;
-		//    //mi.DateOfInitiation = im.DateOfInitiation;
-		//    //mi.IsActive = im.IsActive;
-		//    //mi.MemberNo = im.MemberNo;
-		//    //if (im.MemberTypeID == 2)
-		//    //{
-		//    //    mi.MemberNo += 1000;
-		//    //}
-		//    //mi.ContactNo = im.ContactNo;
-
-		//    //im.IsActive = mi.IsActive;
-
-		//    //_entities.SaveChanges();
-		//}
-
 		[Authorize(Roles = "Administrator")]
 		public ActionResult List(string sort, int? page, string searchContent, int? IsActive, int? initiateTypeID)
 		{
@@ -117,10 +31,10 @@ namespace SMCHSGManager.Controllers
 			ViewData["searchContent"] = searchContent;
 			ViewData["initiateOnly"] = false;
 
-			if (IsActive == null)
-			{
-				IsActive = 1;
-			}
+            if (IsActive == null)
+            {
+                IsActive = 3;
+            }
 			ViewData["IsActive"] = IsActive;
 
 			int initTypeCount = _entities.InitiateTypes.Count() + 1;
@@ -167,6 +81,67 @@ namespace SMCHSGManager.Controllers
 
 			return View(sortedMemberInfos);
 		}
+
+        [Authorize(Roles = "Administrator, Dharma Protector")]
+        public ActionResult iList(string sort, int? page, string searchContent, int? IsActive, int? initiateTypeID)
+        {
+            var currentPage = page ?? 1;
+            ViewData["SortItem"] = sort;
+            sort = sort ?? "MemberNo";
+            ViewData["PageSize"] = _pageSize;
+
+            ViewData["searchContent"] = searchContent;
+            ViewData["initiateOnly"] = false;
+
+            if (IsActive == null)
+            {
+                IsActive = 1;
+            }
+            ViewData["IsActive"] = IsActive;
+
+            int initTypeCount = _entities.InitiateTypes.Count() + 1;
+            if (initiateTypeID == null)
+            {
+                initiateTypeID = initTypeCount;
+            }
+            ViewData["initiateTypeID"] = initiateTypeID;
+
+            List<PublicMemberShortInfo> memberInfos = (from r in _entities.MemberInfos
+                                                  where (r.aspnet_Users.UserName.Contains(searchContent) || searchContent == null) &&
+                                                             (r.IsActive && IsActive == 1 || !r.IsActive && IsActive == 2 || IsActive == 3)
+                                                               && (r.InitiateTypeID == initiateTypeID || initiateTypeID == initTypeCount)
+                                                       select new PublicMemberShortInfo()
+                                                  {
+                                                      ID = r.MemberID,
+                                                      Name = r.Name, 
+                                                      InitiateStatus = r.InitiateType.Name,
+                                                      MemberNo = r.MemberNo,
+                                                      DateOfInitiation = r.DateOfInitiation,
+                                                      DateOfBirth = r.DateOfBirth,
+                                                      Gender = r.Gender.Name,
+                                                      IsActive = r.IsActive,
+                                                  }).OrderBy(sort).ToList();
+
+            MemberFeePaymentController mfpc = new MemberFeePaymentController();
+            List<MemberFeeExpiredDateInfo> latestMemberFeePayments = mfpc.updateMemberFeeExipredDate();
+            foreach (PublicMemberShortInfo pmi in memberInfos)
+            {
+                if (latestMemberFeePayments.Any(a => a.MemberID == pmi.ID))
+                {
+                    pmi.MemberFeeExpiredDate = latestMemberFeePayments.SingleOrDefault(a => a.MemberID == pmi.ID).MemberFeeExpiredDate;
+                }
+            }
+ 
+            ViewData["TotalPages"] = 1;
+
+            if ((int)ViewData["TotalPages"] < currentPage)
+            {
+                currentPage = 1;
+            }
+            ViewData["CurrentPage"] = currentPage;
+
+            return View(memberInfos);
+        }
 
 
 		//public ActionResult List(string sort, int? page, string searchContent, int? IsActive, int? initiateTypeID)

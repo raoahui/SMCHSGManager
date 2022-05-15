@@ -45,7 +45,8 @@ namespace SMCHSGManager.Models
             public DateTime? RegistrationCloseDate { get; set; }
 
 
-            [StringLength(1200)]
+            //[StringLength(1200)]
+            [StringLength(20000)]
             public String Description { get; set; }
 
             [StringLength(800)]

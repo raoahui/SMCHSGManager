@@ -565,6 +565,7 @@
           <Property Name="VolunteerJobTypeID" Type="int" Nullable="false" />
           <Property Name="Monday" Type="bit" Nullable="false" />
           <Property Name="Tuesday" Type="bit" Nullable="false" />
+          <Property Name="Wednesday" Type="bit" Nullable="false" />
           <Property Name="WednesdayOvernight" Type="bit" Nullable="false" />
           <Property Name="Thursday" Type="bit" Nullable="false" />
           <Property Name="Friday" Type="bit" Nullable="false" />
@@ -572,6 +573,7 @@
           <Property Name="SaturdayEvening" Type="bit" Nullable="false" />
           <Property Name="SaturdayOvernight" Type="bit" Nullable="false" />
           <Property Name="Sunday" Type="bit" Nullable="false" />
+          <Property Name="SundayEvening" Type="bit" Nullable="false" />
           <Property Name="Availability" Type="nvarchar" MaxLength="7" />
         </EntityType>
         <EntityType Name="GroupMeditation">
@@ -710,8 +712,8 @@
           <Property Name="FromDate" Type="date" Nullable="false" />
           <Property Name="ToDate" Type="date" Nullable="false" />
           <Property Name="PayAmount" Type="money" Nullable="false" />
-          <Property Name="PayMethodID" Type="int" />
-          <Property Name="ReceivedDate" Type="date" Nullable="false" />
+          <Property Name="PayMethodID" Type="int" Nullable="false" />
+          <Property Name="ReceivedDate" Type="datetime" Nullable="false" />
           <Property Name="Remark" Type="nvarchar(max)" />
         </EntityType>
         <EntityType Name="MemberInfos">
@@ -726,7 +728,6 @@
           <Property Name="ContactNo" Type="nvarchar" MaxLength="80" />
           <Property Name="DateOfInitiation" Type="date" />
           <Property Name="GenderID" Type="int" Nullable="false" />
-          <Property Name="MemberFeeExpiredDate" Type="datetime" />
           <Property Name="IsActive" Type="bit" Nullable="false" />
           <Property Name="CenterID" Type="int" />
           <Property Name="DateOfBirth" Type="datetime" />
@@ -1546,7 +1547,7 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_MemberFeePayments_PayMethods">
-          <End Role="PayMethods" Type="DB_18093_smchdbModel.Store.PayMethods" Multiplicity="0..1" />
+          <End Role="PayMethods" Type="DB_18093_smchdbModel.Store.PayMethods" Multiplicity="1" />
           <End Role="MemberFeePayments" Type="DB_18093_smchdbModel.Store.MemberFeePayments" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="PayMethods">
@@ -1886,7 +1887,6 @@
           <EntitySet Name="EventVolunteerJobBookings" EntityType="DB_18093_smchdbModel.EventVolunteerJobBooking" />
           <EntitySet Name="EventVolunteerJobs" EntityType="DB_18093_smchdbModel.EventVolunteerJob" />
           <EntitySet Name="Genders" EntityType="DB_18093_smchdbModel.Gender" />
-          <EntitySet Name="GMVolunteerJobNames" EntityType="DB_18093_smchdbModel.GMVolunteerJobName" />
           <EntitySet Name="GroupMeditations" EntityType="DB_18093_smchdbModel.GroupMeditation" />
           <EntitySet Name="GroupMeditationAttendances" EntityType="DB_18093_smchdbModel.GroupMeditationAttendance" />
           <EntitySet Name="IDCardTypes" EntityType="DB_18093_smchdbModel.IDCardType" />
@@ -1899,7 +1899,6 @@
           <EntitySet Name="LocalRetreatScheduleTemplates" EntityType="DB_18093_smchdbModel.LocalRetreatScheduleTemplate" />
           <EntitySet Name="Locations" EntityType="DB_18093_smchdbModel.Location" />
           <EntitySet Name="LocationUploadFiles" EntityType="DB_18093_smchdbModel.LocationUploadFile" />
-          <EntitySet Name="MemberFeePayments" EntityType="DB_18093_smchdbModel.MemberFeePayment" />
           <EntitySet Name="MemberInfos" EntityType="DB_18093_smchdbModel.MemberInfo" />
           <EntitySet Name="MemberOrderDetails" EntityType="DB_18093_smchdbModel.MemberOrderDetail" />
           <EntitySet Name="MemberOrders" EntityType="DB_18093_smchdbModel.MemberOrder" />
@@ -2077,14 +2076,6 @@
             <End Role="Genders" EntitySet="Genders" />
             <End Role="MemberInfos" EntitySet="MemberInfos" />
           </AssociationSet>
-          <AssociationSet Name="FK_GMVolunteerJobNameLists_MemberInfos" Association="DB_18093_smchdbModel.FK_GMVolunteerJobNameLists_MemberInfos">
-            <End Role="MemberInfos" EntitySet="MemberInfos" />
-            <End Role="GMVolunteerJobNames" EntitySet="GMVolunteerJobNames" />
-          </AssociationSet>
-          <AssociationSet Name="FK_GMVolunteerJobNameLists_VolunteerJobTypes" Association="DB_18093_smchdbModel.FK_GMVolunteerJobNameLists_VolunteerJobTypes">
-            <End Role="VolunteerJobTypes" EntitySet="VolunteerJobTypes" />
-            <End Role="GMVolunteerJobNames" EntitySet="GMVolunteerJobNames" />
-          </AssociationSet>
           <AssociationSet Name="FK_GroupMeditation_InitiateTypes" Association="DB_18093_smchdbModel.FK_GroupMeditation_InitiateTypes">
             <End Role="InitiateTypes" EntitySet="InitiateTypes" />
             <End Role="GroupMeditation" EntitySet="GroupMeditations" />
@@ -2132,14 +2123,6 @@
           <AssociationSet Name="FK_LocationUploadFiles_UploadFiles" Association="DB_18093_smchdbModel.FK_LocationUploadFiles_UploadFiles">
             <End Role="UploadFiles" EntitySet="UploadFiles" />
             <End Role="LocationUploadFiles" EntitySet="LocationUploadFiles" />
-          </AssociationSet>
-          <AssociationSet Name="FK_MemberFeePayments_MemberInfos" Association="DB_18093_smchdbModel.FK_MemberFeePayments_MemberInfos">
-            <End Role="MemberInfos" EntitySet="MemberInfos" />
-            <End Role="MemberFeePayments" EntitySet="MemberFeePayments" />
-          </AssociationSet>
-          <AssociationSet Name="FK_MemberFeePayments_PayMethods" Association="DB_18093_smchdbModel.FK_MemberFeePayments_PayMethods">
-            <End Role="PayMethods" EntitySet="PayMethods" />
-            <End Role="MemberFeePayments" EntitySet="MemberFeePayments" />
           </AssociationSet>
           <AssociationSet Name="FK_MemberOrders_MemberInfos" Association="DB_18093_smchdbModel.FK_MemberOrders_MemberInfos">
             <End Role="MemberInfos" EntitySet="MemberInfos" />
@@ -2200,6 +2183,24 @@
           <AssociationSet Name="FK_TempProducts_TempProductDiscounts" Association="DB_18093_smchdbModel.FK_TempProducts_TempProductDiscounts">
             <End Role="TempProducts" EntitySet="TempProducts" />
             <End Role="TempProductDiscounts" EntitySet="TempProductDiscounts" />
+          </AssociationSet>
+          <EntitySet Name="MemberFeePayments" EntityType="DB_18093_smchdbModel.MemberFeePayment" />
+          <AssociationSet Name="FK_MemberFeePayments_MemberInfos" Association="DB_18093_smchdbModel.FK_MemberFeePayments_MemberInfos">
+            <End Role="MemberInfo" EntitySet="MemberInfos" />
+            <End Role="MemberFeePayment" EntitySet="MemberFeePayments" />
+          </AssociationSet>
+          <AssociationSet Name="FK_MemberFeePayments_PayMethods" Association="DB_18093_smchdbModel.FK_MemberFeePayments_PayMethods">
+            <End Role="PayMethod" EntitySet="PayMethods" />
+            <End Role="MemberFeePayment" EntitySet="MemberFeePayments" />
+          </AssociationSet>
+          <EntitySet Name="GMVolunteerJobNames" EntityType="DB_18093_smchdbModel.GMVolunteerJobName" />
+          <AssociationSet Name="FK_GMVolunteerJobNameLists_MemberInfos" Association="DB_18093_smchdbModel.FK_GMVolunteerJobNameLists_MemberInfos">
+            <End Role="MemberInfo" EntitySet="MemberInfos" />
+            <End Role="GMVolunteerJobName" EntitySet="GMVolunteerJobNames" />
+          </AssociationSet>
+          <AssociationSet Name="FK_GMVolunteerJobNameLists_VolunteerJobTypes" Association="DB_18093_smchdbModel.FK_GMVolunteerJobNameLists_VolunteerJobTypes">
+            <End Role="VolunteerJobType" EntitySet="VolunteerJobTypes" />
+            <End Role="GMVolunteerJobName" EntitySet="GMVolunteerJobNames" />
           </AssociationSet>
         </EntityContainer>
         <EntityType Name="AnnounceGroup">
@@ -2456,26 +2457,6 @@
           <NavigationProperty Name="InitiateVisitors" Relationship="DB_18093_smchdbModel.FK_InitiateVisitors_Genders" FromRole="Genders" ToRole="InitiateVisitors" />
           <NavigationProperty Name="MemberInfos" Relationship="DB_18093_smchdbModel.FK_MemberInfos_Genders" FromRole="Genders" ToRole="MemberInfos" />
         </EntityType>
-        <EntityType Name="GMVolunteerJobName">
-          <Key>
-            <PropertyRef Name="MemberID" />
-            <PropertyRef Name="VolunteerJobTypeID" />
-          </Key>
-          <Property Name="MemberID" Type="Guid" Nullable="false" />
-          <Property Name="VolunteerJobTypeID" Type="Int32" Nullable="false" />
-          <Property Name="Monday" Type="Boolean" Nullable="false" />
-          <Property Name="Tuesday" Type="Boolean" Nullable="false" />
-          <Property Name="Thursday" Type="Boolean" Nullable="false" />
-          <Property Name="Friday" Type="Boolean" Nullable="false" />
-          <Property Name="SaturdayOvernight" Type="Boolean" Nullable="false" />
-          <Property Name="Sunday" Type="Boolean" Nullable="false" />
-          <Property Name="Availability" Type="String" MaxLength="7" Unicode="true" FixedLength="false" />
-          <NavigationProperty Name="MemberInfo" Relationship="DB_18093_smchdbModel.FK_GMVolunteerJobNameLists_MemberInfos" FromRole="GMVolunteerJobNames" ToRole="MemberInfos" />
-          <NavigationProperty Name="VolunteerJobType" Relationship="DB_18093_smchdbModel.FK_GMVolunteerJobNameLists_VolunteerJobTypes" FromRole="GMVolunteerJobNames" ToRole="VolunteerJobTypes" />
-          <Property Type="Boolean" Name="WednesdayOvernight" Nullable="false" />
-          <Property Type="Boolean" Name="SaturdayDay" Nullable="false" />
-          <Property Type="Boolean" Name="SaturdayEvening" Nullable="false" />
-        </EntityType>
         <EntityType Name="GroupMeditation">
           <Key>
             <PropertyRef Name="ID" />
@@ -2630,22 +2611,6 @@
           <NavigationProperty Name="Location" Relationship="DB_18093_smchdbModel.FK_LocationUploadFiles_Locations" FromRole="LocationUploadFiles" ToRole="Locations" />
           <NavigationProperty Name="UploadFile" Relationship="DB_18093_smchdbModel.FK_LocationUploadFiles_UploadFiles" FromRole="LocationUploadFiles" ToRole="UploadFiles" />
         </EntityType>
-        <EntityType Name="MemberFeePayment">
-          <Key>
-            <PropertyRef Name="IMemberID" />
-            <PropertyRef Name="FromDate" />
-            <PropertyRef Name="ToDate" />
-          </Key>
-          <Property Name="IMemberID" Type="Guid" Nullable="false" />
-          <Property Name="FromDate" Type="DateTime" Nullable="false" />
-          <Property Name="ToDate" Type="DateTime" Nullable="false" />
-          <Property Name="PayAmount" Type="Decimal" Nullable="false" Precision="19" Scale="4" />
-          <Property Name="PayMethodID" Type="Int32" />
-          <Property Name="ReceivedDate" Type="DateTime" Nullable="false" />
-          <Property Name="Remark" Type="String" MaxLength="Max" Unicode="true" FixedLength="false" />
-          <NavigationProperty Name="MemberInfo" Relationship="DB_18093_smchdbModel.FK_MemberFeePayments_MemberInfos" FromRole="MemberFeePayments" ToRole="MemberInfos" />
-          <NavigationProperty Name="PayMethod" Relationship="DB_18093_smchdbModel.FK_MemberFeePayments_PayMethods" FromRole="MemberFeePayments" ToRole="PayMethods" />
-        </EntityType>
         <EntityType Name="MemberInfo">
           <Key>
             <PropertyRef Name="MemberID" />
@@ -2658,7 +2623,6 @@
           <Property Name="ContactNo" Type="String" MaxLength="80" Unicode="true" FixedLength="false" />
           <Property Name="DateOfInitiation" Type="DateTime" />
           <Property Name="GenderID" Type="Int32" Nullable="false" />
-          <Property Name="MemberFeeExpiredDate" Type="DateTime" />
           <Property Name="IsActive" Type="Boolean" Nullable="false" />
           <Property Name="CenterID" Type="Int32" />
           <Property Name="DateOfBirth" Type="DateTime" />
@@ -2672,12 +2636,12 @@
           <NavigationProperty Name="EventRegistrations" Relationship="DB_18093_smchdbModel.FK_EventRegistrations_MemberInfos" FromRole="MemberInfos" ToRole="EventRegistrations" />
           <NavigationProperty Name="Events" Relationship="DB_18093_smchdbModel.FK_Events_MemberInfos" FromRole="MemberInfos" ToRole="Events" />
           <NavigationProperty Name="Gender" Relationship="DB_18093_smchdbModel.FK_MemberInfos_Genders" FromRole="MemberInfos" ToRole="Genders" />
-          <NavigationProperty Name="GMVolunteerJobNames" Relationship="DB_18093_smchdbModel.FK_GMVolunteerJobNameLists_MemberInfos" FromRole="MemberInfos" ToRole="GMVolunteerJobNames" />
           <NavigationProperty Name="GroupMeditationAttendances" Relationship="DB_18093_smchdbModel.FK_GroupMeditationAttendances_MemberInfos" FromRole="MemberInfos" ToRole="GroupMeditationAttendances" />
           <NavigationProperty Name="InitiateType" Relationship="DB_18093_smchdbModel.FK_MemberInfos_InitiateTypes" FromRole="MemberInfos" ToRole="InitiateTypes" />
           <NavigationProperty Name="InternationalGMApplicationInfos" Relationship="DB_18093_smchdbModel.FK_ApplicationInternationGMInfos_MemberInfos" FromRole="MemberInfos" ToRole="InternationalGMApplicationInfos" />
-          <NavigationProperty Name="MemberFeePayments" Relationship="DB_18093_smchdbModel.FK_MemberFeePayments_MemberInfos" FromRole="MemberInfos" ToRole="MemberFeePayments" />
           <NavigationProperty Name="MemberOrders" Relationship="DB_18093_smchdbModel.FK_MemberOrders_MemberInfos" FromRole="MemberInfos" ToRole="MemberOrders" />
+          <NavigationProperty Name="MemberFeePayments" Relationship="DB_18093_smchdbModel.FK_MemberFeePayments_MemberInfos" FromRole="MemberInfo" ToRole="MemberFeePayment" />
+          <NavigationProperty Name="GMVolunteerJobNames" Relationship="DB_18093_smchdbModel.FK_GMVolunteerJobNameLists_MemberInfos" FromRole="MemberInfo" ToRole="GMVolunteerJobName" />
         </EntityType>
         <EntityType Name="MemberOrderDetail">
           <Key>
@@ -2724,7 +2688,7 @@
           </Key>
           <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="Name" Type="String" Nullable="false" MaxLength="50" Unicode="true" FixedLength="false" />
-          <NavigationProperty Name="MemberFeePayments" Relationship="DB_18093_smchdbModel.FK_MemberFeePayments_PayMethods" FromRole="PayMethods" ToRole="MemberFeePayments" />
+          <NavigationProperty Name="MemberFeePayments" Relationship="DB_18093_smchdbModel.FK_MemberFeePayments_PayMethods" FromRole="PayMethod" ToRole="MemberFeePayment" />
         </EntityType>
         <EntityType Name="ProductCategory">
           <Key>
@@ -2916,7 +2880,7 @@
           <Property Name="Name" Type="String" MaxLength="100" Unicode="true" FixedLength="false" />
           <Property Name="Remark" Type="String" MaxLength="Max" Unicode="true" FixedLength="false" />
           <NavigationProperty Name="EventVolunteerJobs" Relationship="DB_18093_smchdbModel.FK_EventVolunteerJobs_VolunteerJobTypes" FromRole="VolunteerJobTypes" ToRole="EventVolunteerJobs" />
-          <NavigationProperty Name="GMVolunteerJobNames" Relationship="DB_18093_smchdbModel.FK_GMVolunteerJobNameLists_VolunteerJobTypes" FromRole="VolunteerJobTypes" ToRole="GMVolunteerJobNames" />
+          <NavigationProperty Name="GMVolunteerJobNames" Relationship="DB_18093_smchdbModel.FK_GMVolunteerJobNameLists_VolunteerJobTypes" FromRole="VolunteerJobType" ToRole="GMVolunteerJobName" />
         </EntityType>
         <EntityType Name="YouTubeChannel">
           <Key>
@@ -3431,32 +3395,6 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_GMVolunteerJobNameLists_MemberInfos">
-          <End Role="MemberInfos" Type="DB_18093_smchdbModel.MemberInfo" Multiplicity="1">
-            <OnDelete Action="Cascade" />
-          </End>
-          <End Role="GMVolunteerJobNames" Type="DB_18093_smchdbModel.GMVolunteerJobName" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="MemberInfos">
-              <PropertyRef Name="MemberID" />
-            </Principal>
-            <Dependent Role="GMVolunteerJobNames">
-              <PropertyRef Name="MemberID" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_GMVolunteerJobNameLists_VolunteerJobTypes">
-          <End Role="VolunteerJobTypes" Type="DB_18093_smchdbModel.VolunteerJobType" Multiplicity="1" />
-          <End Role="GMVolunteerJobNames" Type="DB_18093_smchdbModel.GMVolunteerJobName" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="VolunteerJobTypes">
-              <PropertyRef Name="ID" />
-            </Principal>
-            <Dependent Role="GMVolunteerJobNames">
-              <PropertyRef Name="VolunteerJobTypeID" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="FK_GroupMeditation_InitiateTypes">
           <End Role="InitiateTypes" Type="DB_18093_smchdbModel.InitiateType" Multiplicity="1" />
           <End Role="GroupMeditation" Type="DB_18093_smchdbModel.GroupMeditation" Multiplicity="*" />
@@ -3612,32 +3550,6 @@
             </Principal>
             <Dependent Role="LocationUploadFiles">
               <PropertyRef Name="UploadFileID" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_MemberFeePayments_MemberInfos">
-          <End Role="MemberInfos" Type="DB_18093_smchdbModel.MemberInfo" Multiplicity="1">
-            <OnDelete Action="Cascade" />
-          </End>
-          <End Role="MemberFeePayments" Type="DB_18093_smchdbModel.MemberFeePayment" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="MemberInfos">
-              <PropertyRef Name="MemberID" />
-            </Principal>
-            <Dependent Role="MemberFeePayments">
-              <PropertyRef Name="IMemberID" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_MemberFeePayments_PayMethods">
-          <End Role="PayMethods" Type="DB_18093_smchdbModel.PayMethod" Multiplicity="0..1" />
-          <End Role="MemberFeePayments" Type="DB_18093_smchdbModel.MemberFeePayment" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="PayMethods">
-              <PropertyRef Name="ID" />
-            </Principal>
-            <Dependent Role="MemberFeePayments">
-              <PropertyRef Name="PayMethodID" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -3843,6 +3755,92 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <EntityType Name="MemberFeePayment">
+          <Key>
+            <PropertyRef Name="IMemberID" />
+            <PropertyRef Name="FromDate" />
+            <PropertyRef Name="ToDate" />
+          </Key>
+          <Property Type="Guid" Name="IMemberID" Nullable="false" />
+          <Property Type="DateTime" Name="FromDate" Nullable="false" />
+          <Property Type="DateTime" Name="ToDate" Nullable="false" />
+          <Property Type="Decimal" Name="PayAmount" Nullable="false" Precision="19" Scale="4" />
+          <Property Type="Int32" Name="PayMethodID" Nullable="false" />
+          <Property Type="DateTime" Name="ReceivedDate" Nullable="false" />
+          <Property Type="String" Name="Remark" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="MemberInfo" Relationship="DB_18093_smchdbModel.FK_MemberFeePayments_MemberInfos" FromRole="MemberFeePayment" ToRole="MemberInfo" />
+          <NavigationProperty Name="PayMethod" Relationship="DB_18093_smchdbModel.FK_MemberFeePayments_PayMethods" FromRole="MemberFeePayment" ToRole="PayMethod" />
+        </EntityType>
+        <Association Name="FK_MemberFeePayments_MemberInfos">
+          <End Type="DB_18093_smchdbModel.MemberInfo" Role="MemberInfo" Multiplicity="1" />
+          <End Type="DB_18093_smchdbModel.MemberFeePayment" Role="MemberFeePayment" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="MemberInfo">
+              <PropertyRef Name="MemberID" />
+            </Principal>
+            <Dependent Role="MemberFeePayment">
+              <PropertyRef Name="IMemberID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_MemberFeePayments_PayMethods">
+          <End Type="DB_18093_smchdbModel.PayMethod" Role="PayMethod" Multiplicity="1" />
+          <End Type="DB_18093_smchdbModel.MemberFeePayment" Role="MemberFeePayment" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="PayMethod">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="MemberFeePayment">
+              <PropertyRef Name="PayMethodID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="GMVolunteerJobName">
+          <Key>
+            <PropertyRef Name="MemberID" />
+            <PropertyRef Name="VolunteerJobTypeID" />
+          </Key>
+          <Property Type="Guid" Name="MemberID" Nullable="false" />
+          <Property Type="Int32" Name="VolunteerJobTypeID" Nullable="false" />
+          <Property Type="Boolean" Name="Monday" Nullable="false" />
+          <Property Type="Boolean" Name="Tuesday" Nullable="false" />
+          <Property Type="Boolean" Name="Wednesday" Nullable="false" />
+          <Property Type="Boolean" Name="WednesdayOvernight" Nullable="false" />
+          <Property Type="Boolean" Name="Thursday" Nullable="false" />
+          <Property Type="Boolean" Name="Friday" Nullable="false" />
+          <Property Type="Boolean" Name="SaturdayDay" Nullable="false" />
+          <Property Type="Boolean" Name="SaturdayEvening" Nullable="false" />
+          <Property Type="Boolean" Name="SaturdayOvernight" Nullable="false" />
+          <Property Type="Boolean" Name="Sunday" Nullable="false" />
+          <Property Type="Boolean" Name="SundayEvening" Nullable="false" />
+          <Property Type="String" Name="Availability" MaxLength="7" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="MemberInfo" Relationship="DB_18093_smchdbModel.FK_GMVolunteerJobNameLists_MemberInfos" FromRole="GMVolunteerJobName" ToRole="MemberInfo" />
+          <NavigationProperty Name="VolunteerJobType" Relationship="DB_18093_smchdbModel.FK_GMVolunteerJobNameLists_VolunteerJobTypes" FromRole="GMVolunteerJobName" ToRole="VolunteerJobType" />
+        </EntityType>
+        <Association Name="FK_GMVolunteerJobNameLists_MemberInfos">
+          <End Type="DB_18093_smchdbModel.MemberInfo" Role="MemberInfo" Multiplicity="1" />
+          <End Type="DB_18093_smchdbModel.GMVolunteerJobName" Role="GMVolunteerJobName" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="MemberInfo">
+              <PropertyRef Name="MemberID" />
+            </Principal>
+            <Dependent Role="GMVolunteerJobName">
+              <PropertyRef Name="MemberID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_GMVolunteerJobNameLists_VolunteerJobTypes">
+          <End Type="DB_18093_smchdbModel.VolunteerJobType" Role="VolunteerJobType" Multiplicity="1" />
+          <End Type="DB_18093_smchdbModel.GMVolunteerJobName" Role="GMVolunteerJobName" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="VolunteerJobType">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="GMVolunteerJobName">
+              <PropertyRef Name="VolunteerJobTypeID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -3985,20 +3983,6 @@
             <ScalarProperty Name="ID" ColumnName="ID" />
             <ScalarProperty Name="Name" ColumnName="Name" />
           </MappingFragment></EntityTypeMapping></EntitySetMapping>
-          <EntitySetMapping Name="GMVolunteerJobNames"><EntityTypeMapping TypeName="DB_18093_smchdbModel.GMVolunteerJobName"><MappingFragment StoreEntitySet="GMVolunteerJobNames">
-            <ScalarProperty Name="SaturdayEvening" ColumnName="SaturdayEvening" />
-                <ScalarProperty Name="SaturdayDay" ColumnName="SaturdayDay" />
-                <ScalarProperty Name="WednesdayOvernight" ColumnName="WednesdayOvernight" />
-                <ScalarProperty Name="MemberID" ColumnName="MemberID" />
-            <ScalarProperty Name="VolunteerJobTypeID" ColumnName="VolunteerJobTypeID" />
-            <ScalarProperty Name="Monday" ColumnName="Monday" />
-            <ScalarProperty Name="Tuesday" ColumnName="Tuesday" />
-            <ScalarProperty Name="Thursday" ColumnName="Thursday" />
-            <ScalarProperty Name="Friday" ColumnName="Friday" />
-            <ScalarProperty Name="SaturdayOvernight" ColumnName="SaturdayOvernight" />
-            <ScalarProperty Name="Sunday" ColumnName="Sunday" />
-            <ScalarProperty Name="Availability" ColumnName="Availability" />
-          </MappingFragment></EntityTypeMapping></EntitySetMapping>
           <EntitySetMapping Name="GroupMeditations"><EntityTypeMapping TypeName="DB_18093_smchdbModel.GroupMeditation"><MappingFragment StoreEntitySet="GroupMeditation">
             <ScalarProperty Name="ID" ColumnName="ID" />
             <ScalarProperty Name="StartDateTime" ColumnName="StartDateTime" />
@@ -4088,15 +4072,6 @@
             <ScalarProperty Name="UploadFileID" ColumnName="UploadFileID" />
             <ScalarProperty Name="Remark" ColumnName="Remark" />
           </MappingFragment></EntityTypeMapping></EntitySetMapping>
-          <EntitySetMapping Name="MemberFeePayments"><EntityTypeMapping TypeName="DB_18093_smchdbModel.MemberFeePayment"><MappingFragment StoreEntitySet="MemberFeePayments">
-            <ScalarProperty Name="IMemberID" ColumnName="IMemberID" />
-            <ScalarProperty Name="FromDate" ColumnName="FromDate" />
-            <ScalarProperty Name="ToDate" ColumnName="ToDate" />
-            <ScalarProperty Name="PayAmount" ColumnName="PayAmount" />
-            <ScalarProperty Name="PayMethodID" ColumnName="PayMethodID" />
-            <ScalarProperty Name="ReceivedDate" ColumnName="ReceivedDate" />
-            <ScalarProperty Name="Remark" ColumnName="Remark" />
-          </MappingFragment></EntityTypeMapping></EntitySetMapping>
           <EntitySetMapping Name="MemberInfos"><EntityTypeMapping TypeName="DB_18093_smchdbModel.MemberInfo"><MappingFragment StoreEntitySet="MemberInfos">
             <ScalarProperty Name="Name" ColumnName="Name" />
             <ScalarProperty Name="MemberID" ColumnName="MemberID" />
@@ -4106,7 +4081,6 @@
             <ScalarProperty Name="ContactNo" ColumnName="ContactNo" />
             <ScalarProperty Name="DateOfInitiation" ColumnName="DateOfInitiation" />
             <ScalarProperty Name="GenderID" ColumnName="GenderID" />
-            <ScalarProperty Name="MemberFeeExpiredDate" ColumnName="MemberFeeExpiredDate" />
             <ScalarProperty Name="IsActive" ColumnName="IsActive" />
             <ScalarProperty Name="CenterID" ColumnName="CenterID" />
             <ScalarProperty Name="DateOfBirth" ColumnName="DateOfBirth" />
@@ -4259,6 +4233,39 @@
             <ScalarProperty Name="Remark" ColumnName="Remark" />
             <ScalarProperty Name="TagTemplate" ColumnName="TagTemplate" />
           </MappingFragment></EntityTypeMapping></EntitySetMapping>
+          <EntitySetMapping Name="MemberFeePayments">
+            <EntityTypeMapping TypeName="DB_18093_smchdbModel.MemberFeePayment">
+              <MappingFragment StoreEntitySet="MemberFeePayments">
+                <ScalarProperty Name="Remark" ColumnName="Remark" />
+                <ScalarProperty Name="ReceivedDate" ColumnName="ReceivedDate" />
+                <ScalarProperty Name="PayMethodID" ColumnName="PayMethodID" />
+                <ScalarProperty Name="PayAmount" ColumnName="PayAmount" />
+                <ScalarProperty Name="ToDate" ColumnName="ToDate" />
+                <ScalarProperty Name="FromDate" ColumnName="FromDate" />
+                <ScalarProperty Name="IMemberID" ColumnName="IMemberID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="GMVolunteerJobNames">
+            <EntityTypeMapping TypeName="DB_18093_smchdbModel.GMVolunteerJobName">
+              <MappingFragment StoreEntitySet="GMVolunteerJobNames">
+                <ScalarProperty Name="Availability" ColumnName="Availability" />
+                <ScalarProperty Name="SundayEvening" ColumnName="SundayEvening" />
+                <ScalarProperty Name="Sunday" ColumnName="Sunday" />
+                <ScalarProperty Name="SaturdayOvernight" ColumnName="SaturdayOvernight" />
+                <ScalarProperty Name="SaturdayEvening" ColumnName="SaturdayEvening" />
+                <ScalarProperty Name="SaturdayDay" ColumnName="SaturdayDay" />
+                <ScalarProperty Name="Friday" ColumnName="Friday" />
+                <ScalarProperty Name="Thursday" ColumnName="Thursday" />
+                <ScalarProperty Name="WednesdayOvernight" ColumnName="WednesdayOvernight" />
+                <ScalarProperty Name="Wednesday" ColumnName="Wednesday" />
+                <ScalarProperty Name="Tuesday" ColumnName="Tuesday" />
+                <ScalarProperty Name="Monday" ColumnName="Monday" />
+                <ScalarProperty Name="VolunteerJobTypeID" ColumnName="VolunteerJobTypeID" />
+                <ScalarProperty Name="MemberID" ColumnName="MemberID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>
@@ -4279,7 +4286,7 @@
     </Options>
     <!-- Diagram content (shape and connector positions) -->
     <Diagrams>
-      <Diagram Name="SMCHDBModel">
+      <Diagram Name="SMCHDBModel" ZoomLevel="95">
         <EntityTypeShape EntityType="DB_18093_smchdbModel.AnnounceGroup" Width="1.5" PointX="11.25" PointY="19.5" Height="1.7879850260416674" IsExpanded="true" />
         <EntityTypeShape EntityType="DB_18093_smchdbModel.Announcement" Width="1.5" PointX="13.5" PointY="27.875" Height="3.1340950520833317" IsExpanded="true" />
         <EntityTypeShape EntityType="DB_18093_smchdbModel.AnnouncementUploadFile" Width="1.5" PointX="18.75" PointY="32.375" Height="1.9802864583333388" IsExpanded="true" />
@@ -4300,7 +4307,6 @@
         <EntityTypeShape EntityType="DB_18093_smchdbModel.EventVolunteerJobBooking" Width="1.5" PointX="19.5" PointY="21.375" Height="2.172587890624996" IsExpanded="true" />
         <EntityTypeShape EntityType="DB_18093_smchdbModel.EventVolunteerJob" Width="1.5" PointX="24.125" PointY="32.125" Height="2.5571907552083388" IsExpanded="true" />
         <EntityTypeShape EntityType="DB_18093_smchdbModel.Gender" Width="1.5" PointX="9" PointY="22" Height="1.7879850260416674" IsExpanded="true" />
-        <EntityTypeShape EntityType="DB_18093_smchdbModel.GMVolunteerJobName" Width="1.5" PointX="16.5" PointY="23.75" Height="3.7109993489583353" IsExpanded="true" />
         <EntityTypeShape EntityType="DB_18093_smchdbModel.GroupMeditation" Width="1.5" PointX="14.25" PointY="42" Height="2.9417936197916674" IsExpanded="true" />
         <EntityTypeShape EntityType="DB_18093_smchdbModel.GroupMeditationAttendance" Width="1.5" PointX="16.5" PointY="32.375" Height="2.1725878906250102" IsExpanded="true" />
         <EntityTypeShape EntityType="DB_18093_smchdbModel.IDCardType" Width="1.5" PointX="14.25" PointY="20.5" Height="1.7879850260416674" IsExpanded="true" />
@@ -4313,8 +4319,7 @@
         <EntityTypeShape EntityType="DB_18093_smchdbModel.LocalRetreatScheduleTemplate" Width="1.5" PointX="21.75" PointY="43" Height="2.7494921875000102" IsExpanded="true" />
         <EntityTypeShape EntityType="DB_18093_smchdbModel.Location" Width="1.5" PointX="11.25" PointY="41.375" Height="2.5571907552083388" IsExpanded="true" />
         <EntityTypeShape EntityType="DB_18093_smchdbModel.LocationUploadFile" Width="1.5" PointX="21.75" PointY="27" Height="1.9802864583333388" IsExpanded="true" />
-        <EntityTypeShape EntityType="DB_18093_smchdbModel.MemberFeePayment" Width="1.5" PointX="19.5" PointY="28" Height="2.7494921875000102" IsExpanded="true" />
-        <EntityTypeShape EntityType="DB_18093_smchdbModel.MemberInfo" Width="1.5" PointX="11.25" PointY="26.25" Height="6.4032194010416674" IsExpanded="true" />
+        <EntityTypeShape EntityType="DB_18093_smchdbModel.MemberInfo" Width="1.5" PointX="11.25" PointY="26.25" Height="6.2109179687500031" IsExpanded="true" />
         <EntityTypeShape EntityType="DB_18093_smchdbModel.MemberOrderDetail" Width="1.5" PointX="21.75" PointY="37" Height="1.9802864583333388" IsExpanded="true" />
         <EntityTypeShape EntityType="DB_18093_smchdbModel.MemberOrder" Width="1.5" PointX="16.5" PointY="35.5" Height="3.7109993489583388" IsExpanded="true" />
         <EntityTypeShape EntityType="DB_18093_smchdbModel.OrderStatus" Width="1.5" PointX="14.25" PointY="45.875" Height="1.7879850260416674" IsExpanded="true" />
@@ -4344,18 +4349,16 @@
           <ConnectorPoint PointX="15" PointY="30.910543619791671" />
           <ConnectorPoint PointX="15.291666666666666" PointY="30.910543619791671" />
           <ConnectorPoint PointX="15.458333333333334" PointY="30.910543619791671" />
-          <ConnectorPoint PointX="18.291666666666668" PointY="30.910543619791671" />
+          <ConnectorPoint PointX="18.229166666666668" PointY="30.910543619791671" />
           <ConnectorPoint PointX="18.552083333333332" PointY="30.910543619791671" />
           <ConnectorPoint PointX="19.09375" PointY="30.910543619791671" />
           <ConnectorPoint PointX="19.09375" PointY="32.375" />
         </AssociationConnector>
         <AssociationConnector Association="DB_18093_smchdbModel.FK_Announcements_MemberInfos" ManuallyRouted="false">
-          <ConnectorPoint PointX="12.75" PointY="28.596023763020831" />
-          <ConnectorPoint PointX="12.790905524711297" PointY="28.596023763020831" />
-          <ConnectorPoint PointX="12.957572191377965" PointY="28.596023763020831" />
-          <ConnectorPoint PointX="13.041666666666666" PointY="28.596023763020831" />
-          <ConnectorPoint PointX="13.343749999999998" PointY="28.596023763020831" />
-          <ConnectorPoint PointX="13.5" PointY="28.596023763020831" />
+          <ConnectorPoint PointX="12.75" PointY="30.244047852907283" />
+          <ConnectorPoint PointX="13.041666666666666" PointY="30.244047852907283" />
+          <ConnectorPoint PointX="13.333333333333334" PointY="30.244047852907283" />
+          <ConnectorPoint PointX="13.5" PointY="30.244047852907283" />
         </AssociationConnector>
         <AssociationConnector Association="DB_18093_smchdbModel.FK_AnnouncementUploadFiles_UploadFiles" ManuallyRouted="false">
           <ConnectorPoint PointX="18" PointY="22.885254158253204" />
@@ -4383,8 +4386,8 @@
           <ConnectorPoint PointX="8" PointY="35.591095377604169" />
           <ConnectorPoint PointX="8.9166666666666661" PointY="35.591095377604169" />
           <ConnectorPoint PointX="9.0833333333333339" PointY="35.591095377604169" />
-          <ConnectorPoint PointX="10.822916666666666" PointY="35.591095377604169" />
-          <ConnectorPoint PointX="11.208333333333334" PointY="35.591095377604169" />
+          <ConnectorPoint PointX="10.666666666666666" PointY="35.591095377604169" />
+          <ConnectorPoint PointX="11.020833333333334" PointY="35.591095377604169" />
           <ConnectorPoint PointX="11.25" PointY="35.591095377604169" />
         </AssociationConnector>
         <AssociationConnector Association="DB_18093_smchdbModel.FK_AshramInfos_Countries" ManuallyRouted="false">
@@ -4406,47 +4409,47 @@
           <ConnectorPoint PointX="3.75" PointY="32.460999348958353" />
           <ConnectorPoint PointX="7.072916666666667" PointY="32.460999348958353" />
           <ConnectorPoint PointX="7.239583333333333" PointY="32.460999348958353" />
-          <ConnectorPoint PointX="10.875" PointY="32.460999348958353" />
-          <ConnectorPoint PointX="10.875" PointY="29.451609700520834" />
-          <ConnectorPoint PointX="10.916666666666666" PointY="29.451609700520834" />
-          <ConnectorPoint PointX="11.208333333333334" PointY="29.451609700520834" />
-          <ConnectorPoint PointX="11.25" PointY="29.451609700520834" />
+          <ConnectorPoint PointX="10.666666666666666" PointY="32.460999348958353" />
+          <ConnectorPoint PointX="11.020833333333334" PointY="32.460999348958353" />
+          <ConnectorPoint PointX="11.125" PointY="32.460999348958353" />
+          <ConnectorPoint PointX="11.125" PointY="31.452096322027067" />
+          <ConnectorPoint PointX="11.25" PointY="31.452096322027067" />
         </AssociationConnector>
         <AssociationConnector Association="DB_18093_smchdbModel.FK_GroupMeditation_aspnet_Users_Aodio" ManuallyRouted="false">
-          <ConnectorPoint PointX="10.5" PointY="26.720896809895834" />
-          <ConnectorPoint PointX="11" PointY="26.720896809895834" />
-          <ConnectorPoint PointX="11" PointY="38.125" />
-          <ConnectorPoint PointX="13.256205398794073" PointY="38.125" />
-          <ConnectorPoint PointX="13.583333333333336" PointY="38.125" />
-          <ConnectorPoint PointX="15.25" PointY="38.125" />
-          <ConnectorPoint PointX="15.25" PointY="41.625" />
-          <ConnectorPoint PointX="15" PointY="41.625" />
-          <ConnectorPoint PointX="15" PointY="42" />
+          <ConnectorPoint PointX="9.75" PointY="28.191793619791667" />
+          <ConnectorPoint PointX="9.75" PointY="29.125" />
+          <ConnectorPoint PointX="10.072918666666666" PointY="29.125" />
+          <ConnectorPoint PointX="10.239585333333334" PointY="29.125" />
+          <ConnectorPoint PointX="10.8125" PointY="29.125" />
+          <ConnectorPoint PointX="10.8125" PointY="44.182190755208339" />
+          <ConnectorPoint PointX="13.100592231765546" PointY="44.182190755208339" />
+          <ConnectorPoint PointX="13.267258898432214" PointY="44.182190755208339" />
+          <ConnectorPoint PointX="13.416666666666666" PointY="44.182190755208339" />
+          <ConnectorPoint PointX="13.583333333333334" PointY="44.182190755208339" />
+          <ConnectorPoint PointX="13.625" PointY="44.182190755208339" />
+          <ConnectorPoint PointX="13.625" PointY="43.470896809895834" />
+          <ConnectorPoint PointX="13.760416666666666" PointY="43.470896809895834" />
+          <ConnectorPoint PointX="13.927083333333334" PointY="43.470896809895834" />
+          <ConnectorPoint PointX="14.25" PointY="43.470896809895834" />
         </AssociationConnector>
         <AssociationConnector Association="DB_18093_smchdbModel.FK_GroupMeditation_aspnet_Users_DP" ManuallyRouted="false">
-          <ConnectorPoint PointX="10.5" PointY="27.487597214843753" />
-          <ConnectorPoint PointX="10.854166666666666" PointY="27.487597214843753" />
-          <ConnectorPoint PointX="11.083333333333334" PointY="27.487597214843753" />
-          <ConnectorPoint PointX="11.125" PointY="27.487597214843753" />
-          <ConnectorPoint PointX="11.125" PointY="37.875" />
-          <ConnectorPoint PointX="13.097603914663461" PointY="37.875" />
-          <ConnectorPoint PointX="13.29106586384207" PointY="37.875" />
-          <ConnectorPoint PointX="13.416666666666666" PointY="37.875" />
-          <ConnectorPoint PointX="13.583333333333334" PointY="37.875" />
-          <ConnectorPoint PointX="14.166666666666666" PointY="37.875" />
-          <ConnectorPoint PointX="14.333333333333334" PointY="37.875" />
-          <ConnectorPoint PointX="15.458333333333334" PointY="37.875" />
-          <ConnectorPoint PointX="15.458333333333334" PointY="41.375" />
-          <ConnectorPoint PointX="15.458333333333334" PointY="41.375" />
-          <ConnectorPoint PointX="15.166666666666666" PointY="41.375" />
-          <ConnectorPoint PointX="14.593748" PointY="41.375" />
-          <ConnectorPoint PointX="14.593748" PointY="42" />
+          <ConnectorPoint PointX="10.156252" PointY="28.191793619791667" />
+          <ConnectorPoint PointX="10.156252" PointY="29.375" />
+          <ConnectorPoint PointX="10.75" PointY="29.375" />
+          <ConnectorPoint PointX="10.75" PointY="44.307190755208339" />
+          <ConnectorPoint PointX="13.100592231765546" PointY="44.307190755208339" />
+          <ConnectorPoint PointX="13.267258898432214" PointY="44.307190755208339" />
+          <ConnectorPoint PointX="13.5" PointY="44.307190755208339" />
+          <ConnectorPoint PointX="13.5" PointY="42.704196404947922" />
+          <ConnectorPoint PointX="13.760416666666666" PointY="42.704196404947922" />
+          <ConnectorPoint PointX="13.927083333333334" PointY="42.704196404947922" />
+          <ConnectorPoint PointX="14.25" PointY="42.704196404947922" />
         </AssociationConnector>
         <AssociationConnector Association="DB_18093_smchdbModel.FK_MemberInfos_aspnet_Users" ManuallyRouted="false">
-          <ConnectorPoint PointX="10.5" PointY="27.90219541731771" />
-          <ConnectorPoint PointX="10.854166666666666" PointY="27.90219541731771" />
-          <ConnectorPoint PointX="11.208333333333334" PointY="27.90219541731771" />
-          <ConnectorPoint PointX="11.25" PointY="27.90219541731771" />
+          <ConnectorPoint PointX="10.5" PointY="27.220896809895834" />
+          <ConnectorPoint PointX="10.791666666666666" PointY="27.220896809895834" />
+          <ConnectorPoint PointX="10.958333333333334" PointY="27.220896809895834" />
+          <ConnectorPoint PointX="11.25" PointY="27.220896809895834" />
         </AssociationConnector>
         <AssociationConnector Association="DB_18093_smchdbModel.FK_BlackListMembers_IDCardTypes" ManuallyRouted="false">
           <ConnectorPoint PointX="15.75" PointY="22.287985026041667" />
@@ -4455,18 +4458,16 @@
           <ConnectorPoint PointX="16.5" PointY="29.403595377604166" />
         </AssociationConnector>
         <AssociationConnector Association="DB_18093_smchdbModel.FK_MemberInfos_BlockListMembers" ManuallyRouted="false">
-          <ConnectorPoint PointX="12.75" PointY="31.453792469401037" />
-          <ConnectorPoint PointX="13.041666666666666" PointY="31.453792469401037" />
-          <ConnectorPoint PointX="13.208333333333334" PointY="31.453792469401037" />
-          <ConnectorPoint PointX="13.260416666666666" PointY="31.453792469401037" />
-          <ConnectorPoint PointX="13.260416666666666" PointY="27.773499348958339" />
-          <ConnectorPoint PointX="13.572916666666666" PointY="27.773499348958339" />
-          <ConnectorPoint PointX="13.739583333333334" PointY="27.773499348958339" />
-          <ConnectorPoint PointX="15.291666666666666" PointY="27.773499348958339" />
-          <ConnectorPoint PointX="15.458333333333334" PointY="27.773499348958339" />
-          <ConnectorPoint PointX="16.041666666666668" PointY="27.773499348958339" />
-          <ConnectorPoint PointX="16.208333333333332" PointY="27.773499348958339" />
-          <ConnectorPoint PointX="17.25" PointY="27.773499348958339" />
+          <ConnectorPoint PointX="12.75" PointY="27.564646809895834" />
+          <ConnectorPoint PointX="13.041666666666666" PointY="27.564646809895834" />
+          <ConnectorPoint PointX="13.208333333333334" PointY="27.564646809895834" />
+          <ConnectorPoint PointX="13.572916666666666" PointY="27.564646809895834" />
+          <ConnectorPoint PointX="13.739583333333334" PointY="27.564646809895834" />
+          <ConnectorPoint PointX="15.291666666666666" PointY="27.564646809895834" />
+          <ConnectorPoint PointX="15.458333333333334" PointY="27.564646809895834" />
+          <ConnectorPoint PointX="16.041666666666668" PointY="27.564646809895834" />
+          <ConnectorPoint PointX="16.208333333333332" PointY="27.564646809895834" />
+          <ConnectorPoint PointX="17.25" PointY="27.564646809895834" />
           <ConnectorPoint PointX="17.25" PointY="28.125" />
         </AssociationConnector>
         <AssociationConnector Association="DB_18093_smchdbModel.FK_MemberOrders_Currencies" ManuallyRouted="false">
@@ -4474,32 +4475,32 @@
           <ConnectorPoint PointX="1.5" PointY="37.355499674479169" />
           <ConnectorPoint PointX="2.583333333333333" PointY="37.355499674479169" />
           <ConnectorPoint PointX="2.75" PointY="37.355499674479169" />
-          <ConnectorPoint PointX="2.75" PointY="37.355499674479169" />
-          <ConnectorPoint PointX="2.75" PointY="38.25" />
+          <ConnectorPoint PointX="2.875" PointY="37.355499674479169" />
+          <ConnectorPoint PointX="2.875" PointY="38.25" />
           <ConnectorPoint PointX="3.2604141666666666" PointY="38.25" />
           <ConnectorPoint PointX="3.4270808333333336" PointY="38.25" />
           <ConnectorPoint PointX="4.0729191666666669" PointY="38.25" />
           <ConnectorPoint PointX="4.2395858333333329" PointY="38.25" />
           <ConnectorPoint PointX="7.072916666666667" PointY="38.25" />
           <ConnectorPoint PointX="7.239583333333333" PointY="38.25" />
-          <ConnectorPoint PointX="10.833333333333332" PointY="38.25" />
-          <ConnectorPoint PointX="11" PointY="38.25" />
+          <ConnectorPoint PointX="10.666666666666666" PointY="38.25" />
+          <ConnectorPoint PointX="11.020833333333334" PointY="38.25" />
           <ConnectorPoint PointX="13.256205398794073" PointY="38.25" />
           <ConnectorPoint PointX="13.583333333333336" PointY="38.25" />
-          <ConnectorPoint PointX="15.166666666666666" PointY="38.25" />
-          <ConnectorPoint PointX="15.333333333333334" PointY="38.25" />
-          <ConnectorPoint PointX="15.375" PointY="38.25" />
-          <ConnectorPoint PointX="15.541666666666668" PointY="38.25" />
-          <ConnectorPoint PointX="16.125" PointY="38.25" />
-          <ConnectorPoint PointX="16.125" PointY="37.355499674479169" />
-          <ConnectorPoint PointX="16.5" PointY="37.355499674479169" />
+          <ConnectorPoint PointX="15.489583333333334" PointY="38.25" />
+          <ConnectorPoint PointX="15.656250000000002" PointY="38.25" />
+          <ConnectorPoint PointX="16" PointY="38.25" />
+          <ConnectorPoint PointX="16" PointY="36.651322114583337" />
+          <ConnectorPoint PointX="16.104166666666668" PointY="36.651322114583337" />
+          <ConnectorPoint PointX="16.270833333333332" PointY="36.651322114583337" />
+          <ConnectorPoint PointX="16.5" PointY="36.651322114583337" />
         </AssociationConnector>
         <AssociationConnector Association="DB_18093_smchdbModel.FK_Products_Currencies" ManuallyRouted="false">
           <ConnectorPoint PointX="2.25" PointY="36.546433044471151" />
-          <ConnectorPoint PointX="2.625" PointY="36.921433044471151" />
-          <ConnectorPoint PointX="2.625" PointY="37.912903645833325" />
+          <ConnectorPoint PointX="2.6666666666666665" PointY="36.921433044471151" />
           <ConnectorPoint PointX="2.6666666666666665" PointY="37.912903645833325" />
-          <ConnectorPoint PointX="2.8333333333333335" PointY="37.912903645833325" />
+          <ConnectorPoint PointX="2.7916666666666665" PointY="37.912903645833325" />
+          <ConnectorPoint PointX="2.9583333333333335" PointY="37.912903645833325" />
           <ConnectorPoint PointX="3.2604141666666666" PointY="37.912903645833325" />
           <ConnectorPoint PointX="3.4270808333333336" PointY="37.912903645833325" />
           <ConnectorPoint PointX="4.0729191666666669" PointY="37.912903645833325" />
@@ -4532,20 +4533,15 @@
           <ConnectorPoint PointX="21.75" PointY="43.5862939453125" />
         </AssociationConnector>
         <AssociationConnector Association="DB_18093_smchdbModel.FK_EventMealBookings_EventRegistrations" ManuallyRouted="false">
-          <ConnectorPoint PointX="14.625" PointY="24" />
-          <ConnectorPoint PointX="14.625" PointY="23.5" />
-          <ConnectorPoint PointX="16.041666666666668" PointY="23.5" />
-          <ConnectorPoint PointX="16.208333333333332" PointY="23.5" />
-          <ConnectorPoint PointX="18.25" PointY="23.5" />
-          <ConnectorPoint PointX="18.25" PointY="25.365143229166669" />
+          <ConnectorPoint PointX="15.375" PointY="25.365143229166669" />
+          <ConnectorPoint PointX="16.041666666666668" PointY="25.365143229166669" />
+          <ConnectorPoint PointX="16.208333333333332" PointY="25.365143229166669" />
           <ConnectorPoint PointX="18.291666666666668" PointY="25.365143229166669" />
-          <ConnectorPoint PointX="18.661458333333332" PointY="25.365143229166669" />
+          <ConnectorPoint PointX="18.552083333333332" PointY="25.365143229166669" />
           <ConnectorPoint PointX="18.75" PointY="25.365143229166669" />
         </AssociationConnector>
         <AssociationConnector Association="DB_18093_smchdbModel.FK_EventMealBookings_EventSchedules" ManuallyRouted="false">
           <ConnectorPoint PointX="21.75" PointY="33" />
-          <ConnectorPoint PointX="21.558925565098878" PointY="32.808925565098882" />
-          <ConnectorPoint PointX="21.441074434901122" PointY="32.691074434901118" />
           <ConnectorPoint PointX="21.375" PointY="32.625" />
           <ConnectorPoint PointX="21.375" PointY="25.365143229166669" />
           <ConnectorPoint PointX="20.25" PointY="25.365143229166669" />
@@ -4554,7 +4550,7 @@
           <ConnectorPoint PointX="15" PointY="35.40625" />
           <ConnectorPoint PointX="16.104166666666668" PointY="35.40625" />
           <ConnectorPoint PointX="16.270833333333332" PointY="35.40625" />
-          <ConnectorPoint PointX="18.291666666666668" PointY="35.40625" />
+          <ConnectorPoint PointX="18.229166666666668" PointY="35.40625" />
           <ConnectorPoint PointX="18.458333333333332" PointY="35.40625" />
           <ConnectorPoint PointX="18.75" PointY="35.40625" />
         </AssociationConnector>
@@ -4580,52 +4576,50 @@
           <ConnectorPoint PointX="16.208333333333332" PointY="23.252146809895834" />
           <ConnectorPoint PointX="18.202789087540065" PointY="23.252146809895834" />
           <ConnectorPoint PointX="18.450225984975962" PointY="23.252146809895834" />
-          <ConnectorPoint PointX="18.494791666666668" PointY="23.252146809895834" />
-          <ConnectorPoint PointX="18.661458333333332" PointY="23.252146809895834" />
+          <ConnectorPoint PointX="18.463541666666668" PointY="23.252146809895834" />
+          <ConnectorPoint PointX="18.630208333333332" PointY="23.252146809895834" />
           <ConnectorPoint PointX="19.5" PointY="23.252146809895834" />
         </AssociationConnector>
         <AssociationConnector Association="DB_18093_smchdbModel.FK_Events_EventTypes" ManuallyRouted="false">
           <ConnectorPoint PointX="12.75" PointY="24.662985026041667" />
           <ConnectorPoint PointX="13.125" PointY="25.037985026041667" />
-          <ConnectorPoint PointX="13.125" PointY="34.461253255208334" />
-          <ConnectorPoint PointX="13.5" PointY="34.461253255208334" />
+          <ConnectorPoint PointX="13.125" PointY="34.576484747395831" />
+          <ConnectorPoint PointX="13.5" PointY="34.576484747395831" />
         </AssociationConnector>
         <AssociationConnector Association="DB_18093_smchdbModel.FK_Events_Locations" ManuallyRouted="false">
-          <ConnectorPoint PointX="12.75" PointY="42.635078525641028" />
-          <ConnectorPoint PointX="13.149181791755867" PointY="41.764820424938456" />
-          <ConnectorPoint PointX="13.218669338441893" PointY="41.613330297757393" />
+          <ConnectorPoint PointX="12.75" PointY="43.060966120793275" />
+          <ConnectorPoint PointX="13.155428259047207" PointY="41.946867579048615" />
+          <ConnectorPoint PointX="13.212422871150551" PointY="41.790248959564956" />
           <ConnectorPoint PointX="13.5" PointY="41" />
           <ConnectorPoint PointX="13.5" PointY="36.797506510416667" />
         </AssociationConnector>
         <AssociationConnector Association="DB_18093_smchdbModel.FK_Events_MemberInfos" ManuallyRouted="false">
-          <ConnectorPoint PointX="12.75" PointY="32.389109700520834" />
-          <ConnectorPoint PointX="13.041666666666666" PointY="32.389109700520834" />
-          <ConnectorPoint PointX="13.208333333333334" PointY="32.389109700520834" />
-          <ConnectorPoint PointX="13.5" PointY="32.389109700520834" />
+          <ConnectorPoint PointX="12.75" PointY="32.209463115490578" />
+          <ConnectorPoint PointX="13.041666666666666" PointY="32.209463115490578" />
+          <ConnectorPoint PointX="13.208333333333334" PointY="32.209463115490578" />
+          <ConnectorPoint PointX="13.5" PointY="32.209463115490578" />
         </AssociationConnector>
         <AssociationConnector Association="DB_18093_smchdbModel.FK_EventSchedules_Events" ManuallyRouted="false">
           <ConnectorPoint PointX="15" PointY="35.135696614583338" />
           <ConnectorPoint PointX="16.104166666666668" PointY="35.135696614583338" />
           <ConnectorPoint PointX="16.270833333333332" PointY="35.135696614583338" />
-          <ConnectorPoint PointX="18.291666666666668" PointY="35.135696614583338" />
+          <ConnectorPoint PointX="18.229166666666668" PointY="35.135696614583338" />
           <ConnectorPoint PointX="18.458333333333332" PointY="35.135696614583338" />
           <ConnectorPoint PointX="20.760419416666668" PointY="35.135696614583338" />
           <ConnectorPoint PointX="20.927086083333332" PointY="35.135696614583338" />
           <ConnectorPoint PointX="21.333333333333336" PointY="35.135696614583338" />
-          <ConnectorPoint PointX="21.583333333333336" PointY="35.135696614583338" />
+          <ConnectorPoint PointX="21.5" PointY="35.135696614583338" />
           <ConnectorPoint PointX="21.75" PointY="35.135696614583338" />
         </AssociationConnector>
         <AssociationConnector Association="DB_18093_smchdbModel.FK_EventUploadFiles_Events" ManuallyRouted="false">
           <ConnectorPoint PointX="14.25" PointY="36.797506510416667" />
           <ConnectorPoint PointX="14.25" PointY="38" />
-          <ConnectorPoint PointX="15.375" PointY="38" />
-          <ConnectorPoint PointX="15.541666666666668" PointY="38" />
-          <ConnectorPoint PointX="15.822916666666668" PointY="38" />
-          <ConnectorPoint PointX="15.822916666666668" PointY="39.667999674479169" />
-          <ConnectorPoint PointX="16.072916666666668" PointY="39.667999674479169" />
+          <ConnectorPoint PointX="15.572916666666668" PointY="38" />
+          <ConnectorPoint PointX="15.572916666666668" PointY="39.667999674479169" />
+          <ConnectorPoint PointX="16.104166666666668" PointY="39.667999674479169" />
           <ConnectorPoint PointX="16.380208333333332" PointY="39.667999674479169" />
-          <ConnectorPoint PointX="18.354166666666668" PointY="39.667999674479169" />
-          <ConnectorPoint PointX="18.520833333333332" PointY="39.667999674479169" />
+          <ConnectorPoint PointX="18.229166666666668" PointY="39.667999674479169" />
+          <ConnectorPoint PointX="18.395833333333332" PointY="39.667999674479169" />
           <ConnectorPoint PointX="18.75" PointY="39.667999674479169" />
         </AssociationConnector>
         <AssociationConnector Association="DB_18093_smchdbModel.FK_EventSchedules_EventScheduleOffsets" ManuallyRouted="false">
@@ -4649,16 +4643,20 @@
           <ConnectorPoint PointX="18.75" PointY="38.918000174479168" />
         </AssociationConnector>
         <AssociationConnector Association="DB_18093_smchdbModel.FK_EventVolunteerJobBookings_EventVolunteerJobs" ManuallyRouted="false">
-          <ConnectorPoint PointX="24.875" PointY="32.125" />
-          <ConnectorPoint PointX="24.875" PointY="22.461293945312498" />
-          <ConnectorPoint PointX="22.583333333333332" PointY="22.461293945312498" />
-          <ConnectorPoint PointX="22.416666666666668" PointY="22.461293945312498" />
-          <ConnectorPoint PointX="21" PointY="22.461293945312498" />
+          <ConnectorPoint PointX="25.59375" PointY="32.125" />
+          <ConnectorPoint PointX="25.59375" PointY="22.34375" />
+          <ConnectorPoint PointX="22.177083333333332" PointY="22.34375" />
+          <ConnectorPoint PointX="22.010416666666668" PointY="22.34375" />
+          <ConnectorPoint PointX="21" PointY="22.34375" />
         </AssociationConnector>
         <AssociationConnector Association="DB_18093_smchdbModel.FK_EventVolunteerJobs_VolunteerJobTypes" ManuallyRouted="false">
-          <ConnectorPoint PointX="23.25" PointY="30.740143229166662" />
-          <ConnectorPoint PointX="24.4687475" PointY="30.740143229166662" />
-          <ConnectorPoint PointX="24.4687475" PointY="32.125" />
+          <ConnectorPoint PointX="23.25" PointY="31.569194335937503" />
+          <ConnectorPoint PointX="23.541666666666668" PointY="31.569194335937503" />
+          <ConnectorPoint PointX="23.708333333333332" PointY="31.569194335937503" />
+          <ConnectorPoint PointX="23.947916666666668" PointY="31.569194335937503" />
+          <ConnectorPoint PointX="24.114583333333332" PointY="31.569194335937503" />
+          <ConnectorPoint PointX="25.578125" PointY="31.569194335937503" />
+          <ConnectorPoint PointX="25.578125" PointY="32.125" />
         </AssociationConnector>
         <AssociationConnector Association="DB_18093_smchdbModel.FK_InitiateVisitors_Genders" ManuallyRouted="false">
           <ConnectorPoint PointX="9.75" PointY="22" />
@@ -4666,46 +4664,21 @@
           <ConnectorPoint PointX="11.25" PointY="16.845896809895834" />
         </AssociationConnector>
         <AssociationConnector Association="DB_18093_smchdbModel.FK_MemberInfos_Genders" ManuallyRouted="false">
-          <ConnectorPoint PointX="10.5" PointY="23.725676333733976" />
-          <ConnectorPoint PointX="10.9375" PointY="24.163176333733976" />
-          <ConnectorPoint PointX="10.9375" PointY="30.987557024739587" />
-          <ConnectorPoint PointX="11.041666666666666" PointY="30.987557024739587" />
-          <ConnectorPoint PointX="11.208333333333334" PointY="30.987557024739587" />
-          <ConnectorPoint PointX="11.25" PointY="30.987557024739587" />
-        </AssociationConnector>
-        <AssociationConnector Association="DB_18093_smchdbModel.FK_GMVolunteerJobNameLists_MemberInfos" ManuallyRouted="false">
-          <ConnectorPoint PointX="12.75" PointY="27.098043619791667" />
-          <ConnectorPoint PointX="13.041666666666666" PointY="27.098043619791667" />
-          <ConnectorPoint PointX="13.208333333333334" PointY="27.098043619791667" />
-          <ConnectorPoint PointX="13.572916666666666" PointY="27.098043619791667" />
-          <ConnectorPoint PointX="13.739583333333334" PointY="27.098043619791667" />
-          <ConnectorPoint PointX="15.447916666666666" PointY="27.098043619791667" />
-          <ConnectorPoint PointX="15.614583333333334" PointY="27.098043619791667" />
-          <ConnectorPoint PointX="16.041666666666668" PointY="27.098043619791667" />
-          <ConnectorPoint PointX="16.208333333333332" PointY="27.098043619791667" />
-          <ConnectorPoint PointX="16.5" PointY="27.098043619791667" />
-        </AssociationConnector>
-        <AssociationConnector Association="DB_18093_smchdbModel.FK_GMVolunteerJobNameLists_VolunteerJobTypes" ManuallyRouted="false">
-          <ConnectorPoint PointX="21.75" PointY="30.740143229166662" />
-          <ConnectorPoint PointX="21.583333333333332" PointY="30.740143229166662" />
-          <ConnectorPoint PointX="21.291666666666668" PointY="30.740143229166662" />
-          <ConnectorPoint PointX="21.25" PointY="30.740143229166662" />
-          <ConnectorPoint PointX="21.25" PointY="27.5625" />
-          <ConnectorPoint PointX="18.661458333333332" PointY="27.5625" />
-          <ConnectorPoint PointX="18.291666666666668" PointY="27.5625" />
-          <ConnectorPoint PointX="17.25" PointY="27.5625" />
-          <ConnectorPoint PointX="17.25" PointY="27.460999348958335" />
+          <ConnectorPoint PointX="10.5" PointY="23.787985026041667" />
+          <ConnectorPoint PointX="10.875" PointY="24.162985026041667" />
+          <ConnectorPoint PointX="10.875" PointY="30.086531898137281" />
+          <ConnectorPoint PointX="11.25" PointY="30.086531898137281" />
         </AssociationConnector>
         <AssociationConnector Association="DB_18093_smchdbModel.FK_GroupMeditation_InitiateTypes" ManuallyRouted="false">
           <ConnectorPoint PointX="10.5" PointY="40.961293945312505" />
+          <ConnectorPoint PointX="10.729166666666666" PointY="40.961293945312505" />
+          <ConnectorPoint PointX="10.895833333333334" PointY="40.961293945312505" />
           <ConnectorPoint PointX="10.916666666666666" PointY="40.961293945312505" />
-          <ConnectorPoint PointX="11.083333333333334" PointY="40.961293945312505" />
+          <ConnectorPoint PointX="11.114583333333334" PointY="40.961293945312505" />
           <ConnectorPoint PointX="13.100592231765546" PointY="40.961293945312505" />
-          <ConnectorPoint PointX="13.364583333333336" PointY="40.961293945312505" />
+          <ConnectorPoint PointX="13.422872065460741" PointY="40.961293945312505" />
           <ConnectorPoint PointX="13.760416666666666" PointY="40.961293945312505" />
           <ConnectorPoint PointX="13.927083333333334" PointY="40.961293945312505" />
-          <ConnectorPoint PointX="15.166666666666666" PointY="40.961293945312505" />
-          <ConnectorPoint PointX="15.333333333333334" PointY="40.961293945312505" />
           <ConnectorPoint PointX="15.375" PointY="40.961293945312505" />
           <ConnectorPoint PointX="15.375" PointY="42" />
         </AssociationConnector>
@@ -4718,28 +4691,26 @@
           <ConnectorPoint PointX="16.5" PointY="33.461293945312505" />
         </AssociationConnector>
         <AssociationConnector Association="DB_18093_smchdbModel.FK_GroupMeditationAttendances_MemberInfos" ManuallyRouted="false">
-          <ConnectorPoint PointX="12.75" PointY="30.191861537760413" />
-          <ConnectorPoint PointX="13" PointY="30.191861537760413" />
-          <ConnectorPoint PointX="13" PointY="31.509095052083332" />
-          <ConnectorPoint PointX="13.041666666666666" PointY="31.509095052083332" />
-          <ConnectorPoint PointX="13.208333333333334" PointY="31.509095052083332" />
-          <ConnectorPoint PointX="13.317827429446503" PointY="31.509095052083332" />
-          <ConnectorPoint PointX="13.484494096113171" PointY="31.509095052083332" />
-          <ConnectorPoint PointX="15.291666666666666" PointY="31.509095052083332" />
-          <ConnectorPoint PointX="15.458333333333334" PointY="31.509095052083332" />
-          <ConnectorPoint PointX="17.25" PointY="31.509095052083332" />
+          <ConnectorPoint PointX="12.75" PointY="28.90434733140156" />
+          <ConnectorPoint PointX="13.041666666666666" PointY="28.90434733140156" />
+          <ConnectorPoint PointX="13.208333333333334" PointY="28.90434733140156" />
+          <ConnectorPoint PointX="13.25" PointY="28.90434733140156" />
+          <ConnectorPoint PointX="13.25" PointY="31.259095052083332" />
+          <ConnectorPoint PointX="15.291666666666666" PointY="31.259095052083332" />
+          <ConnectorPoint PointX="15.458333333333334" PointY="31.259095052083332" />
+          <ConnectorPoint PointX="17.25" PointY="31.259095052083332" />
           <ConnectorPoint PointX="17.25" PointY="32.375" />
         </AssociationConnector>
         <AssociationConnector Association="DB_18093_smchdbModel.FK_MemberInfos_InitiateTypes" ManuallyRouted="false">
-          <ConnectorPoint PointX="10.5" PointY="39.531152846153844" />
-          <ConnectorPoint PointX="10.90625" PointY="39.124902846153844" />
-          <ConnectorPoint PointX="10.90625" PointY="28.676902558919274" />
-          <ConnectorPoint PointX="10.916666666666666" PointY="28.676902558919274" />
-          <ConnectorPoint PointX="11.208333333333334" PointY="28.676902558919274" />
-          <ConnectorPoint PointX="11.25" PointY="28.676902558919274" />
+          <ConnectorPoint PointX="10.5" PointY="39.562306692307693" />
+          <ConnectorPoint PointX="10.69107443490112" PointY="39.371232257406575" />
+          <ConnectorPoint PointX="10.871425565098878" PointY="39.190881127208812" />
+          <ConnectorPoint PointX="10.9375" PointY="39.124806692307693" />
+          <ConnectorPoint PointX="10.9375" PointY="28.653714354016557" />
+          <ConnectorPoint PointX="11.25" PointY="28.653714354016557" />
         </AssociationConnector>
         <AssociationConnector Association="DB_18093_smchdbModel.FK_ApplicationInternationGMInfos_MemberInfos" ManuallyRouted="false">
-          <ConnectorPoint PointX="12" PointY="32.653219401041667" />
+          <ConnectorPoint PointX="12" PointY="32.46091796875" />
           <ConnectorPoint PointX="12" PointY="33.375" />
         </AssociationConnector>
         <AssociationConnector Association="DB_18093_smchdbModel.FK_InternationalGMApplicationInfos_InternationalGMApplicationInfos" ManuallyRouted="false">
@@ -4760,12 +4731,12 @@
           <ConnectorPoint PointX="12.998628494379421" PointY="37.686570447979165" />
           <ConnectorPoint PointX="13.339538732127407" PointY="37.993774290464749" />
           <ConnectorPoint PointX="13.339538732127407" PointY="41.168146972656253" />
-          <ConnectorPoint PointX="13.339538732127407" PointY="41.168146972656253" />
-          <ConnectorPoint PointX="13.506205398794075" PointY="41.168146972656253" />
+          <ConnectorPoint PointX="13.355476806134826" PointY="41.168146972656253" />
+          <ConnectorPoint PointX="13.522143472801494" PointY="41.168146972656253" />
           <ConnectorPoint PointX="13.760416666666666" PointY="41.168146972656253" />
           <ConnectorPoint PointX="13.927083333333334" PointY="41.168146972656253" />
-          <ConnectorPoint PointX="15.166666666666666" PointY="41.168146972656253" />
-          <ConnectorPoint PointX="15.54166666666667" PointY="41.168146972656253" />
+          <ConnectorPoint PointX="15.291666666666666" PointY="41.168146972656253" />
+          <ConnectorPoint PointX="15.458333333333334" PointY="41.168146972656253" />
           <ConnectorPoint PointX="15.916666666666666" PointY="41.168146972656253" />
           <ConnectorPoint PointX="16.380208333333332" PointY="41.168146972656253" />
           <ConnectorPoint PointX="16.5" PointY="41.168146972656253" />
@@ -4773,20 +4744,18 @@
         <AssociationConnector Association="DB_18093_smchdbModel.FK_InternationalGMApplicationTransportInfos_InternationalTransports" ManuallyRouted="false">
           <ConnectorPoint PointX="6" PointY="41.29758789062501" />
           <ConnectorPoint PointX="6" PointY="41.730286458333339" />
+          <ConnectorPoint PointX="10.666666666666666" PointY="41.730286458333339" />
+          <ConnectorPoint PointX="10.895833333333334" PointY="41.730286458333339" />
           <ConnectorPoint PointX="11" PointY="41.730286458333339" />
           <ConnectorPoint PointX="11" PointY="40.75" />
           <ConnectorPoint PointX="13.256205398794073" PointY="40.75" />
           <ConnectorPoint PointX="13.583333333333336" PointY="40.75" />
           <ConnectorPoint PointX="13.760416666666666" PointY="40.75" />
           <ConnectorPoint PointX="13.927083333333334" PointY="40.75" />
-          <ConnectorPoint PointX="15.166666666666666" PointY="40.75" />
-          <ConnectorPoint PointX="15.333333333333334" PointY="40.75" />
-          <ConnectorPoint PointX="15.375" PointY="40.75" />
-          <ConnectorPoint PointX="15.541666666666668" PointY="40.75" />
           <ConnectorPoint PointX="16" PointY="40.75" />
           <ConnectorPoint PointX="16" PointY="41.956420863932294" />
-          <ConnectorPoint PointX="16.072916666666668" PointY="41.956420863932294" />
-          <ConnectorPoint PointX="16.380208333333332" PointY="41.956420863932294" />
+          <ConnectorPoint PointX="16.161458333333336" PointY="41.956420863932294" />
+          <ConnectorPoint PointX="16.380208333333336" PointY="41.956420863932294" />
           <ConnectorPoint PointX="16.5" PointY="41.956420863932294" />
         </AssociationConnector>
         <AssociationConnector Association="DB_18093_smchdbModel.FK_LocalRetreatScheduleTemplates_ScheduleOffsets" ManuallyRouted="false">
@@ -4794,87 +4763,63 @@
           <ConnectorPoint PointX="21.75" PointY="45.40599859375" />
         </AssociationConnector>
         <AssociationConnector Association="DB_18093_smchdbModel.FK_LocationUploadFiles_Locations" ManuallyRouted="false">
-          <ConnectorPoint PointX="12.75" PointY="42.653595377604169" />
-          <ConnectorPoint PointX="13.100592231765546" PointY="42.653595377604169" />
-          <ConnectorPoint PointX="13.267258898432214" PointY="42.653595377604169" />
-          <ConnectorPoint PointX="13.760416666666666" PointY="42.653595377604169" />
-          <ConnectorPoint PointX="13.927083333333334" PointY="42.653595377604169" />
-          <ConnectorPoint PointX="14" PointY="42.653595377604169" />
+          <ConnectorPoint PointX="12.75" PointY="42.03959870247396" />
+          <ConnectorPoint PointX="13.038349420696918" PointY="42.03959870247396" />
+          <ConnectorPoint PointX="13.267258898432214" PointY="42.03959870247396" />
+          <ConnectorPoint PointX="13.760416666666666" PointY="42.03959870247396" />
+          <ConnectorPoint PointX="13.927083333333334" PointY="42.03959870247396" />
+          <ConnectorPoint PointX="14" PointY="42.03959870247396" />
           <ConnectorPoint PointX="14" PointY="41.75" />
-          <ConnectorPoint PointX="14.510414666666666" PointY="41.75" />
-          <ConnectorPoint PointX="14.677081333333334" PointY="41.75" />
-          <ConnectorPoint PointX="14.916666666666666" PointY="41.75" />
-          <ConnectorPoint PointX="15.083333333333334" PointY="41.75" />
           <ConnectorPoint PointX="15.291666666666666" PointY="41.75" />
           <ConnectorPoint PointX="15.458333333333334" PointY="41.75" />
           <ConnectorPoint PointX="15.916666666666666" PointY="41.75" />
-          <ConnectorPoint PointX="16.239583333333332" PointY="41.75" />
-          <ConnectorPoint PointX="16.25" PointY="41.75" />
-          <ConnectorPoint PointX="16.25" PointY="39.875" />
-          <ConnectorPoint PointX="18.4375" PointY="39.875" />
-          <ConnectorPoint PointX="18.4375" PointY="38.125" />
-          <ConnectorPoint PointX="20.541667166666667" PointY="38.125" />
-          <ConnectorPoint PointX="20.708333833333331" PointY="38.125" />
-          <ConnectorPoint PointX="20.760419416666668" PointY="38.125" />
-          <ConnectorPoint PointX="20.927086083333332" PointY="38.125" />
-          <ConnectorPoint PointX="21.5" PointY="38.125" />
-          <ConnectorPoint PointX="21.5" PointY="29.355286458333339" />
+          <ConnectorPoint PointX="16.083333333333332" PointY="41.75" />
+          <ConnectorPoint PointX="16.125" PointY="41.75" />
+          <ConnectorPoint PointX="16.125" PointY="39.875" />
+          <ConnectorPoint PointX="16.161458333333336" PointY="39.875" />
+          <ConnectorPoint PointX="16.380208333333336" PointY="39.875" />
+          <ConnectorPoint PointX="18.3125" PointY="39.875" />
+          <ConnectorPoint PointX="18.3125" PointY="29.355286458333339" />
+          <ConnectorPoint PointX="18.385416666666668" PointY="29.355286458333339" />
+          <ConnectorPoint PointX="18.552083333333332" PointY="29.355286458333339" />
+          <ConnectorPoint PointX="21.291666666666668" PointY="29.355286458333339" />
+          <ConnectorPoint PointX="21.458333333333332" PointY="29.355286458333339" />
           <ConnectorPoint PointX="22.5" PointY="29.355286458333339" />
           <ConnectorPoint PointX="22.5" PointY="28.980286458333339" />
         </AssociationConnector>
         <AssociationConnector Association="DB_18093_smchdbModel.FK_LocationUploadFiles_UploadFiles" ManuallyRouted="false">
           <ConnectorPoint PointX="18" PointY="20.65625" />
-          <ConnectorPoint PointX="18.494791666666668" PointY="20.65625" />
-          <ConnectorPoint PointX="18.661458333333332" PointY="20.65625" />
-          <ConnectorPoint PointX="22.5" PointY="20.65625" />
-          <ConnectorPoint PointX="22.5" PointY="27" />
-        </AssociationConnector>
-        <AssociationConnector Association="DB_18093_smchdbModel.FK_MemberFeePayments_MemberInfos" ManuallyRouted="false">
-          <ConnectorPoint PointX="12.75" PointY="31.785797526041666" />
-          <ConnectorPoint PointX="13.041666666666666" PointY="31.785797526041666" />
-          <ConnectorPoint PointX="13.208333333333334" PointY="31.785797526041666" />
-          <ConnectorPoint PointX="13.370016053071698" PointY="31.785797526041666" />
-          <ConnectorPoint PointX="13.536682719738366" PointY="31.785797526041666" />
-          <ConnectorPoint PointX="17.166666666666668" PointY="31.785797526041666" />
-          <ConnectorPoint PointX="17.333333333333332" PointY="31.785797526041666" />
-          <ConnectorPoint PointX="18.291666666666668" PointY="31.785797526041666" />
-          <ConnectorPoint PointX="18.552083333333332" PointY="31.785797526041666" />
-          <ConnectorPoint PointX="19.010416666666668" PointY="31.785797526041666" />
-          <ConnectorPoint PointX="19.177083333333332" PointY="31.785797526041666" />
-          <ConnectorPoint PointX="20.65625" PointY="31.785797526041666" />
-          <ConnectorPoint PointX="20.65625" PointY="30.74949218750001" />
-        </AssociationConnector>
-        <AssociationConnector Association="DB_18093_smchdbModel.FK_MemberFeePayments_PayMethods" ManuallyRouted="false">
-          <ConnectorPoint PointX="18.578125" PointY="18.220683593749996" />
-          <ConnectorPoint PointX="18.578125" PointY="28.03125" />
-          <ConnectorPoint PointX="19.5" PointY="28.03125" />
+          <ConnectorPoint PointX="18.463541666666668" PointY="20.65625" />
+          <ConnectorPoint PointX="18.630208333333332" PointY="20.65625" />
+          <ConnectorPoint PointX="22.09375" PointY="20.65625" />
+          <ConnectorPoint PointX="22.09375" PointY="27" />
         </AssociationConnector>
         <AssociationConnector Association="DB_18093_smchdbModel.FK_MemberOrders_MemberInfos" ManuallyRouted="false">
-          <ConnectorPoint PointX="12.75" PointY="28.056660757211539" />
-          <ConnectorPoint PointX="13.106294519862868" PointY="29.603456069170857" />
-          <ConnectorPoint PointX="13.143705480137133" PointY="29.76586973186318" />
-          <ConnectorPoint PointX="13.265445113638579" PointY="30.294382756571387" />
-          <ConnectorPoint PointX="13.265445113638579" PointY="30.789534863220275" />
-          <ConnectorPoint PointX="13.359195113638579" PointY="31.122815440799492" />
-          <ConnectorPoint PointX="13.359195113638579" PointY="31.286594473757141" />
-          <ConnectorPoint PointX="13.6875" PointY="33.027256862580131" />
-          <ConnectorPoint PointX="13.6875" PointY="37.646502337239582" />
-          <ConnectorPoint PointX="14.166666666666666" PointY="37.646502337239582" />
-          <ConnectorPoint PointX="14.333333333333334" PointY="37.646502337239582" />
-          <ConnectorPoint PointX="16.041666666666668" PointY="37.646502337239582" />
-          <ConnectorPoint PointX="16.270833333333332" PointY="37.646502337239582" />
-          <ConnectorPoint PointX="16.5" PointY="37.646502337239582" />
+          <ConnectorPoint PointX="12.75" PointY="32.397455430288467" />
+          <ConnectorPoint PointX="13.066074434901122" PointY="32.713529865189585" />
+          <ConnectorPoint PointX="13.183925565098878" PointY="32.831380995387349" />
+          <ConnectorPoint PointX="13.1875" PointY="32.834955430288467" />
+          <ConnectorPoint PointX="13.1875" PointY="37.331324869791672" />
+          <ConnectorPoint PointX="13.416666666666666" PointY="37.331324869791672" />
+          <ConnectorPoint PointX="13.583333333333334" PointY="37.331324869791672" />
+          <ConnectorPoint PointX="14.166666666666666" PointY="37.331324869791672" />
+          <ConnectorPoint PointX="14.333333333333334" PointY="37.331324869791672" />
+          <ConnectorPoint PointX="15.916666666666666" PointY="37.331324869791672" />
+          <ConnectorPoint PointX="16.083333333333332" PointY="37.331324869791672" />
+          <ConnectorPoint PointX="16.104166666666668" PointY="37.331324869791672" />
+          <ConnectorPoint PointX="16.270833333333332" PointY="37.331324869791672" />
+          <ConnectorPoint PointX="16.5" PointY="37.331324869791672" />
         </AssociationConnector>
         <AssociationConnector Association="DB_18093_smchdbModel.FK_MemberOrderDetails_MemberOrders" ManuallyRouted="false">
           <ConnectorPoint PointX="18" PointY="37.865143229166669" />
-          <ConnectorPoint PointX="18.291666666666668" PointY="37.865143229166669" />
+          <ConnectorPoint PointX="18.229166666666668" PointY="37.865143229166669" />
           <ConnectorPoint PointX="18.583333333333332" PointY="37.865143229166669" />
           <ConnectorPoint PointX="20.541667166666667" PointY="37.865143229166669" />
           <ConnectorPoint PointX="20.708333833333331" PointY="37.865143229166669" />
           <ConnectorPoint PointX="20.760419416666668" PointY="37.865143229166669" />
           <ConnectorPoint PointX="20.927086083333332" PointY="37.865143229166669" />
           <ConnectorPoint PointX="21.333333333333336" PointY="37.865143229166669" />
-          <ConnectorPoint PointX="21.583333333333336" PointY="37.865143229166669" />
+          <ConnectorPoint PointX="21.5" PointY="37.865143229166669" />
           <ConnectorPoint PointX="21.75" PointY="37.865143229166669" />
         </AssociationConnector>
         <AssociationConnector Association="DB_18093_smchdbModel.FK_ProductDetails_MemberOrderDetails" ManuallyRouted="false">
@@ -4882,18 +4827,22 @@
           <ConnectorPoint PointX="9" PointY="35.75" />
           <ConnectorPoint PointX="10" PointY="35.75" />
           <ConnectorPoint PointX="10" PointY="37.802643229166669" />
-          <ConnectorPoint PointX="10.833333333333332" PointY="37.802643229166669" />
-          <ConnectorPoint PointX="11.083333333333332" PointY="37.802643229166669" />
+          <ConnectorPoint PointX="10.666666666666666" PointY="37.802643229166669" />
+          <ConnectorPoint PointX="11.020833333333334" PointY="37.802643229166669" />
           <ConnectorPoint PointX="13.02524714383013" PointY="37.802643229166669" />
           <ConnectorPoint PointX="13.210770110547172" PointY="37.802643229166669" />
           <ConnectorPoint PointX="13.416666666666666" PointY="37.802643229166669" />
           <ConnectorPoint PointX="13.583333333333334" PointY="37.802643229166669" />
           <ConnectorPoint PointX="14.166666666666666" PointY="37.802643229166669" />
           <ConnectorPoint PointX="14.333333333333334" PointY="37.802643229166669" />
-          <ConnectorPoint PointX="16.041666666666668" PointY="37.802643229166669" />
+          <ConnectorPoint PointX="15.916666666666666" PointY="37.802643229166669" />
+          <ConnectorPoint PointX="16.083333333333332" PointY="37.802643229166669" />
+          <ConnectorPoint PointX="16.104166666666668" PointY="37.802643229166669" />
           <ConnectorPoint PointX="16.270833333333332" PointY="37.802643229166669" />
           <ConnectorPoint PointX="16.375" PointY="37.802643229166669" />
           <ConnectorPoint PointX="16.375" PointY="39.460999348958339" />
+          <ConnectorPoint PointX="18.229166666666668" PointY="39.460999348958339" />
+          <ConnectorPoint PointX="18.395833333333332" PointY="39.460999348958339" />
           <ConnectorPoint PointX="18.5" PointY="39.460999348958339" />
           <ConnectorPoint PointX="18.5" PointY="37.610212343750007" />
           <ConnectorPoint PointX="20.541667166666667" PointY="37.610212343750007" />
@@ -4901,20 +4850,22 @@
           <ConnectorPoint PointX="20.760419416666668" PointY="37.610212343750007" />
           <ConnectorPoint PointX="20.927086083333332" PointY="37.610212343750007" />
           <ConnectorPoint PointX="21.333333333333336" PointY="37.610212343750007" />
-          <ConnectorPoint PointX="21.583333333333336" PointY="37.610212343750007" />
+          <ConnectorPoint PointX="21.5" PointY="37.610212343750007" />
           <ConnectorPoint PointX="21.75" PointY="37.610212343750007" />
         </AssociationConnector>
         <AssociationConnector Association="DB_18093_smchdbModel.FK_MemberOrders_OrderStatuses" ManuallyRouted="false">
           <ConnectorPoint PointX="15.75" PointY="45.906152846153844" />
-          <ConnectorPoint PointX="16.15625" PointY="45.499902846153844" />
-          <ConnectorPoint PointX="16.15625" PointY="36.396497837239593" />
-          <ConnectorPoint PointX="16.5" PointY="36.396497837239593" />
+          <ConnectorPoint PointX="16.244791666666668" PointY="45.499902846153844" />
+          <ConnectorPoint PointX="16.244791666666668" PointY="38.5068207890625" />
+          <ConnectorPoint PointX="16.291666666666668" PointY="38.5068207890625" />
+          <ConnectorPoint PointX="16.458333333333332" PointY="38.5068207890625" />
+          <ConnectorPoint PointX="16.5" PointY="38.5068207890625" />
         </AssociationConnector>
         <AssociationConnector Association="DB_18093_smchdbModel.FK_MemberOrders_ProductOrders" ManuallyRouted="false">
           <ConnectorPoint PointX="15.75" PointY="48.514999" />
           <ConnectorPoint PointX="16.296875" PointY="47.968124" />
-          <ConnectorPoint PointX="16.296875" PointY="38.730499174479171" />
-          <ConnectorPoint PointX="16.5" PointY="38.730499174479171" />
+          <ConnectorPoint PointX="16.296875" PointY="37.258235171875" />
+          <ConnectorPoint PointX="16.5" PointY="37.258235171875" />
         </AssociationConnector>
         <AssociationConnector Association="DB_18093_smchdbModel.FK_Products_ProductCategories" ManuallyRouted="false">
           <ConnectorPoint PointX="2.25" PointY="30.821741850260423" />
@@ -4951,8 +4902,8 @@
         <AssociationConnector Association="DB_18093_smchdbModel.FK_ProductOrders_Products" ManuallyRouted="false">
           <ConnectorPoint PointX="7.15625" PointY="37.537903645833325" />
           <ConnectorPoint PointX="7.15625" PointY="38.71875" />
-          <ConnectorPoint PointX="10.822916666666666" PointY="38.71875" />
-          <ConnectorPoint PointX="10.989583333333334" PointY="38.71875" />
+          <ConnectorPoint PointX="10.666666666666666" PointY="38.71875" />
+          <ConnectorPoint PointX="11.020833333333334" PointY="38.71875" />
           <ConnectorPoint PointX="11.25" PointY="38.71875" />
         </AssociationConnector>
         <AssociationConnector Association="DB_18093_smchdbModel.FK_ProductUploadFiles_Products" ManuallyRouted="false">
@@ -4983,6 +4934,57 @@
           <ConnectorPoint PointX="3.75" PointY="28.5" />
           <ConnectorPoint PointX="3.75" PointY="25.836293945312491" />
           <ConnectorPoint PointX="5.25" PointY="25.836293945312491" />
+        </AssociationConnector>
+        <EntityTypeShape EntityType="DB_18093_smchdbModel.MemberFeePayment" Width="1.5" PointX="22.5" PointY="23.375" Height="2.7494921874999818" />
+        <AssociationConnector Association="DB_18093_smchdbModel.FK_MemberFeePayments_MemberInfos" >
+          <ConnectorPoint PointX="12.75" PointY="31.927643229166669" />
+          <ConnectorPoint PointX="13.041666666666666" PointY="31.927643229166669" />
+          <ConnectorPoint PointX="13.208333333333334" PointY="31.927643229166669" />
+          <ConnectorPoint PointX="15.114023437499997" PointY="31.927643229166669" />
+          <ConnectorPoint PointX="15.280690104166665" PointY="31.927643229166669" />
+          <ConnectorPoint PointX="17.166666666666668" PointY="31.927643229166669" />
+          <ConnectorPoint PointX="17.333333333333332" PointY="31.927643229166669" />
+          <ConnectorPoint PointX="18.229166666666668" PointY="31.927643229166669" />
+          <ConnectorPoint PointX="18.552083333333332" PointY="31.927643229166669" />
+          <ConnectorPoint PointX="19.010416666666668" PointY="31.927643229166669" />
+          <ConnectorPoint PointX="19.177083333333332" PointY="31.927643229166669" />
+          <ConnectorPoint PointX="21.291666666666668" PointY="31.927643229166669" />
+          <ConnectorPoint PointX="21.458333333333332" PointY="31.927643229166669" />
+          <ConnectorPoint PointX="23.625" PointY="31.927643229166669" />
+          <ConnectorPoint PointX="23.625" PointY="26.124492187499982" />
+        </AssociationConnector>
+        <AssociationConnector Association="DB_18093_smchdbModel.FK_MemberFeePayments_PayMethods" >
+          <ConnectorPoint PointX="18.546875" PointY="18.220683593749996" />
+          <ConnectorPoint PointX="18.546875" PointY="23.6875" />
+          <ConnectorPoint PointX="22.010416666666668" PointY="23.6875" />
+          <ConnectorPoint PointX="22.177083333333332" PointY="23.6875" />
+          <ConnectorPoint PointX="22.5" PointY="23.6875" />
+        </AssociationConnector>
+        <EntityTypeShape EntityType="DB_18093_smchdbModel.GMVolunteerJobName" Width="1.5" PointX="24" PointY="27.25" Height="4.0956022135416674" />
+        <AssociationConnector Association="DB_18093_smchdbModel.FK_GMVolunteerJobNameLists_MemberInfos" >
+          <ConnectorPoint PointX="12.75" PointY="31.82896234375001" />
+          <ConnectorPoint PointX="13.041666666666666" PointY="31.82896234375001" />
+          <ConnectorPoint PointX="13.208333333333334" PointY="31.82896234375001" />
+          <ConnectorPoint PointX="15.212704322916656" PointY="31.82896234375001" />
+          <ConnectorPoint PointX="15.379370989583324" PointY="31.82896234375001" />
+          <ConnectorPoint PointX="17.166666666666668" PointY="31.82896234375001" />
+          <ConnectorPoint PointX="17.333333333333332" PointY="31.82896234375001" />
+          <ConnectorPoint PointX="18.229166666666668" PointY="31.82896234375001" />
+          <ConnectorPoint PointX="18.552083333333332" PointY="31.82896234375001" />
+          <ConnectorPoint PointX="19.010416666666668" PointY="31.82896234375001" />
+          <ConnectorPoint PointX="19.177083333333332" PointY="31.82896234375001" />
+          <ConnectorPoint PointX="21.291666666666668" PointY="31.82896234375001" />
+          <ConnectorPoint PointX="21.458333333333332" PointY="31.82896234375001" />
+          <ConnectorPoint PointX="23.541666666666668" PointY="31.82896234375001" />
+          <ConnectorPoint PointX="23.708333333333332" PointY="31.82896234375001" />
+          <ConnectorPoint PointX="24.03125" PointY="31.82896234375001" />
+          <ConnectorPoint PointX="24.03125" PointY="31.345602213541667" />
+        </AssociationConnector>
+        <AssociationConnector Association="DB_18093_smchdbModel.FK_GMVolunteerJobNameLists_VolunteerJobTypes" >
+          <ConnectorPoint PointX="23.25" PointY="30.547801106770834" />
+          <ConnectorPoint PointX="23.541666666666668" PointY="30.547801106770834" />
+          <ConnectorPoint PointX="23.708333333333332" PointY="30.547801106770834" />
+          <ConnectorPoint PointX="24" PointY="30.547801106770834" />
         </AssociationConnector>
       </Diagram>
     </Diagrams>

@@ -123,7 +123,35 @@ namespace SMCHSGManager.Controllers
         [Authorize(Roles = "SuperAdmin")]
         public ActionResult CreateNextYearGMEvent(DateTime? startDate, DateTime? endDate)
         {
-            int year = DateTime.Today.Year +1;
+
+            startDate = new DateTime(2020, 12, 1);
+            endDate = new DateTime(2021, 3, 31);
+
+            for (DateTime dt = startDate.Value; dt <= endDate; dt = dt.AddDays(1))
+            {
+                switch (dt.DayOfWeek)
+                {
+                    case DayOfWeek.Sunday:
+                        AddGroupMeditationItem(dt, 19, 2.5, 1);
+                        break;
+                    case DayOfWeek.Thursday:
+                        AddGroupMeditationItem(dt, 19, 2.5, 1);
+                        break;
+                   case DayOfWeek.Saturday:
+                        AddGroupMeditationItem(dt, 9, 3, 1);
+                        AddGroupMeditationItem(dt, 19, 2.5, 1);
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+            return View();
+        }
+
+        public ActionResult CreateNextYearGMEvent_Good(DateTime? startDate, DateTime? endDate)
+        {
+            int year = DateTime.Today.Year + 1;
             //List<GroupMeditation> GMs = (from r in _entities.GroupMeditations where r.StartDateTime.Year == nextYear orderby r.StartDateTime select r).ToList();
             if (!startDate.HasValue)
             {
@@ -141,6 +169,10 @@ namespace SMCHSGManager.Controllers
                 {
                     case DayOfWeek.Sunday:
                         AddGroupMeditationItem(dt, 9, 3, 1);
+                        if (dt >= new DateTime(2020, 2, 1))
+                        {
+                            AddGroupMeditationItem(dt, 19, 2.5, 1);
+                        }
                         break;
                     case DayOfWeek.Monday:
                         AddGroupMeditationItem(dt, 19.5, 2, 1);
@@ -149,6 +181,10 @@ namespace SMCHSGManager.Controllers
                         AddGroupMeditationItem(dt, 19.5, 2, 1);
                         break;
                     case DayOfWeek.Wednesday:
+                        if (dt >= new DateTime(2020, 2, 1))
+                        {
+                            AddGroupMeditationItem(dt, 19.5, 2, 1);
+                        }
                         AddGroupMeditationItem(dt, 23, 7, 1);
                         break;
                     case DayOfWeek.Thursday:
@@ -191,25 +227,6 @@ namespace SMCHSGManager.Controllers
 		public ActionResult CorrectGMEvent()
 		{
             
-            //var latestMemberFeePayments = (from r in _entities.MemberFeePayments
-            //                               orderby r.ToDate descending
-            //                               group r by r.MemberInfo.MemberID into h
-            //                               select new
-            //                               {
-            //                                   MemberID = h.Key,
-            //                                   ToDate = h.Max(a => a.ToDate),
-            //                               }).ToList();
-
-            //foreach (var mfp in latestMemberFeePayments)
-            //{
-            //    MemberInfo memberInfo = _entities.MemberInfos.Single(a => a.MemberID == mfp.MemberID);
-            //    if (memberInfo.MemberFeeExpiredDate < mfp.ToDate)
-            //    {
-            //        memberInfo.MemberFeeExpiredDate = mfp.ToDate;
-            //        _entities.SaveChanges();
-            //    }
-            // }
-
             //List<GroupMeditation> GMs = (from r in _entities.GroupMeditations where (r.InitiateTypeID == 3 || r.StartDateTime.Hour == 9 && r.StartDateTime > new DateTime(2012, 2, 6)) orderby r.StartDateTime select r).ToList();
 
             //foreach (GroupMeditation gm in GMs)
@@ -589,12 +606,25 @@ namespace SMCHSGManager.Controllers
 			DateTime nextMonthDay = firstDayOfMonth.AddDays(32);
 			DateTime preMonthDay = firstDayOfMonth.AddDays(-2);
 
-			List<MemberInfo> members = GetMemberInfos();
-			updateMemberFeeExipredDate(members);
+            MemberFeePaymentController mfpc = new MemberFeePaymentController();
+            List<MemberFeeExpiredDateInfo> memberFeeMax = mfpc.updateMemberFeeExipredDate();
 
-			var viewModel = new GMAttendanceViewModel
+            List<MemberInfo> memberInfos = GetMemberInfos();
+            foreach (MemberInfo mi in memberInfos)
+            {
+                if (!memberFeeMax.Any(a => a.MemberID == mi.MemberID))
+                {
+                    MemberFeeExpiredDateInfo mfe = new MemberFeeExpiredDateInfo();
+                    mfe.MemberID = mi.MemberID;
+                    mfe.MemberNo = mi.MemberNo;
+                    mfe.Name = mi.Name;
+                    memberFeeMax.Add(mfe);
+                }
+            }
+            memberFeeMax = memberFeeMax.OrderBy(a => a.MemberNo).ToList();
+            var viewModel = new GMAttendanceViewModel
 			{
-				Members = members,
+                MemberFeeExpiredDates = memberFeeMax,
 				nextMonthGMs = nextMonthGMs,
 				NextMonth = nextMonth,
 				NextMonthStr = (string.Format("{0: MMMM, yyyy}", firstDayOfMonth)).Trim(),
@@ -602,14 +632,14 @@ namespace SMCHSGManager.Controllers
 				HavePreviousMonth = _entities.GroupMeditations.Any(a => a.StartDateTime <= preMonthDay),
 			};
 
-			bool[,] attendenceChecks = new bool[members.Count, nextMonthGMs.Count];
+            bool[,] attendenceChecks = new bool[memberFeeMax.Count, nextMonthGMs.Count];
 			int j = 0;
 			foreach (GroupMeditation gm in nextMonthGMs)
 			{
 				List<MemberInfo> mis = _entities.GroupMeditationAttendances.Where(a => a.GroupMeditationID == gm.ID).Select(a => a.MemberInfo).OrderBy(a => a.MemberNo).ToList();
-				for (int i = 0; i < members.Count; i++)
+                for (int i = 0; i < memberFeeMax.Count; i++)
 				{
-					if (mis.Any(a => a.MemberNo == members[i].MemberNo))
+                    if (mis.Any(a => a.MemberID == memberFeeMax[i].MemberID))
 					{
 						attendenceChecks[i, j] = true;
 					}
@@ -626,37 +656,8 @@ namespace SMCHSGManager.Controllers
 
 		private List<MemberInfo> GetMemberInfos()
 		{
-            List<MemberInfo> members = _entities.MemberInfos.Where(a => a.MemberNo.HasValue && a.MemberNo < 999 && a.Name != "0" && a.Name != "DP" && a.IsActive).OrderBy(a => a.MemberNo).ToList();
+            List<MemberInfo> members = _entities.MemberInfos.Where(a => a.MemberNo.HasValue && a.Name != "0" && a.Name != "DP" && a.IsActive).OrderBy(a => a.MemberNo).ToList();
 			return members;
-		}
-
-		public void updateMemberFeeExipredDate(List<MemberInfo> memberInfos)
-		{
-
-			var latestMemberFeePayments = (from r in _entities.MemberFeePayments
-										   orderby r.ToDate descending
-										   group r by r.MemberInfo.MemberNo into h
-										   select new
-										   {
-											   MemberNo = h.Key,
-											   ToDate = h.Max(a => a.ToDate),
-										   }).ToList();
-
-			foreach (var mfp in latestMemberFeePayments)
-			{
-				if (memberInfos.Any(a => a.MemberNo == mfp.MemberNo))
-				{
-					MemberInfo memberInfo = memberInfos.SingleOrDefault(a => a.MemberNo == mfp.MemberNo);
-                    if (mfp.ToDate > memberInfo.MemberFeeExpiredDate || !memberInfo.MemberFeeExpiredDate.HasValue)
-					{
-                        memberInfo.MemberFeeExpiredDate = mfp.ToDate;
-                        UpdateModel(memberInfo, "MemberInfo");
-                        _entities.SaveChanges();
-					}
-				}
-			}
-
-
 		}
 
 
@@ -667,7 +668,7 @@ namespace SMCHSGManager.Controllers
 			List<GroupMeditation> nextMonthGMs = GetMonthGMs(nextMonth);
 
 			List<MemberInfo> members = GetMemberInfos();
-
+            
 			try
 			{
 				string[] attendenceChecks = (string[])collection.GetValues("AttendenceChecks");
@@ -740,7 +741,7 @@ namespace SMCHSGManager.Controllers
 		public ActionResult GenerateExcel2()
 		{
 			var viewModel = (GMAttendanceViewModel)TempData["viewModel"];
-			return this.Excel(null, viewModel.Members.AsQueryable(), "AttendanceTable.xls", GetStringList());
+			return this.Excel(null, viewModel.MemberFeeExpiredDates.AsQueryable(), "AttendanceTable.xls", GetStringList());
 		}
 
 	     

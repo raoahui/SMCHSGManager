@@ -13,14 +13,14 @@
    
          <% using (Html.BeginForm()) {%>
 
-   <% 
-				if (Model.Count() == 0)
+   <% if (Model.Count() == 0)
       {%>
           <div align="center" style=" margin-bottom:20px; margin-top:15px; color:Green; font-size:14px">
 			<%: ViewData["Message"] %>
         </div>   
 			<p align="center">
 				<%: Html.ActionLink("Create New", "Create", "MemberFeePayment", null, new { @style = "color:white;", @class = "buttonsearch" })%> 
+				<%: Html.ActionLink("Create New Giro", "CreateGiro", "MemberFeePayment", null, new { @style = "color:white;", @class = "buttonsearch" })%> 
 			</p>
    
      <% }
@@ -30,12 +30,14 @@
 	<table style="border:0">
 		<tr>
 			<td style="border:0">
-              Name/MemberNo:  <%: Html.TextBox("searchContent")%>  
+              Name/MemberNo/PayMethod:  <%: Html.TextBox("searchContent")%>  
                <input type="submit" value="Search" class ="buttonsearch" name="Search" />
 			</td>
-			<td style="width:20%; border:0"></td>
 			<td style="border:0;">
 				<%: Html.ActionLink("Create New", "Create", "MemberFeePayment", null, new { @style = "color:white;", @class = "buttonsearch" })%> 
+			</td>
+			<td style="border:0;">
+				<%: Html.ActionLink("Create New Giro", "CreateGiro", "MemberFeePayment", null, new { @style = "color:white;", @class = "buttonsearch" })%> 
 			</td>
 		</tr>
 	</table>

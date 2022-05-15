@@ -21,8 +21,8 @@ namespace SMCHSGManager.ViewModel
         public List<Location> Locations { get; set; }
         public List<EventType> EventTypes { get; set; }
         public List<int> EventIDs { get; set; }
-        //public List<SelectListItem> LocalRetreatScheduleModelSelectLists { get; set; }
-    }
+        public List<SelectListItem> scheduleModelSelectLists { get; set; }
+     }
 
     public class EventListViewModel
     {

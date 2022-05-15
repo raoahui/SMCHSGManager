@@ -68,25 +68,29 @@
 		</tr>
 
     <% int i = 0; 
-        foreach (var item in Model.Members) { %>
+        foreach (var item in Model.MemberFeeExpiredDates) { %>
     
         <tr>
           <%--  <td><%: (++i).ToString()%></td>--%>
            <td>
-                <%: item.MemberNo.Value %>
+                <% if (item.MemberNo.HasValue)
+                   { %>
+                    <%: item.MemberNo.Value%>
+                 <% }%>
             </td>
              <td>
                <b>  <%: item.Name %>		</b>
             </td>
 		
-			<% if (item.MemberFeeExpiredDate.HasValue && item.MemberFeeExpiredDate.Value == new DateTime(2020, 12, 31))
-			{ %>
-			<td> Giro </td>
-			<%}else { %>
-			<td nowrap="nowrap">
-				<%: string.Format("{0: MMM-yy}", item.MemberFeeExpiredDate)%>
-			</td>
-			<%} %>
+            <td>
+			<% if (item.MemberFeeExpiredDate.HasValue){ %>
+			    <% if (item.MemberFeeExpiredDate.Value == SMCHSGManager.Models.MemberFeePayment.ToDateGiro){ %>
+			         Giro 
+			    <%}else{ %>
+				    <%: string.Format("{0: MMM-yy}", item.MemberFeeExpiredDate)%>
+			    <%}
+            } %>
+            </td>
 		
 			<% int j=0;
 				foreach (var gm in Model.nextMonthGMs){%>

@@ -28,9 +28,6 @@ namespace SMCHSGManager.Models
 			public DateTime DateOfInitiation { get; set; }
 
 			[DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:d MMM yyyy}")]
-			public DateTime MemberFeeExpiredDate { get; set; }
-
-			[DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:d MMM yyyy}")]
 			public DateTime DateOfBirth { get; set; }
 		}
 

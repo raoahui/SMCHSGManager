@@ -125,22 +125,59 @@ namespace SMCHSGManager.Controllers
         // GET: /Event/Create
 
 		[Authorize(Roles = "Administrator")]
-		public ActionResult Create()
+		public ActionResult Create(int? eventTypeID)
         {
             var viewModel = new EventViewModel()
             {
                 Event = new Event(),
                 Locations = _entities.Locations.ToList(),
-                EventTypes = (from r in _entities.EventTypes where r.ID != 2 && r.ID != 3 select r) .ToList(),
+                //EventTypes = (from r in _entities.EventTypes where r.ID != 2 && r.ID != 3 select r) .ToList(),
             };
 
             viewModel.Event.Title = "[Please input event title]";
             DateTime today = DateTime.Today.ToUniversalTime().AddHours(8);
-            viewModel.Event.StartDateTime = today.AddDays(10).AddHours(22).AddMinutes(30);
-            viewModel.Event.EndDateTime = viewModel.Event.StartDateTime.AddDays(1).AddHours(12);
-            viewModel.Event.RegistrationOpenDate = today.AddDays(-20);
-            viewModel.Event.RegistrationCloseDate = today.AddDays(-7);
-
+            viewModel.Event.StartDateTime = today.AddDays(30).AddHours(22).AddMinutes(30);
+            viewModel.Event.EndDateTime = viewModel.Event.StartDateTime.AddHours(1);
+            viewModel.Event.RegistrationOpenDate = viewModel.Event.StartDateTime.AddDays(-20);
+            viewModel.Event.RegistrationCloseDate = viewModel.Event.StartDateTime.AddDays(-7);
+            
+            if (eventTypeID.HasValue && eventTypeID == 1)
+            {
+                List<SelectListItem> scheduleModelSelectLists = new List<SelectListItem>();
+                List<int> scheduleModels = ((from r in _entities.LocalRetreatScheduleTemplates select r.Model).Distinct().OrderByDescending(a => a)).ToList();
+                foreach (int i in scheduleModels)
+                {
+                    List<LocalRetreatScheduleTemplate> ScheduleTemplates = (from r in _entities.LocalRetreatScheduleTemplates select r).Where(r=>r.Model == i).OrderByDescending(r=>r.ID).ToList();
+                    int lastScheduleID = ScheduleTemplates.FirstOrDefault().ScheduleOffsetID;
+                    string scheduleHours = _entities.ScheduleOffsets.Single(a => a.ID == lastScheduleID).OffsetHours.ToString() + " Hours";
+                    string temp = " -- with";
+                    bool withFood = false;
+                    foreach(LocalRetreatScheduleTemplate st in ScheduleTemplates)
+                    {
+                        if(!withFood && (st.EventActivityID >= 4 && st.EventActivityID <=6)) // Breakfast, Lunch, Dinner  
+                        {
+                            withFood = true;
+                            break;
+                        }
+                    }
+                    if (!withFood)
+                    {
+                        temp += "out";
+                    }
+                    if (i != 1)
+                    {
+                        SelectListItem item = new SelectListItem { Text = "Model " + i.ToString() + temp + " meal, and last meditation section is " + scheduleHours, Value = i.ToString() };
+                        scheduleModelSelectLists.Add(item);
+                    }
+                }
+                viewModel.Event.EventTypeID = eventTypeID.Value;
+                viewModel.scheduleModelSelectLists = scheduleModelSelectLists;
+                viewModel.EventTypes = (from r in _entities.EventTypes where r.ID == eventTypeID select r).ToList();
+            }
+            else
+            {
+                viewModel.EventTypes = (from r in _entities.EventTypes where r.ID >= 5  select r).ToList();
+            }
             viewModel.Event.IsPublic = false;
 
             //viewModel.LocalRetreatScheduleModelSelectLists = GetScheduleSelectLists();
@@ -150,12 +187,12 @@ namespace SMCHSGManager.Controllers
 
         protected void ValidateEvent(Event Event)
         {
-            if (Event.EndDateTime < Event.StartDateTime )
+           if (Event.EventTypeID != 1)
             {
-                ModelState.AddModelError("Event.StartDateTime", "StartDateTime should be earlier than EndDateTime!.");
-            }
-            if (Event.EventTypeID == 5 )
-            {
+                if (Event.EndDateTime < Event.StartDateTime)
+                {
+                    ModelState.AddModelError("Event.StartDateTime", "StartDateTime should be earlier than EndDateTime!.");
+                }
                 TimeSpan temp = Event.EndDateTime - Event.StartDateTime;
                 int ScheduleOffsetID = (from r in _entities.ScheduleOffsets where r.OffsetHours == temp.TotalHours select r.ID).FirstOrDefault();
                 if (ScheduleOffsetID == 0)
@@ -234,25 +271,34 @@ namespace SMCHSGManager.Controllers
 				
 				//GenerateEventPrices(Event);
    
-                _entities.AddToEvents(Event);
-                _entities.SaveChanges();
+                //_entities.AddToEvents(Event);
+                //_entities.SaveChanges();
 
 
+                EventScheduleController esc = new EventScheduleController();
                 if (Event.EventTypeID == 1)
                 {
-                    Event = (from r in _entities.Events select r).OrderByDescending(x => x.ID).First();
-                    TempData["Event"] = Event;
-
-                    return RedirectToAction("ScheduleModelSelect", "EventSchedule");
+                    //Event = (from r in _entities.Events select r).OrderByDescending(x => x.ID).First();
+                    //TempData["Event"] = Event;
+                    //return RedirectToAction("ScheduleModelSelect", "EventSchedule");
+                    int modelID = int.Parse(collection.Get("Event.ModelID"));
+                    esc.GenerateLocalRetreatSchedules(Event, modelID);
+                    //return RedirectToAction("Table", "EventSchedule", new { localRetreatID = Event.ID });
                 }
                 else
                 {
-                    EventScheduleController esc = new EventScheduleController();
                     esc.GenerateEventSchedules(Event);
-  
-                    return RedirectToAction("Index");
+                    //return RedirectToAction("Index");
                 }
 
+                DateTime endDateTime = (from r in Event.EventSchedules 
+                                                        orderby r.DateTimeFrom descending 
+                                                        select r.DateTimeFrom).FirstOrDefault();
+                Event.EndDateTime = endDateTime;
+                _entities.AddToEvents(Event);
+                _entities.SaveChanges();
+
+                return RedirectToAction("Index");
             }
             catch
             {
@@ -327,7 +373,7 @@ namespace SMCHSGManager.Controllers
             {
                 Event = aEvent,
                 Locations = _entities.Locations.ToList(),
-                EventTypes = (from r in _entities.EventTypes where r.ID != 2 && r.ID != 3 select r).ToList(),
+                EventTypes = (from r in _entities.EventTypes where r.ID == aEvent.EventTypeID select r).ToList(),
             };
             return View(viewModel);
         }

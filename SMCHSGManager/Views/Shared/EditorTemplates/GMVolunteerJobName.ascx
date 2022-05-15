@@ -61,6 +61,16 @@
 
 	                   <tr>
     	                    <td class="formlabel">
+                                 <%: Html.LabelFor(model=>model.Wednesday) %>
+                            </td>
+                            <td align="left" class="formvalue3">
+								 <%: Html.CheckBoxFor(model => model.Wednesday)%>
+							     <%: Html.ValidationMessageFor(model => model.Wednesday)%>
+                            </td>
+                        </tr>
+
+	                   <tr>
+    	                    <td class="formlabel">
                                  <%: Html.LabelFor(model=>model.WednesdayOvernight) %>
                             </td>
                             <td align="left" class="formvalue3">
@@ -129,6 +139,15 @@
                             </td>
                         </tr>
 						            
+	                   <tr>
+    	                    <td class="formlabel">
+                                 <%: Html.LabelFor(model=>model.SundayEvening) %>
+                            </td>
+                            <td align="left" class="formvalue3">
+								 <%: Html.CheckBoxFor(model => model.SundayEvening)%>
+							     <%: Html.ValidationMessageFor(model => model.SundayEvening)%>
+                            </td>
+                        </tr>
          
                            <tr><td colspan=2 class="formlabel">
                             <div class="dashedline"></div>

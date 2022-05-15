@@ -35,7 +35,7 @@ namespace System.Web.Mvc.Html
 				if (typeof(T).FullName.EndsWith("PublicMemberInfo"))
 				{
 					temp.Remove("InitiateStatus");
-					temp.Remove("Email");
+					//temp.Remove("Email");
 					temp.Remove("UserName");
 					temp.Remove("GenderID");
 					temp.Remove("InitiateTypeID");
@@ -44,6 +44,10 @@ namespace System.Web.Mvc.Html
 					temp.Remove("PassportNo");
 					temp.Remove("Remark");
 				}
+                else if (typeof(T).FullName.EndsWith("PublicMemberShortInfo"))
+                {
+                    temp.Remove("DateOfBirth");
+                }
                 columns = temp.ToArray();
             }
 
@@ -145,7 +149,84 @@ namespace System.Web.Mvc.Html
 				}
 
 			}
-			else
+            else if (typeof(T).FullName.EndsWith("wirelessMonitorViewModel"))
+            {
+                //int memberColumns = GetMemberColumnCount(columns);
+                int locSpaCols = 2;
+                int speedTestSpanCols = 4;
+                int i = 0;
+                int index1 = 0;
+                int index2 = 0;
+                foreach (var columnName in columns)
+                {
+                    if (columnName == "building" || columnName == "level")
+                    {
+                        if (columnName == "building")
+                        {
+                            string temp = "th colspan=\"" + locSpaCols.ToString() + " \"";
+                            writer.RenderBeginTag(temp);
+                            writer.Write("Location");
+                            writer.RenderEndTag();
+                            index1 = i;
+                        }
+                    }
+                    else if (columnName == "ping" || columnName == "upload" ||
+                             columnName == "download" || columnName == "jitter")
+                    {
+                        if (columnName == "ping")
+                        {
+                            string temp = "th colspan=\"" + speedTestSpanCols.ToString() + " \"";
+                            writer.RenderBeginTag(temp);
+                            writer.Write("Speed Test");
+                            writer.RenderEndTag();
+                            index2 = i;
+                        }
+                    }
+                    else
+                    {
+                        string temp1 = "th rowspan=\"2\"";
+                        writer.RenderBeginTag(temp1);
+                        var currentAction = (string)helper.ViewContext.RouteData.Values["action"];
+
+                        if (columnName == "IsActive")
+                        {
+                            List<SelectListItem> si = GetYouTubeVideoIDSelectList(helper);
+                            var link = columnName + helper.DropDownList("IsActive", si, new { onChange = "this.form.submit()" });
+                            writer.Write(link);
+                        }
+                        else
+                        {
+                            var head = ReplaceHeader(columnName);
+                            var link = helper.ActionLink(head, currentAction, new { sort = columnName, searchContent = helper.ViewDataContainer.ViewData["searchContent"] });
+                            writer.Write(link);
+                        }
+                        writer.RenderEndTag();
+                    }
+                    i++;
+                }
+                writer.RenderEndTag();
+
+                writer.RenderBeginTag(HtmlTextWriterTag.Tr);
+                for (i = index1; i < index1 + locSpaCols ; i++)
+                {
+                    writer.RenderBeginTag(HtmlTextWriterTag.Th);
+                    var head = columns[i];// ReplaceHeader(columns[i]).Substring(6);
+                    var currentAction = (string)helper.ViewContext.RouteData.Values["action"];
+                    var link = helper.ActionLink(head, currentAction, new { sort = columns[i], searchContent = helper.ViewDataContainer.ViewData["searchContent"] });
+                    writer.Write(link);
+                    writer.RenderEndTag();
+                }
+                for (i = index2; i < index2 + speedTestSpanCols; i++)
+                {
+                    writer.RenderBeginTag(HtmlTextWriterTag.Th);
+                    var head = columns[i];// ReplaceHeader(columns[i]).Substring(6);
+                    var currentAction = (string)helper.ViewContext.RouteData.Values["action"];
+                    var link = helper.ActionLink(head, currentAction, new { sort = columns[i], searchContent = helper.ViewDataContainer.ViewData["searchContent"] });
+                    writer.Write(link);
+                    writer.RenderEndTag();
+                }
+            }
+            else
 			{
 				foreach (var columnName in columns)
 				{
@@ -178,42 +259,6 @@ namespace System.Web.Mvc.Html
 			writer.RenderEndTag();
 
 		}
-
-
-		//private static void RenderHeader(HtmlHelper helper, HtmlTextWriter writer, string[] columns)
-		//{
-		//    writer.RenderBeginTag(HtmlTextWriterTag.Tr);
-
-		//    foreach (var columnName in columns)
-		//    {
-		//        string temp1 = "th rowspan=\"2\" ";
-		//        writer.RenderBeginTag(temp1);
-
-		//        if (columnName == "InitiateStatus")
-		//        {
-		//            List<SelectListItem> si = GetStatusSelectList(helper);
-		//            var link = columnName + helper.DropDownList("InitiateStatusID", si, new { onChange = "this.form.submit()" });
-		//            writer.Write(link);
-		//        }
-		//        else if (columnName == "IsActive")
-		//        {
-		//            List<SelectListItem> si = GetYouTubeVideoIDSelectList(helper);
-		//            var link = columnName + helper.DropDownList("IsActive", si, new { onChange = "this.form.submit()" });
-		//            writer.Write(link);
-		//        }
-		//        else
-		//        {
-		//            var currentAction = (string)helper.ViewContext.RouteData.Values["action"];
-		//            var head = ReplaceHeader(columnName);
-		//            var link = helper.ActionLink(head, currentAction, new { sort = columnName, searchContent = helper.ViewDataContainer.ViewData["searchContent"] });
-		//            writer.Write(link);
-		//        }
-		//        writer.RenderEndTag();
-		//    }
-
-		//    writer.RenderEndTag();
-		//}  
-
 
         private static int GetMemberColumnCount(string[] columns)
         {
@@ -283,7 +328,6 @@ namespace System.Web.Mvc.Html
 			return si;
 		}
 
-
         public static string ReplaceHeader(string columnName)
         {
             string newStr = columnName;
@@ -301,7 +345,6 @@ namespace System.Web.Mvc.Html
             }
             else if (columnName == "MemberFeeExpiredDate")
             {
-                //newStr = "MemberFee Expired Date";
                 newStr = "MemberFee Expired by";
             }
             else if (columnName == "IDCardNo")
@@ -344,7 +387,7 @@ namespace System.Web.Mvc.Html
 				}
 
                 var value = typeof(T).GetProperty(columnName).GetValue(item, null) ?? String.Empty;
-				if (columnName == "ID" || columnName == "IMemberID")
+                if (columnName == "ID" || columnName == "IMemberID")
 				{
 					valueID = (Guid)value;
 					var link = MvcHtmlString.Create(i.ToString());
@@ -358,11 +401,11 @@ namespace System.Web.Mvc.Html
 					else if (typeof(T).FullName.EndsWith("MemberFeePaymentListViewModel"))
 					{
 						write.Write("&nbsp;");
-						var fromDate = typeof(T).GetProperty("FromDate").GetValue(item, null) ?? String.Empty;
-						var toDate = typeof(T).GetProperty("ToDate").GetValue(item, null) ?? String.Empty;
-  						link = helper.ActionLink("Delete", "Delete", "MemberFeePayment", new { IMemberID = valueID, FromDate = fromDate, ToDate = toDate }, new { @style = "color: green;" });
+                        var fromDate = typeof(T).GetProperty("FromDate").GetValue(item, null) ?? String.Empty;
+                        var toDate = typeof(T).GetProperty("ToDate").GetValue(item, null) ?? String.Empty;
+                        link = helper.ActionLink("Delete", "Delete", "MemberFeePayment", new { IMemberID = valueID, FromDate = fromDate, ToDate = toDate }, new { @style = "color: green;" });
 						write.Write(link);
-					}
+                    }
 				}
                 else if (columnName == "Name" && helper.ViewDataContainer.ViewData["EventID"] != null)
                 {
@@ -373,7 +416,7 @@ namespace System.Web.Mvc.Html
                     }
                     write.Write(link);
                 }
-				else if (columnName == "Name" || columnName == "UserName")
+                else if (columnName == "Name" && !typeof(T).FullName.EndsWith("PublicMemberShortInfo") || columnName == "UserName")
 				{
 					var link = helper.ActionLink(value.ToString(), "Details", new { id = valueID });
 					if (typeof(T).FullName.EndsWith("MemberOnlineInfo"))
@@ -384,11 +427,11 @@ namespace System.Web.Mvc.Html
                     {
                         var fromDate = typeof(T).GetProperty("FromDate").GetValue(item, null) ?? String.Empty;
                         var toDate = typeof(T).GetProperty("ToDate").GetValue(item, null) ?? String.Empty;
-						link = helper.ActionLink(value.ToString(), "Edit", "MemberFeePayment", new { IMemberID = valueID, FromDate = fromDate, ToDate = toDate }, new {title = "Edit" });
+                        link = helper.ActionLink(value.ToString(), "Edit", "MemberFeePayment", new { IMemberID = valueID, FromDate = fromDate, ToDate = toDate }, new { title = "Edit" });
                     }
 					write.Write(link);
 				}
-				else if (columnName == "IsOnline")
+                else if (columnName == "IsOnline")
                 {
                     if ((bool)value)
                     {
@@ -402,13 +445,13 @@ namespace System.Web.Mvc.Html
                          write.Write(link);
                     }
                 }
-				else if ( columnName == "MemberFeeExpiredDate" || columnName == "DateOfInitiation" || columnName == "FromDate" || columnName == "ToDate" || columnName == "ReceievedDate")
+                else if (columnName == "MemberFeeExpiredDate" || columnName == "DateOfBirth" || columnName == "DateOfInitiation" || columnName == "FromDate" || columnName == "ToDate" || columnName == "ReceivedDate")
 				{
 					//if (columnName == "MemberFeeExpiredDate" && !string.IsNullOrEmpty((String)value) && (DateTime)value == new DateTime(2020, 12, 31))
-                    if (columnName == "MemberFeeExpiredDate" && value != String.Empty && (DateTime)value == new DateTime(2020, 12, 31))
+                    if (columnName == "MemberFeeExpiredDate" && (value != String.Empty) && (DateTime)value == MemberFeePayment.ToDateGiro)
 					{
 						write.Write("Giro");
-					}
+                    }
 					else
 					{
 						write.Write(helper.Encode(String.Format("{0:d MMM yyyy}", value)));
@@ -430,11 +473,9 @@ namespace System.Web.Mvc.Html
                     write.Write(helper.Encode(value.ToString()));
                 }
                 write.RenderEndTag();
-            }
+             }
              write.RenderEndTag();
         }
-
-        		
 
         private static bool checkEventSigned(HtmlHelper helper, Guid valueID)
         {

@@ -1,4 +1,4 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Site.Master" Inherits="System.Web.Mvc.ViewPage<IEnumerable<SMCHSGManager.Models.ProductDiscount>>" %>
+﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Site.Master" Inherits="System.Web.Mvc.ViewPage<IEnumerable<SMCHSGManager.Models.LocalRetreatScheduleTemplate>>" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="TitleContent" runat="server">
 	Index
@@ -6,56 +6,50 @@
 
 <asp:Content ID="Content2" ContentPlaceHolderID="MainContent" runat="server">
 
-<div id="body">     
-
-<h5>Product Discount List</h5>
-
-    <p>
-        <%: Html.ActionLink("Create New", "Create") %>
-    </p>
-
+   <h5>Local Retreat Schedule List Model <%: ViewData["modelID"] %></h5>
+ 
     <table>
         <tr>
             <th></th>
             <th>
-                S/N
+                Local Retreat Activity
             </th>
             <th>
-                Product Name
+                Schedule Offset (Hours)
             </th>
             <th>
-                Discount
+                DP_PersonNeeded
             </th>
             <th>
-                DateFrom
+                Video_PersonNeeded
             </th>
             <th>
-                DateTo
+                Clean_PersonNeeded
             </th>
         </tr>
 
-    <% int i = 0;
-    	 foreach (var item in Model) { %>
+    <% foreach (var item in Model) { %>
     
         <tr>
             <td>
                 <%: Html.ActionLink("Edit", "Edit", new { id=item.ID }) %> |
                 <%: Html.ActionLink("Delete", "Delete", new { id=item.ID })%>
             </td>
+       
             <td>
-                <%: (++i).ToString() %>
+                <%: item.EventActivity.Name %>
             </td>
             <td>
-                <%: item.Product.Name + ' ' + item.Product.NameChi %>
+                <%: item.ScheduleOffset.OffsetHours %>
             </td>
             <td>
-                <%: (item.Discount * 100).ToString() + '%' %>
+                <%: item.DP_PersonNeeded %>
             </td>
             <td>
-                <%: String.Format("{0:d}", item.DateFrom) %>
+                <%: item.Video_PersonNeeded %>
             </td>
             <td>
-                <%: String.Format("{0:d}", item.DateTo) %>
+                <%: item.Clean_PersonNeeded %>
             </td>
         </tr>
     
@@ -63,8 +57,9 @@
 
     </table>
 
-
-</div>
+    <p align=center>
+        <%: Html.ActionLink("Create New", "Create", new { modelID = ViewData["modelID"] })%>
+    </p>
 
 </asp:Content>
 

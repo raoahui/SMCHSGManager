@@ -20,7 +20,7 @@
             <th>Group Meditation</th>
         </tr>
         <tr>
-            <td>Monday, Tuesday, Thursday</td>
+            <td>Monday, Tuesday, Wednesday & Thursday</td>
             <td>6:00pm<font color="red" size="2">*</font></td>
             <td>7:30pm</td>
             <td>6:30pm - 7:00pm</td>

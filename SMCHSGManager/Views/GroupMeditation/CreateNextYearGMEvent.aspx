@@ -20,55 +20,6 @@
 <div id="body">
     <h2>CreateGMEventYearly</h2>
 
-    <table>
-        <tr>
-           <th>
-             </th>
-          <%--  <th>
-                Title
-            </th>--%>
-            <th>
-                Date
-            </th>
-           <th>
-                From
-            </th>
-            <th>
-                To
-            </th>
-            <th></th>
-        </tr>
-
-    <% int i = 1; 
-        foreach (var item in Model) { %>
-    
-        <tr>
-            <td>
-               <%: (i++).ToString() %>
-            </td>
-          <%--  <td>
-                <%: item.Title %>
-            </td>--%>
-             <td>
-                <%: String.Format("{0:ddd, d MMM yyyy}", item.StartDateTime)%>
-            </td>
-             <td>
-                <%: String.Format("{0:HH:mm}", item.StartDateTime)%>
-            </td>
-            <td>
-                <%: String.Format("{0:HH:mm}", item.EndDateTime)%>
-            </td>
-            <td>
-                 <%: Html.ActionLink("Remove", "Delete", "Event", new { id = item.ID }, new { @style = "color:white;", @class = "buttonsmall" })%>
-                <%-- <%: Ajax.ActionLink("Delete", "Deleted", "GroupMeditation", new {eventID = item.ID }, new AjaxOptions { UpdateTargetId = "rsvpmsg", OnSuccess = "AnimateRSVPMessage" })%>         --%>
-             </td>
-
-        </tr>
-    
-    <% } %>
-
-    </table>
-
     <p>
         <%: Html.ActionLink("Create New", "Create") %>
     </p>

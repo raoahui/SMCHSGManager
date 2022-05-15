@@ -12,6 +12,7 @@ namespace SMCHSGManager.Models
 	public partial class MemberFeePayment
 	{
 		  // Validation rules for the MemberInfo class
+        public static DateTime ToDateGiro = new DateTime(3000, 1, 1);
 
 		[Bind(Exclude = "IMemberID")]
 		public class MemberFeePaymentMetaDate

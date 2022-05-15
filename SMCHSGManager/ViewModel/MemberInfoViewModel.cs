@@ -54,6 +54,27 @@ namespace SMCHSGManager.ViewModel
 		public bool IsActive { get; set; }
 	}
 
+    public class PublicMemberShortInfo
+    {
+        public Guid ID { get; set; }
+        public string Name { get; set; }
+
+        public string InitiateStatus { get; set; }
+        public int? MemberNo { get; set; }
+
+        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:d MMM yyyy}")]
+        public DateTime? MemberFeeExpiredDate { get; set; }
+
+        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:d MMM yyyy}")]
+        public DateTime? DateOfInitiation { get; set; }
+
+        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:d MMM yyyy}")]
+        public DateTime? DateOfBirth { get; set; }
+
+        public string Gender { get; set; }
+        public bool IsActive { get; set; }
+    }
+
 	public class MemberInfoShortListViewModel
 	{
 		public Guid ID { get; set; }
@@ -78,12 +99,13 @@ namespace SMCHSGManager.ViewModel
 		public string Remark { get; set; }
 	}
 
-	//public class MemberCheckInfo
-	//{
-	//    public Guid ID { get; set; }
-	//    public int MemberID { get; set; }
-	//    public DateTime CheckInDateTime { get; set; }
-	//}
+    public class MemberFeeExpiredDateInfo
+    {
+        public Guid MemberID { get; set; }
+        public int? MemberNo { get; set; }
+        public string Name { get; set; }
+        public DateTime? MemberFeeExpiredDate { get; set; }
+    }
 
 	public class OrdinaryMemberViewModel
 	{
@@ -113,7 +135,7 @@ namespace SMCHSGManager.ViewModel
         public string PaymentMethod { get; set; }
 
  		[DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:d MMM yyyy}")]
-		public DateTime ReceievedDate { get; set; }
+		public DateTime ReceivedDate { get; set; }
 	}
 
     public class GMAttendanceMonthCount
@@ -151,6 +173,8 @@ namespace SMCHSGManager.ViewModel
 
 	public class DPRosterViewModel
 	{
+        public List<string> TitleWeekNameList { get; set; }
+        public List<string> TitleTimeList { get; set; }
 		public string[,] MonthDpList { get; set; }
 		public List<List<MemberInfo>> WeekNoDPLists { get; set; }
 		public int NextMonth { get; set; }
@@ -164,7 +188,7 @@ namespace SMCHSGManager.ViewModel
 	public class GMAttendanceViewModel
 	{
 		public List<GroupMeditation> nextMonthGMs { get; set; }
-		public List<MemberInfo> Members { get; set; }
+        public List<MemberFeeExpiredDateInfo> MemberFeeExpiredDates { get; set; }
 		public int NextMonth { get; set; }
 		public string NextMonthStr { get; set; }
 		public bool HavePreviousMonth { get; set; }

@@ -14,10 +14,10 @@
                 <div class = "nextlink">
                    <% if (User.IsInRole("Administrator"))
                   {%> 
-                     <%: Html.ActionLink("Add New Event", "Create", null, new { @style = "color:white;", @class = "buttonsmall" })%>
+                        <%: Html.ActionLink("Add Local Retreat", "Create", new { eventTypeID = 1 }, new { @style = "color:white;", @class = "buttonsmall" })%>
+                        <%: Html.ActionLink("Add New Event", "Create", null, new { @style = "color:white;", @class = "buttonsmall" })%>
                  <%} %>
-                <%-- <%: Html.ActionLink("Month view", "MonthView", null, new { @style = "color:white;", @class = "buttonsmall" })%> --%>
-                 </div>
+                  </div>
             </div>
 
        <h2> Upcoming events</h2>       
