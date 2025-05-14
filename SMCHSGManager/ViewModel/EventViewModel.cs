@@ -43,6 +43,8 @@ namespace SMCHSGManager.ViewModel
         public List<Announcement> Announcements { get; set; }
         public List<Event> UpcomingEvents { get; set; }
         public string[] AnnouncementImages { get; set; }
+        public GroupMeditation GroupMeditation { get; set; }
+        public List<GroupMeditationAttendance> GroupMeditationAttendances { get; set; }
     }
 
 	public class InitiateVisitorViewModel

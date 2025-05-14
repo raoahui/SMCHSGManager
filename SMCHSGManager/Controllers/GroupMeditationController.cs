@@ -23,20 +23,14 @@ namespace SMCHSGManager.Controllers
 		[Authorize]
 		public ActionResult Index(DateTime? startDate, DateTime? endDate)
         {
-  			if (!endDate.HasValue)
-			{
-				endDate = DateTime.UtcNow.AddHours(8);
-			}
-
-            DateTime latestGroupMeditationAttendanceDB = DateTime.Today; // _entities.GroupMeditationAttendances.OrderByDescending(a => a.CheckInTime).Select(a => a.CheckInTime).FirstOrDefault();
+            DateTime latestGroupMeditationAttendanceDB = DateTime.Today;
 
             latestGroupMeditationAttendanceDB = latestGroupMeditationAttendanceDB.AddDays(1);
 
             var events = (from r in _entities.GroupMeditations 
-                         where 	 //r.EndDateTime <= today && 
-										(startDate == null || r.StartDateTime >= startDate.Value)
-									  && (endDate == null || r.EndDateTime <= endDate.Value) && r.EndDateTime < latestGroupMeditationAttendanceDB
-                                      && r.InitiateTypeID == 1
+                         where 	(startDate == null || r.StartDateTime >= startDate.Value)
+                                && (endDate == null || r.EndDateTime <= endDate.Value) && r.EndDateTime < latestGroupMeditationAttendanceDB
+                                && r.InitiateTypeID == 1
                          orderby r.StartDateTime descending select r).ToList();
 
              return View(events);
@@ -298,24 +292,34 @@ namespace SMCHSGManager.Controllers
 
 
 		[Authorize(Roles = "SuperAdmin")]
-        public ActionResult AddNewAttend(int GMID)
+        public ActionResult AddNewAttend(int GMID, DateTime? checkTime)
 		{
-            
+            List<SelectListItem> memberNotRegisterList = new List<SelectListItem>();
             var memberRegisterIDs = (from r in _entities.GroupMeditationAttendances where r.GroupMeditationID == GMID select r.MemberID).ToList();
-            var memberNotRegisterList = (from r in _entities.MemberInfos 
-                                       where !memberRegisterIDs.Contains(r.MemberID) && r.IsActive && !r.Name.StartsWith("0")
-                                       orderby r.Name select r).ToList();
-
+            var memberNotRegisterTable = (from r in _entities.MemberInfos
+                                         where !memberRegisterIDs.Contains(r.MemberID) && r.IsActive && !r.Name.StartsWith("0") && r.Name != "DP" && r.MemberNo != null
+                                         orderby r.MemberNo.Value select new SelectListModel{
+													ID = r.MemberNo.Value,
+													Name = r.Name,
+                                                    GID = r.MemberID,
+										 }).ToList();
+            foreach (SelectListModel r in memberNotRegisterTable)
+            {
+                SelectListItem item = new SelectListItem { Text = r.ID + " - " + r.Name, Value = r.GID.ToString()};
+                memberNotRegisterList.Add(item);
+            }
+            
             ViewData["MemberInfo"] = memberNotRegisterList;
             ViewData["aEvent"] = GMID;
             ViewData["Descending"] = true;
+            ViewData["checkTime"] = checkTime;
 
-            return View(memberNotRegisterList.First());
+            return View();
 		}
         
         //[HttpPost]
         [AcceptVerbs(HttpVerbs.Post), Authorize]
-        public ActionResult AddNewAttend(int GMID, Guid? MemberID, FormCollection collection)
+        public ActionResult AddNewAttend(int GMID, DateTime? checkTime, Guid? MemberID, FormCollection collection)
         {
             Guid memberID;
             if (MemberID == null)
@@ -330,10 +334,15 @@ namespace SMCHSGManager.Controllers
 
             //eventRegistration.EventID = eventID;
             GroupMeditation gm = _entities.GroupMeditations.Single(a => a.ID == GMID);
-            NewGroupMeditationAttendance(gm.StartDateTime.AddHours(-0.5), memberID, GMID);
+            var cTime = gm.StartDateTime.AddHours(-0.5);
+            if (checkTime != null) cTime = checkTime.Value;
 
-            return RedirectToAction("Details", new { eventID = GMID, descending = true });
+            NewGroupMeditationAttendance(cTime, memberID, GMID);
 
+            if (checkTime == null)
+                return RedirectToAction("Details", new { eventID = GMID, descending = true });
+            else
+                return RedirectToAction("Index", "Home");
         }
 
         [Authorize(Roles = "Administrator")]
@@ -466,7 +475,7 @@ namespace SMCHSGManager.Controllers
 
 		}
 
-		private void NewGroupMeditationAttendance(DateTime checkInTime, Guid memberID, int groupMeditaionID)
+        private void NewGroupMeditationAttendance(DateTime checkInTime, Guid memberID, int groupMeditaionID)
 		{
 			GroupMeditationAttendance groupMeditationAttendance = new GroupMeditationAttendance();
 			groupMeditationAttendance.MemberID = memberID;
@@ -512,9 +521,9 @@ namespace SMCHSGManager.Controllers
 
 			var querys = (from r in _entities.GroupMeditationAttendances
 					  where (r.MemberInfo.Name.Contains(searchContent) ||
-									searchContent == null || r.MemberInfo.MemberNo == memberNO)
+									searchContent == null && r.MemberInfo.IsActive || r.MemberInfo.MemberNo == memberNO)
 									 && r.MemberInfo.MemberNo.HasValue && r.MemberInfo.MemberNo.Value < 1000
-									 && !r.MemberInfo.Name.Contains("tester")
+									 && !r.MemberInfo.Name.Contains("tester") && !r.MemberInfo.Name.Contains("DP")
 					  orderby r.MemberInfo.MemberNo
 
 					  group r by new

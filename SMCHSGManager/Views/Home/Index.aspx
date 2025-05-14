@@ -1,26 +1,33 @@
 ﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Site.Master" Inherits="System.Web.Mvc.ViewPage<SMCHSGManager.ViewModel.HomeViewModel>" %>
 
+<script runat="server">
+
+    protected void Page_Load(object sender, EventArgs e)
+    {
+
+    }
+</script>
 <asp:Content ID="Content1" ContentPlaceHolderID="TitleContent" runat="server">
 	SMCH Association Singapore - Home Page</asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="MainContent" runat="server">
-	<div id="body">
+    <div id="body">
 		<!-- Left column   -->
 		<div id="columnleft">
 			<div class="leftblock">
 				<table style="border: 0;">
 					<tr>
 						<td style="border: 0; width: 174px; text-align: center">
-							<a href="http://classic.godsdirectcontact.org.tw/eng/news/208/index.htm" target="_blank">
-								<img src="../images/mag208cover.jpg" align="" height="221" width="160">
+							<a href="http://www.suprememastertv.com" target="_blank">
+								<img src="../images/UrgentMsgImage.png" align="" height="221" width="160">
 							</a>
 						</td>
 					</tr>
-					<tr>
+					<%--<tr>
 						<td style="border: 0; width: 174px; text-align: center">
 							<a href="http://classic.godsdirectcontact.org.tw/eng/news/208/index.htm" target="_blank">
 								<b class="next">News Magazine</b></a>
 						</td>
-					</tr>
+					</tr>--%>
 				</table>
 				<%if (!Request.IsAuthenticated)
 	  {%>
@@ -137,37 +144,79 @@
 		</div>
 		<!-- right column-->
 		<div id="columnright">
+            <% if (Model.GroupMeditation != null) {
+                var aEvent = Model.GroupMeditation;
+                string dString = String.Format("{0:ddd, d MMM yyyy  }", aEvent.StartDateTime) + String.Format("{0:HH:mm}", aEvent.StartDateTime) + " to " + String.Format("{0:HH:mm}", aEvent.EndDateTime) + ' ' + "Group Meditation"; %>
+			<div class="rightblock" align="center">
+				<h2>Group Meditation Registration </h2> 
+                <div class="dashedlineIndex"></div>
+                <h4><%: dString%> </h4>
+                <% if (Model.GroupMeditationAttendances.Count > 0)
+                   { %>
+                   <br />
+                    <table>
+                        <tr>
+                            <th></th>
+                            <th>Member No</th>
+                            <th>Name</th>
+                            <th>IDCard Number</th>
+                            <th>Checking Time</th>
+                        </tr>
+                        <%  int ii = 1;
+                            foreach (var item in Model.GroupMeditationAttendances)
+                            { %>
+                        <tr>
+                            <td><%: (ii++).ToString()%></td>
+                            <td align="left"><%: item.MemberInfo.MemberNo.ToString()%></td>
+                            <td align="left"><%: item.MemberInfo.Name%></td>
+                            <td><%: item.MemberInfo.IDCardNo%></td>
+                            <td><%: string.Format("{0:d MMM yyyy HH:mm}", item.CheckInTime)%></td>
+                        </tr>
+                        <% } %>
+                    </table>
+                <% } %>
+                <br />
+                <div class="dashedlineIndex"></div>
+                 <%  if (User.IsInRole("Administrator"))
+                     {%>
+                    <%: Html.ActionLink("Register", "AddNewAttend", "GroupMeditation", new { GMID = aEvent.ID, checkTime = DateTime.Now }, new { @style = "color:white;", @class = "buttonsearch" })%> 
+                 <%} %>
+	        </div>
+		    <%}
+               else
+               { %>
+
 			<div class="rightblock">
 				<h2>
 					Recent Announcements</h2>
 				<% int i = 0;
-	   foreach (var item in Model.Announcements)
-	   { %>
+       foreach (var item in Model.Announcements)
+       { %>
 				<div class="rightlistitem">
 					<div class="dashedlineIndex">
 					</div>
 					<div class="thumbnail">
 						<%--  <%: Html.ActionLink(" ", "Details", new { id = item.ID })%> --%>
 						<% if (!string.IsNullOrEmpty(Model.AnnouncementImages[i]))
-		 { %>
+         { %>
 						<img src="<%: Model.AnnouncementImages[i] %>" height="50" alt="" />
 						<%} %>
 					</div>
 					<p>
 						<%: String.Format("{0:ddd, MMM d yyyy}", item.AnnounceDate)%>
 						<%  if (!string.IsNullOrEmpty(item.StaticURL))
-		  {%>
+          {%>
 						<a style="font-weight: bolder" href="<%: item.StaticURL %>">
-							<%: item.Name %></a>
+							<%: item.Name%></a>
 						<%}
-		  else
-		  { %>
-						<%: Html.ActionLink(item.Name, "Details", "Announcement", new { id = item.ID}, new {@style = "font-weight:bolder;" })%>
+          else
+          { %>
+						<%: Html.ActionLink(item.Name, "Details", "Announcement", new { id = item.ID }, new { @style = "font-weight:bolder;" })%>
 						<%} %>
 					</p>
 					<% string des = SMCHSGManager.Models.GeneralFunction.RemoveHtmlFormat(item.Description); %>
 					<p>
-						<%: Html.Truncate(des, 40) %>
+						<%: Html.Truncate(des, 40)%>
 						<%: Html.ActionLink("read more", "Details", "Announcement", new { id = item.ID }, null)%>
 						&raquo
 					</p>
@@ -175,7 +224,7 @@
 					</div>
 				</div>
 				<% i++;
-	   } %>
+       } %>
 				<div class="dashedline">
 				</div>
 				<%: Html.ActionLink("Read all Announcements", "Index", "Announcement")%>
@@ -187,19 +236,19 @@
 				<div class="dashedline">
 				</div>
 				<% 
-					if (Model.UpcomingEvents.Count() > 0)
-					{
+                if (Model.UpcomingEvents.Count() > 0)
+                {
 				%>
 				<table style="border: 0; width: 100%">
 					<% int itemNo = 0;
-		foreach (var item in Model.UpcomingEvents)
-		{
-			itemNo++;
-			string eventTitle = item.Title;
-			if (item.EventTypeID == 1)
-			{
-				eventTitle += ' ' + item.EventType.Name;
-			} 
+        foreach (var item in Model.UpcomingEvents)
+        {
+            itemNo++;
+            string eventTitle = item.Title;
+            if (item.EventTypeID == 1)
+            {
+                eventTitle += ' ' + item.EventType.Name;
+            } 
 					%>
 					<tr>
 						<td class="eventview">
@@ -213,7 +262,7 @@
 						</td>
 					</tr>
 					<%if (DateTime.Compare(item.RegistrationOpenDate, DateTime.Today.ToUniversalTime().AddHours(8)) <= 0 && DateTime.Compare(DateTime.Today.ToUniversalTime().AddHours(8), item.RegistrationCloseDate) <= 0)
-	   {%>
+       {%>
 					<tr>
 						<td class="eventview" colspan="2">
 							<% Html.RenderPartial("RSVPStatus", item); %>
@@ -223,13 +272,13 @@
 					<tr>
 						<td class="eventview" colspan="2">
 							<% string des = SMCHSGManager.Models.GeneralFunction.RemoveHtmlFormat(item.Description); %>
-							<%: Html.Truncate(des, 50) %>
+							<%: Html.Truncate(des, 50)%>
 							<%: Html.ActionLink("read more", "Details", "Event", new { id = item.ID }, null)%>
 							&raquo
 						</td>
 					</tr>
 					<% if (itemNo < Model.UpcomingEvents.Count())
-		{%>
+        {%>
 					<tr>
 						<td colspan="2" class="eventview">
 							<div class="dashedline">
@@ -245,6 +294,8 @@
 				<%: Html.ActionLink("View all events", "Index", "Event")%>
 				&raquo;
 			</div>
+
+            <%} %>
 		</div>
 		<div class="clear2column">
 		</div>

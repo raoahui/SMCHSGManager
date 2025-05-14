@@ -40,51 +40,33 @@
             	 %>
                Checking Time 
                <a href="<%= Url.Action("Details", "GroupMeditation",  new  { eventID = aEvent.ID, descending = !Descending }) %>" ><img src=<%: imageFile %> title = "<%: orderBy%>" /></a>  &nbsp; 
-				 <%--<%: Html.ActionLink(DescendingStr, "Details", new { eventID = aEvent.ID, descending = !Descending })%>--%>
             </th>
       
         </tr>
 
     <%  int i=1; 
         foreach (var item in Model) { %>
-    
         <tr>
-            <td>
-                <%: (i++).ToString() %>
-            </td>
-            <td>
-					<%: Html.ActionLink("Delete", "DeleteAttendData", new { GMAttendID = item.ID })%>
-           </td>
-           <td align="left">
-                <%: item.MemberInfo.MemberNo.ToString() %>
-            </td>
-           <td align="left">
-                <%: item.MemberInfo.Name %>
-            </td>
-            <td>
-                <%: item.MemberInfo.IDCardNo %>
-            </td>
-            <td>
-                <%: string.Format("{0:d MMM yyyy HH:mm}", item.CheckInTime) %>
-            </td>
-        
+            <td><%: (i++).ToString() %></td>
+            <td><%: Html.ActionLink("Delete", "DeleteAttendData", new { GMAttendID = item.ID })%></td>
+            <td align="left"><%: item.MemberInfo.MemberNo.ToString() %></td>
+            <td align="left"><%: item.MemberInfo.Name %></td>
+            <td><%: item.MemberInfo.IDCardNo %></td>
+            <td><%: string.Format("{0:d MMM yyyy HH:mm}", item.CheckInTime) %></td>
         </tr>
-    
     <% } %>
 
     </table>
     <br />
  	
-    <div class="actionbuttons" >
+    <div class="actionbuttons" align="center" >
      <%                     
          if (User.IsInRole("Administrator"))
          {%>
-
            <%: Html.ActionLink("New Attendance", "AddNewAttend", "GroupMeditation", new { GMID = aEvent.ID }, new { @style = "color:white;", @class = "buttonsearch" })%> 
          <%} %>
     </div>
 
-</div>
-
+    </div>
 </asp:Content>
 

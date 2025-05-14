@@ -30,8 +30,6 @@ namespace SMCHSGManager.Controllers
 			((EntityConnection)_entities.Connection).StoreConnection.ConnectionString = sb.ConnectionString;
 		}
 
-
-
         public ActionResult Index()
         {
             ViewData["Message"] = "Welcome to SupremeMaster Ching Hai Singapore Association!";
@@ -47,7 +45,7 @@ namespace SMCHSGManager.Controllers
             
             EventController ec = new EventController();
             var upcomingEvents = ec.GetUpcomingEvents(true, initiateOnly);
-			int eventNo = 3;
+			int eventNo = 1;
 			if (upcomingEvents.Count() < eventNo)
 			{
 				eventNo = upcomingEvents.Count();
@@ -55,17 +53,30 @@ namespace SMCHSGManager.Controllers
 
             AnnouncementController ac = new AnnouncementController();
             var announcements = ac.GetAnnouncements(null, initiateOnly, null);
-			int announcementNo = 3;
+			int announcementNo = 1;
 			if (announcements.Count() < announcementNo)
 			{
 				announcementNo = announcements.Count();
 			}
 
+            DateTime checkInTimeStart = lToday.AddMinutes(90 + 15);
+            DateTime checkInTimeEnd = lToday.AddMinutes(-15);
+            var groupMeditation = _entities.GroupMeditations.Where(a => a.StartDateTime <= checkInTimeStart && a.StartDateTime >= checkInTimeEnd && a.InitiateTypeID == 1).FirstOrDefault();
+            var groupMeditationAttendances = new List<GroupMeditationAttendance>();
+            if (groupMeditation != null) {
+                groupMeditationAttendances = (from r in _entities.GroupMeditationAttendances
+                                              where r.GroupMeditationID == groupMeditation.ID && r.CheckInTime != null
+                             orderby r.CheckInTime
+                             select r).ToList();
+            }
+            
             var viewModel = new HomeViewModel
             {
 				Announcements = announcements.Take(announcementNo).ToList(),
 				UpcomingEvents = upcomingEvents.Take(eventNo).ToList(),
 				AnnouncementImages = ac.GetAnnouncementImage(announcements.Take(announcementNo).ToList()),
+                GroupMeditation = groupMeditation,
+                GroupMeditationAttendances = groupMeditationAttendances,
             };
 
             return View(viewModel);

@@ -70,6 +70,7 @@
         <% if (Roles.IsUserInRole("Initiate")){ %>
 			<li><span style='margin-bottom:0px;'>Group Meditation </span><dl>
 				<dt><a href="<%= Url.Action("GMScheduleTable", "GroupMeditation", new RouteValueDictionary(new { Area = "" })) %>">Group Meditation</a></dt>
+				<dd><a href="<%= Url.Action("GMRegister", "GroupMeditation", new RouteValueDictionary(new { Area = "" })) %>">GM Register</a></dd>   
 				<dd><a href="<%= Url.Action("DPDuties", "Help", new RouteValueDictionary(new { Area = "" })) %>">DP Duties</a></dd>   
 				<dd><a href="<%= Url.Action("DPRoster", "GMVolunteerJobName", new RouteValueDictionary(new { Area = "", nextMonth = 0, edit = false })) %>">DP Roster</a></dd>   
 				<dd><a href="<%= Url.Action("Index", "InitiateVisitor", new RouteValueDictionary(new { Area = "" })) %>">Visitor</a></dd>
@@ -142,7 +143,6 @@
             <%--<dd><a href="<%= Url.Action("GetAllInitiateUserNameNameEmals", "MemberInfo", new RouteValueDictionary(new { Area = "",  initiateOnly = true  })) %>">GetAllInitiateUserNameEmals</a></dd>--%>
             <%-- <dd><a href="<%= Url.Action("UpdateEmailAndGendar", "Account", new RouteValueDictionary(new { Area = "" })) %>">UpdateEmailAndGendar</a></dd>--%>
             <%--<dd><a href="<%= Url.Action("CreateUsers4RealMemberInfo", "Account", new RouteValueDictionary(new { Area = "" })) %>">CreateUsers4RealMemberInfo</a></dd>--%>
-			<dd><a href="<%= Url.Action("UpdateProdects", "Product", new RouteValueDictionary(new { Area = "" })) %>">UpdateProdects</a> </dd>
 			<dd><a href="<%= Url.Action("AddAttendanceData", "GroupMeditation", new RouteValueDictionary(new { Area = "" })) %>">Add Attendance Data</a> </dd>
             <%--<dd><a href="<%= Url.Action("CorrectGMEvent", "GroupMeditation", new RouteValueDictionary(new { Area = ""})) %>">CorrectGMEvent</a> </dd>
              <dd><a href="<%= Url.Action("CreateGMEvent", "GroupMeditation", new RouteValueDictionary(new { Area = "", startDate = new DateTime(2011, 9, 1), endDate = new DateTime(2011, 12, 31)})) %>">CreateGMEvent</a> </dd>
