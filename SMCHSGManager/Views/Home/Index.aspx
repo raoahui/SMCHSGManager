@@ -1,12 +1,5 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Site.Master" Inherits="System.Web.Mvc.ViewPage<SMCHSGManager.ViewModel.HomeViewModel>" %>
+<%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Site.Master" Inherits="System.Web.Mvc.ViewPage<SMCHSGManager.ViewModel.HomeViewModel>" %>
 
-<script runat="server">
-
-    protected void Page_Load(object sender, EventArgs e)
-    {
-
-    }
-</script>
 <asp:Content ID="Content1" ContentPlaceHolderID="TitleContent" runat="server">
 	SMCH Association Singapore - Home Page</asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="MainContent" runat="server">
@@ -177,7 +170,7 @@
                 <% } %>
                 <br />
                 <div class="dashedlineIndex"></div>
-                 <%  if (User.IsInRole("Administrator"))
+                 <%  if (User.IsInRole("Administrator") || User.IsInRole("DP Admin"))
                      {%>
                     <%: Html.ActionLink("Register", "AddNewAttend", "GroupMeditation", new { GMID = aEvent.ID, checkTime = DateTime.Now }, new { @style = "color:white;", @class = "buttonsearch" })%> 
                  <%} %>

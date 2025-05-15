@@ -67,14 +67,7 @@ namespace SMCHSGManager.Controllers
 						}
 						else
 						{
-                            if (model.UserName.ToLower() == "dp")
-                            {
-                                return RedirectToAction("Index", "InitiateVisitor");
-                            }
-                            else
-                            {
-                                return RedirectToAction("Index", "Home");
-                            }
+                            return RedirectToAction("Index", "Home");
 						}
 					}
                 }

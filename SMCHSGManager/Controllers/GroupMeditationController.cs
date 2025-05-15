@@ -291,7 +291,7 @@ namespace SMCHSGManager.Controllers
         }
 
 
-		[Authorize(Roles = "SuperAdmin")]
+        [Authorize(Roles = "SuperAdmin, DP Admin")]
         public ActionResult AddNewAttend(int GMID, DateTime? checkTime)
 		{
             List<SelectListItem> memberNotRegisterList = new List<SelectListItem>();
