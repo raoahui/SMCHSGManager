@@ -37,7 +37,7 @@ namespace SMCHSGManager.Controllers
 
 			viewModel.MemberInfos = GetMemberNameSelectList(Guid.Empty);
 
-			viewModel.BlackListMember.DateFrom = DateTime.Today;
+            viewModel.BlackListMember.DateFrom = DateTime.Today.ToUniversalTime().AddHours(8);
 
 			return View(viewModel);
         }

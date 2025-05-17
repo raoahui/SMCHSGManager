@@ -172,7 +172,7 @@
                 <div class="dashedlineIndex"></div>
                  <%  if (User.IsInRole("Administrator") || User.IsInRole("DP Admin"))
                      {%>
-                    <%: Html.ActionLink("Register", "AddNewAttend", "GroupMeditation", new { GMID = aEvent.ID, checkTime = DateTime.Now }, new { @style = "color:white;", @class = "buttonsearch" })%> 
+                    <%: Html.ActionLink("Register", "AddNewAttend", "GroupMeditation", new { GMID = aEvent.ID, checkTime = DateTime.Now.ToUniversalTime().AddHours(8) }, new { @style = "color:white;", @class = "buttonsearch" })%> 
                  <%} %>
 	        </div>
 		    <%}

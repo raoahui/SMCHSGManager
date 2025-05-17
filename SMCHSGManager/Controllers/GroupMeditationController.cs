@@ -23,7 +23,7 @@ namespace SMCHSGManager.Controllers
 		[Authorize]
 		public ActionResult Index(DateTime? startDate, DateTime? endDate)
         {
-            DateTime latestGroupMeditationAttendanceDB = DateTime.Today;
+            DateTime latestGroupMeditationAttendanceDB = DateTime.Today.ToUniversalTime().AddHours(8);
 
             latestGroupMeditationAttendanceDB = latestGroupMeditationAttendanceDB.AddDays(1);
 

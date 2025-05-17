@@ -38,7 +38,9 @@ namespace SMCHSGManager.Controllers
             System.Globalization.Calendar calendar = info.Calendar;
             DateTime lastDay = new System.DateTime(2013, 1, 24, calendar);
 
-            DateTime lToday = DateTime.Now; // AddHours(-16);
+            DateTime lToday = DateTime.Now.ToUniversalTime().AddHours(8);
+            // For debug in local, need to use DateTime.Now;
+
             ViewData["LeftDays"] = (lastDay - lToday).Days;
 
             bool initiateOnly = User.IsInRole("Initiate");
