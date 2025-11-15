@@ -1,4 +1,5 @@
 ﻿<%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<SMCHSGManager.ViewModel.DPRosterViewModel>" %>
+     <link href="../../Content/dropdownMenu.css"  rel="stylesheet" type="text/css" id="ctl00_dropdownMenu"     />
 
     <% using (Html.BeginForm())
 	   {%>
@@ -60,7 +61,7 @@
 											 if (Model.Edit)
 											 { %>
 												<td align="center" style=" border:0; padding:3px,2px;">     
-												<%: Html.DropDownList("IMemberID", new SelectList(WeekNoDPLists[j] as IEnumerable, "MemberID", "Name", Guid.Parse(days[1])))%> 
+												<%: Html.DropDownList("IMemberID", new SelectList(WeekNoDPLists[j] as IEnumerable, "MemberID", "Name", Guid.Parse(days[1])), new { @style = "width:100px;" })%> 
 											<%}else{%>
 												<td align="center" style=" border:0; padding:3px,2px; font-weight:bold; font-family:Tahoma">   
                                                 <%: days[1] %>											
