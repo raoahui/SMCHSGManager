@@ -46,7 +46,7 @@ namespace SMCHSGManager.Controllers
 		public ActionResult Create(int volunteerJobTypeID)
         {
 			var gmVolunteerJobNames = (from r in _entities.GMVolunteerJobNames where r.VolunteerJobTypeID == volunteerJobTypeID select r.MemberID).ToList();
-			var memberNotVJID = (from r in _entities.MemberInfos where !gmVolunteerJobNames.Contains(r.MemberID) orderby r.Name select r).ToList();
+			var memberNotVJID = (from r in _entities.MemberInfos where !gmVolunteerJobNames.Contains(r.MemberID) && r.IsActive orderby r.Name select r).ToList();
 			var viewModel = new GMVolunteerJobNameViewdModel
 			{
 				 GMVolunteerJobName = new GMVolunteerJobName (),
@@ -79,45 +79,45 @@ namespace SMCHSGManager.Controllers
             }
         }
         
-        //
-        // GET: /GMVolunteerJobName/Edit/5
+        ////
+        //// GET: /GMVolunteerJobName/Edit/5
 
-		[Authorize(Roles = "Administrator")]
-		public ActionResult Edit(Guid memberID, int volunteerJobTypeID)
-        {
-			var gmVolunteerJobNames = (from r in _entities.GMVolunteerJobNames where r.VolunteerJobTypeID == volunteerJobTypeID select r.MemberID).ToList();
-			var memberNotVJID = (from r in _entities.MemberInfos where !gmVolunteerJobNames.Contains(r.MemberID) orderby r.Name select r).ToList();
+        //[Authorize(Roles = "Administrator")]
+        //public ActionResult Edit(Guid memberID, int volunteerJobTypeID)
+        //{
+        //    var gmVolunteerJobNames = (from r in _entities.GMVolunteerJobNames where r.VolunteerJobTypeID == volunteerJobTypeID select r.MemberID).ToList();
+        //    var memberNotVJID = (from r in _entities.MemberInfos where !gmVolunteerJobNames.Contains(r.MemberID) orderby r.Name select r).ToList();
 
-			GMVolunteerJobName gmVolunteerJobName = _entities.GMVolunteerJobNames.Single(a => a.MemberID == memberID && a.VolunteerJobTypeID == volunteerJobTypeID);
-            var viewModel = new GMVolunteerJobNameViewdModel
-			{
-				GMVolunteerJobName = gmVolunteerJobName,
-				MemberInfo = memberNotVJID,
-			};
-			ViewData["VolunteerJobTypeName"] = gmVolunteerJobName.VolunteerJobType.Name;
+        //    GMVolunteerJobName gmVolunteerJobName = _entities.GMVolunteerJobNames.Single(a => a.MemberID == memberID && a.VolunteerJobTypeID == volunteerJobTypeID);
+        //    var viewModel = new GMVolunteerJobNameViewdModel
+        //    {
+        //        GMVolunteerJobName = gmVolunteerJobName,
+        //        MemberInfo = memberNotVJID,
+        //    };
+        //    ViewData["VolunteerJobTypeName"] = gmVolunteerJobName.VolunteerJobType.Name;
 
-			return View(viewModel);
-        }
+        //    return View(viewModel);
+        //}
 
-        //
-        // POST: /GMVolunteerJobName/Edit/5
+        ////
+        //// POST: /GMVolunteerJobName/Edit/5
 
-        //[HttpPost]
-		[AcceptVerbs(HttpVerbs.Post), Authorize(Roles = "Administrator")]
-		public ActionResult Edit(Guid memberID, int volunteerJobTypeID, FormCollection collection)
-        {
-			GMVolunteerJobName gmVolunteerJobName = _entities.GMVolunteerJobNames.Single(a => a.MemberID == memberID && a.VolunteerJobTypeID == volunteerJobTypeID);
-            try
-            {
-				UpdateModel(gmVolunteerJobName, "GMVolunteerJobName");
-				_entities.SaveChanges();
-				return RedirectToAction("Index", new { volunteerJobTypeID = volunteerJobTypeID });
-            }
-            catch
-            {
-                return View();
-            }
-        }
+        ////[HttpPost]
+        //[AcceptVerbs(HttpVerbs.Post), Authorize(Roles = "Administrator")]
+        //public ActionResult Edit(Guid memberID, int volunteerJobTypeID, FormCollection collection)
+        //{
+        //    GMVolunteerJobName gmVolunteerJobName = _entities.GMVolunteerJobNames.Single(a => a.MemberID == memberID && a.VolunteerJobTypeID == volunteerJobTypeID);
+        //    try
+        //    {
+        //        UpdateModel(gmVolunteerJobName, "GMVolunteerJobName");
+        //        _entities.SaveChanges();
+        //        return RedirectToAction("Index", new { volunteerJobTypeID = volunteerJobTypeID });
+        //    }
+        //    catch
+        //    {
+        //        return View();
+        //    }
+        //}
 
 		//
 		// GET: /GMVolunteerJobName/Delete/5
@@ -317,104 +317,8 @@ namespace SMCHSGManager.Controllers
             return curWeekNo;
         }
 
-        //private List<MemberInfo> GetWeekNoDpMap(MemberInfo mi, DayOfWeek dow, int startTime)
-        //{
-        //    List<MemberInfo> tempList = new List<MemberInfo>();
-        //    switch (dow)
-        //    {
-        //        case DayOfWeek.Sunday:
-        //            {
-        //                if (startTime > 8 && startTime < 10)
-        //                    tempList = (from r in _entities.GMVolunteerJobNames
-        //                                join h in _entities.MemberInfos on r.MemberID equals h.MemberID
-        //                                where r.Sunday && r.VolunteerJobTypeID == 1
-        //                                orderby h.Name
-        //                                select h).ToList();
-        //                else if (startTime > 18 && startTime < 20)
-        //                    tempList = (from r in _entities.GMVolunteerJobNames
-        //                                join h in _entities.MemberInfos on r.MemberID equals h.MemberID
-        //                                where r.SundayEvening && r.VolunteerJobTypeID == 1
-        //                                orderby h.Name
-        //                                select h).ToList();
-        //            }
-        //            break;
-        //        case DayOfWeek.Monday:
-        //            tempList = (from r in _entities.GMVolunteerJobNames
-        //                        join h in _entities.MemberInfos on r.MemberID equals h.MemberID
-        //                        where r.Monday && r.VolunteerJobTypeID == 1
-        //                        orderby h.Name
-        //                        select h).ToList();
-        //            break;
-        //        case DayOfWeek.Tuesday:
-        //            tempList = (from r in _entities.GMVolunteerJobNames
-        //                        join h in _entities.MemberInfos on r.MemberID equals h.MemberID
-        //                        where r.Tuesday && r.VolunteerJobTypeID == 1
-        //                        orderby h.Name
-        //                        select h).ToList();
-        //            break;
-        //        case DayOfWeek.Wednesday:
-        //            if (startTime > 18 && startTime < 20)
-        //                tempList = (from r in _entities.GMVolunteerJobNames
-        //                            join h in _entities.MemberInfos on r.MemberID equals h.MemberID
-        //                            where r.Wednesday && r.VolunteerJobTypeID == 1
-        //                            orderby h.Name
-        //                            select h).ToList();
-        //            else if (startTime > 22)
-        //                tempList = (from r in _entities.GMVolunteerJobNames
-        //                            join h in _entities.MemberInfos on r.MemberID equals h.MemberID
-        //                            where r.WednesdayOvernight && r.VolunteerJobTypeID == 1
-        //                            orderby h.Name
-        //                            select h).ToList();
-        //            break;
-        //        case DayOfWeek.Thursday:
-        //            tempList = (from r in _entities.GMVolunteerJobNames
-        //                        join h in _entities.MemberInfos on r.MemberID equals h.MemberID
-        //                        where r.Thursday && r.VolunteerJobTypeID == 1
-        //                        orderby h.Name
-        //                        select h).ToList();
-        //            break;
-        //        case DayOfWeek.Friday:
-        //            tempList = (from r in _entities.GMVolunteerJobNames
-        //                        join h in _entities.MemberInfos on r.MemberID equals h.MemberID
-        //                        where r.Friday && r.VolunteerJobTypeID == 1
-        //                        orderby h.Name
-        //                        select h).ToList();
-        //            break;
-        //        case DayOfWeek.Saturday:
-        //            {
-        //                if (startTime > 8 && startTime < 10)
-        //                    tempList = (from r in _entities.GMVolunteerJobNames
-        //                                join h in _entities.MemberInfos on r.MemberID equals h.MemberID
-        //                                where r.SaturdayDay && r.VolunteerJobTypeID == 1
-        //                                orderby h.Name
-        //                                select h).ToList();
-        //                else if (startTime > 18 && startTime < 20)
-        //                    tempList = (from r in _entities.GMVolunteerJobNames
-        //                                join h in _entities.MemberInfos on r.MemberID equals h.MemberID
-        //                                where r.SaturdayEvening && r.VolunteerJobTypeID == 1
-        //                                orderby h.Name
-        //                                select h).ToList();
-        //                else if (startTime > 22)
-        //                    tempList = (from r in _entities.GMVolunteerJobNames
-        //                                join h in _entities.MemberInfos on r.MemberID equals h.MemberID
-        //                                where r.SaturdayOvernight && r.VolunteerJobTypeID == 1
-        //                                orderby h.Name
-        //                                select h).ToList();
-        //            }
-        //            break;
-        //        default:
-        //            break;
-        //    }
-        //    if (tempList.Count == 0) tempList = (from r in _entities.GMVolunteerJobNames
-        //                                         join h in _entities.MemberInfos on r.MemberID equals h.MemberID
-        //                                         orderby h.Name
-        //                                         select h).ToList();
-        //    tempList.Insert(0, mi);
-        //    return tempList;
-        //}
-
 		//[HttpPost]
-		[AcceptVerbs(HttpVerbs.Post), Authorize(Roles = "Administrator")]
+		[AcceptVerbs(HttpVerbs.Post), Authorize(Roles = "Administrator, Dharma Protector")] 
 		public ActionResult DPRoster(int nextMonth, FormCollection collection, GMVolunteerJobName gmVolunteerJobName)
 		{
 			try

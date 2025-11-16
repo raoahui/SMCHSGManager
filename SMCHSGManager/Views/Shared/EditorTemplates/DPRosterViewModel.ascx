@@ -77,7 +77,7 @@
 
  </table>
 
-	  <% if (Roles.IsUserInRole("Administrator"))
+	  <% if (Roles.IsUserInRole("Administrator") || Roles.IsUserInRole("Dharma Protector"))
           { %>
             <div align="center" style="margin-bottom:20px; margin-top:20px">
                <%: Html.ActionLink("Back", "DPRoster", new { nextMonth = Model.NextMonth, edit = false }, new { @style = "color:white;", @class = "buttonsmall" })%> 
