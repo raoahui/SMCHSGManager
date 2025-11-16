@@ -213,8 +213,7 @@ namespace SMCHSGManager.Controllers
             MemberInfo mi = _entities.MemberInfos.Single(a => a.Name == "DP");
             foreach (GroupMeditation gm in nextMonthGMs)
             {
-                string weekNoName = String.Format("{0:t}", gm.StartDateTime) + " - " + String.Format("{0:t}", gm.EndDateTime);
-                var curWeekNo = new Tuple<DayOfWeek, int, string>(gm.StartDateTime.DayOfWeek, gm.StartDateTime.Hour, weekNoName);
+                var curWeekNo = getCurWeekNo(gm);
                 int column = titleList.BinarySearch(curWeekNo);
                
                 monthDpList[row, column] = gm.StartDateTime.Day.ToString();
@@ -284,12 +283,11 @@ namespace SMCHSGManager.Controllers
             maxRow = numberOfSundays;
             if (nextMonthGMs.First().StartDateTime.DayOfWeek != DayOfWeek.Sunday) maxRow++;
 
-            MemberInfo mi = _entities.MemberInfos.Single(a => a.Name == "DP");
+            MemberInfo dpMemberInfo = _entities.MemberInfos.Single(a => a.Name == "DP");
             var weekNoList = new List<Tuple<DayOfWeek, int, string>>();
             foreach (GroupMeditation gm in nextMonthGMs)
 			{
-                string weekNoName = String.Format("{0:t}", gm.StartDateTime) + " - " + String.Format("{0:t}", gm.EndDateTime);
-                var curWeekNo = new Tuple<DayOfWeek, int, string>(gm.StartDateTime.DayOfWeek, gm.StartDateTime.Hour, weekNoName);
+                var curWeekNo = getCurWeekNo(gm);
                 if (!weekNoList.Contains(curWeekNo))
                 {
                     weekNoList.Add(curWeekNo);
@@ -300,16 +298,24 @@ namespace SMCHSGManager.Controllers
             titleList = weekNoList.OrderBy(a => a.Item1).ThenBy(a => a.Item2).ToList();
             foreach (var item in titleList)
             {
-                List<MemberInfo> weekNoName = (from r in _entities.GMVolunteerJobNames
+                List<MemberInfo> weekNoMemberInfo = (from r in _entities.GMVolunteerJobNames
                                                join h in _entities.MemberInfos on r.MemberID equals h.MemberID
                                                orderby h.Name
                                                select h).ToList();
-                weekNoName.Insert(0, mi);
+                weekNoMemberInfo.Insert(0, dpMemberInfo);
                     //GetWeekNoDpMap(mi, item.Item1, item.Item2);
-                weekNoDpList.Add(weekNoName);
-           }
+                weekNoDpList.Add(weekNoMemberInfo);
+            }
             return weekNoDpList;
 		}
+
+        private static Tuple<DayOfWeek, int, string> getCurWeekNo(GroupMeditation gm)
+        {
+            var dateTimeDPStart = gm.StartDateTime.AddMinutes(-30);
+            string weekNoName = String.Format("{0:t}", dateTimeDPStart) + " - " + String.Format("{0:t}", gm.StartDateTime);
+            var curWeekNo = new Tuple<DayOfWeek, int, string>(dateTimeDPStart.DayOfWeek, dateTimeDPStart.Hour, weekNoName);
+            return curWeekNo;
+        }
 
         //private List<MemberInfo> GetWeekNoDpMap(MemberInfo mi, DayOfWeek dow, int startTime)
         //{
