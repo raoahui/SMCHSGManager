@@ -128,14 +128,14 @@ namespace SMCHSGManager.Controllers
 							Count = result.Count(),
 						}).ToList();
 
-			  if (startDate == null)
-			  {
-				  startDate = (from r in _entities.GroupMeditationAttendances orderby r.GroupMeditation.StartDateTime select r.GroupMeditation.StartDateTime).FirstOrDefault();
-			  }
-			  if (endDate == null)
-			  {
-				  endDate = (from r in _entities.GroupMeditationAttendances orderby r.GroupMeditation.StartDateTime descending select r.GroupMeditation.EndDateTime).FirstOrDefault();
-			  }
+              //if (startDate == null)
+              //{
+              //    startDate = (from r in _entities.GroupMeditationAttendances orderby r.GroupMeditation.StartDateTime select r.GroupMeditation.StartDateTime).FirstOrDefault();
+              //}
+              //if (endDate == null)
+              //{
+              //    endDate = (from r in _entities.GroupMeditationAttendances orderby r.GroupMeditation.StartDateTime descending select r.GroupMeditation.EndDateTime).FirstOrDefault();
+              //}
 		  }
 
 		  if (startDate == null)
